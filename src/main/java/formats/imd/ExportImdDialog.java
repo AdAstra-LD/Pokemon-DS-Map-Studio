@@ -22,6 +22,8 @@ import javax.swing.filechooser.FileFilter;
 
 import utils.Utils;
 
+import static editor.mapmatrix.MapMatrix.ExportPath;
+
 /**
  * @author Trifindo, JackHack96
  */
@@ -46,7 +48,7 @@ public class ExportImdDialog extends JDialog {
 
     private void jbObjBrowseActionPerformed(ActionEvent e) {
         final JFileChooser fc = new JFileChooser();
-        File folder = new File(Utils.removeExtensionFromPath(handler.getMapMatrix().filePath)).getParentFile();
+        File folder = new File(ExportPath);
         fc.setCurrentDirectory(folder);
         //fc.setSelectedFile(folder);
         fc.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
@@ -137,7 +139,7 @@ public class ExportImdDialog extends JDialog {
 
     private void jbImdBrowseActionPerformed(ActionEvent e) {
         final JFileChooser fc = new JFileChooser();
-        File folder = new File(Utils.removeExtensionFromPath(handler.getMapMatrix().filePath)).getParentFile();
+        File folder = new File(ExportPath);
         fc.setCurrentDirectory(folder);
         fc.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
         fc.setApproveButtonText("Select folder");
@@ -156,10 +158,10 @@ public class ExportImdDialog extends JDialog {
     public void init(MapEditorHandler handler) {
         this.handler = handler;
 
-        String objFolderPath = new File(handler.getMapMatrix().filePath).getParent();
+        String objFolderPath = new File(ExportPath).toString();
         loadObjFilesFromFolder(objFolderPath);
 
-        String imdFolderPath = new File(Utils.removeExtensionFromPath(handler.getMapMatrix().filePath)).getParent();
+        String imdFolderPath = new File(ExportPath).toString();
         if (isFolderPathValid(imdFolderPath)) {
             this.imdFolderPath = imdFolderPath;
             jtfImdFolderPath.setText(imdFolderPath);

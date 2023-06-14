@@ -12,10 +12,13 @@ import net.miginfocom.swing.*;
  * @author Trifindo, JackHack96
  */
 public class SettingsDialog extends JDialog {
+
+    public static boolean HideMap = false;
     public SettingsDialog(Window owner) {
         super(owner);
         initComponents();
         jcmbTheme.setSelectedItem(MainFrame.prefs.get("Theme", "Native"));
+        jcbHideMap.setSelected(MainFrame.prefs.getBoolean("HideMap", false));
     }
 
     private void cancelButtonActionPerformed(ActionEvent e) {
@@ -24,6 +27,8 @@ public class SettingsDialog extends JDialog {
 
     private void okButtonActionPerformed(ActionEvent e) {
         MainFrame.prefs.put("Theme", Objects.requireNonNull(jcmbTheme.getSelectedItem()).toString());
+        MainFrame.prefs.putBoolean("HideMap", jcbHideMap.isSelected());
+
         JOptionPane.showMessageDialog(this, "Please restart PDSMS!");
         dispose();
     }
@@ -33,10 +38,13 @@ public class SettingsDialog extends JDialog {
         dialogPane = new JPanel();
         contentPanel = new JPanel();
         label1 = new JLabel();
+        label2 = new JLabel();
         jcmbTheme = new JComboBox<>();
         buttonBar = new JPanel();
         okButton = new JButton();
         cancelButton = new JButton();
+        jcbHideMap = new JCheckBox();
+
 
         //======== this ========
         setTitle("Settings");
@@ -61,6 +69,7 @@ public class SettingsDialog extends JDialog {
                     // columns
                     "[fill]" +
                     "[grow,fill]",
+
                     // rows
                     "[]"));
 
@@ -75,6 +84,14 @@ public class SettingsDialog extends JDialog {
                     "FlatLaf Dark"
                 }));
                 contentPanel.add(jcmbTheme, "cell 1 0");
+
+                //---- label1 ----
+                label2.setText("Hide map on Discord:");
+                contentPanel.add(label2, "cell 1 1");
+
+                //---- hideMap ----
+                jcbHideMap.setSelected(HideMap);
+                contentPanel.add(jcbHideMap, "cell 2 1");
             }
             dialogPane.add(contentPanel, "cell 0 0");
 
@@ -101,7 +118,7 @@ public class SettingsDialog extends JDialog {
             dialogPane.add(buttonBar, "cell 0 1");
         }
         contentPane.add(dialogPane, BorderLayout.CENTER);
-        setSize(240, 140);
+        setSize(250, 150);
         setLocationRelativeTo(getOwner());
         // JFormDesigner - End of component initialization  //GEN-END:initComponents
     }
@@ -110,9 +127,13 @@ public class SettingsDialog extends JDialog {
     private JPanel dialogPane;
     private JPanel contentPanel;
     private JLabel label1;
+    private JLabel label2;
     private JComboBox<String> jcmbTheme;
     private JPanel buttonBar;
     private JButton okButton;
     private JButton cancelButton;
+
+    private JCheckBox jcbHideMap;
+
     // JFormDesigner - End of variables declaration  //GEN-END:variables
 }
