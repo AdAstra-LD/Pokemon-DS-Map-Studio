@@ -30,6 +30,8 @@ import java.awt.Point;
 import java.awt.image.BufferedImage;
 import java.io.BufferedReader;
 import java.io.File;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FilenameFilter;
@@ -53,7 +55,7 @@ import utils.Utils;
 public class MapMatrix {
 
     private static final int expectedMaxNumMaps = 25;
-
+    public static final String exportPathTag = "exportpath";
     private static final String mapstartTag = "mapstart";
     private static final String areaIndexTag = "areaindex";
     private static final String exportgroupTag = "exportgroup";
@@ -77,7 +79,8 @@ public class MapMatrix {
     private HashMap<Integer, Color> areaColors;
     private HashMap<Integer, Color> exportgroupColors;
 
-    public String filePath = "";
+    public static String filePath = "";
+    public static String ExportPath = "";
     public String tilesetFilePath = "";
     public static final String fileExtension = "pdsmap";
 
@@ -126,6 +129,9 @@ public class MapMatrix {
         out.println(tilesetTag);
         String filename = Utils.removeExtensionFromPath(new File(path).getName());
         out.println(filename + "." + Tileset.fileExtension);
+
+        out.println(exportPathTag);
+        out.println(ExportPath);
 
         Point minCoords = getMinCoords();
         for (HashMap.Entry<Point, MapData> map : entrySet) {
@@ -219,6 +225,17 @@ public class MapMatrix {
                 numTileLayersRead = 0;
                 numHeightLayersRead = 0;
                 currentMapIsExportGroupCenter = false;
+            } else if (line.startsWith(exportPathTag)) {
+                String exportpathvalue = br.readLine();
+                if(exportpathvalue.length() == 0) {
+                    Path p1 = Paths.get(path).getParent();
+                    String textPath = p1.toString();
+                    System.out.println(textPath);
+                    ExportPath = textPath;
+                } else {
+                    ExportPath = exportpathvalue;
+                }
+                System.out.println("Export path: " + ExportPath);
             }
         }
         if (numMapsRead == 0) {
@@ -264,6 +281,16 @@ public class MapMatrix {
                 currentAreaIndex = Integer.parseInt(br.readLine());
             } else if (line.startsWith(exportgroupTag)) {
                 currentExportgroupIndex = Integer.parseInt(br.readLine());
+            } else if (line.startsWith(exportPathTag)) {
+                String exportpathvalue = br.readLine();
+                if(exportpathvalue.length() == 0) {
+                    Path p1 = Paths.get(path).getParent();
+                    String textPath = p1.toString();
+                    System.out.println(textPath);
+                    ExportPath = textPath;
+                } else {
+                    ExportPath = exportpathvalue;
+                }
             } else if(line.startsWith(exportgroupCenterTag)) {
                 currentMapIsExportGroupCenter = true;
             } else if (line.startsWith(tileGridTag)) {
@@ -319,6 +346,15 @@ public class MapMatrix {
                 out.println(tilesetTag);
                 String filename = Utils.removeExtensionFromPath(new File(filePath).getName());
                 out.println(filename + "." + Tileset.fileExtension);
+
+                out.println(exportPathTag);
+                if(ExportPath.length() == 0) {
+                    Path p1 = Paths.get(path).getParent();
+                    String textPath = p1.toString();
+                    System.out.println(textPath);
+                    ExportPath = textPath;
+                }
+                out.println(ExportPath);
 
                 Point minCoords = getMinCoords();
                 out.println(mapstartTag);

@@ -20,6 +20,7 @@ import net.miginfocom.swing.*;
 
 import utils.Utils;
 import utils.swing.*;
+import static editor.mapmatrix.MapMatrix.ExportPath;
 
 /**
  * @author Trifindo
@@ -246,7 +247,8 @@ public class ExportNsbmdDialog extends javax.swing.JDialog {
 
     private void jbImdBrowseActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jbImdBrowseActionPerformed
         final JFileChooser fc = new JFileChooser();
-        File folder = new File(Utils.removeExtensionFromPath(handler.getMapMatrix().filePath)).getParentFile();
+        // folder = new File(Utils.removeExtensionFromPath(handler.getMapMatrix().filePath)).getParentFile();
+        File folder = new File(ExportPath);
         fc.setCurrentDirectory(folder);
         //fc.setSelectedFile(folder);
         fc.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
@@ -337,7 +339,7 @@ public class ExportNsbmdDialog extends javax.swing.JDialog {
 
     private void jbNsbBrowseActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jbNsbBrowseActionPerformed
         final JFileChooser fc = new JFileChooser();
-        File folder = new File(Utils.removeExtensionFromPath(handler.getMapMatrix().filePath)).getParentFile();
+        File folder = new File(Utils.removeExtensionFromPath(ExportPath));
         fc.setCurrentDirectory(folder);
         fc.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
         fc.setApproveButtonText("Select folder");
@@ -376,10 +378,10 @@ public class ExportNsbmdDialog extends javax.swing.JDialog {
     public void init(MapEditorHandler handler) {
         this.handler = handler;
 
-        String imdFolderPath = new File(handler.getMapMatrix().filePath).getParent();
+        String imdFolderPath = new File(ExportPath).toString();
         loadImdFilesFromFolder(imdFolderPath);
 
-        String nsbFolderPath = new File(Utils.removeExtensionFromPath(handler.getMapMatrix().filePath)).getParent();
+        String nsbFolderPath = new File(ExportPath).toString();
         if (isFolderPathValid(nsbFolderPath)) {
             this.nsbFolderPath = nsbFolderPath;
             jtfNsbFolderPath.setText(nsbFolderPath);
