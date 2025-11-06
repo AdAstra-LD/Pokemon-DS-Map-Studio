@@ -10,6 +10,8 @@ import javax.swing.event.*;
 import editor.smartdrawing.*;
 import editor.tileselector.*;
 import com.jogamp.opengl.GLContext;
+import org.jdesktop.beansbinding.*;
+import org.jdesktop.beansbinding.AutoBinding.UpdateStrategy;
 import tileset.TilesetRenderer;
 import editor.handler.MapEditorHandler;
 import formats.obj.ObjWriter;
@@ -432,6 +434,28 @@ public class TilesetEditorDialog extends JDialog {
             jbGlobalTexScale.setEnabled(selected);
             jtfGlobalTexScale.setBackground(selected ? defaultTextPaneBackground : defaultInactiveTextPaneColor);
             jtfGlobalTexScale.setForeground(defaultTextPaneForeground);
+        }
+    }
+
+    private void isTileableTreeCheckboxEventClick(ActionEvent evt) {
+        if (handler.getTileset().size() > 0) {
+            boolean selected = isTileableTreeCheckbox.isSelected();
+            handler.getTileSelected().setIsTileableTree(selected);
+            tileableTreeFSpiner.setEnabled(selected);
+            tileableTreeSSpiner.setEnabled(selected);
+        }
+    }
+
+    private void tileableTreeFSpinerStateChanged(ChangeEvent evt) {
+        if (handler.getTileset().size() > 0) {
+            handler.getTileSelected().setTileableTreeFrontId((Integer)tileableTreeFSpiner.getValue());
+        }
+    }
+
+
+    private void tileableTreeSSpinerStateChanged(ChangeEvent evt) {
+        if (handler.getTileset().size() > 0) {
+            handler.getTileSelected().setTileableTreeSideId((Integer)tileableTreeSSpiner.getValue());
         }
     }
 
@@ -873,6 +897,14 @@ public class TilesetEditorDialog extends JDialog {
 
                 if (dialog.getReturnValue() == ImportTilesDialog.APPROVE_OPTION) {
                     ArrayList<Tile> tiles = dialog.getTilesSelected();
+                    tiles.forEach(tile -> {
+                        if(tile.getIsTileableTree()) {
+                            int newSideIxd = tile.getSideTileId() + tileset.size();
+                            int newFaceIxd = tile.getFrontTileId() + tileset.size();
+                            tile.setTileableTreeFrontId(newFaceIxd);
+                            tile.setTileableTreeSideId(newSideIxd);
+                        }
+                    });
 
                     handler.getTileset().importTiles(tiles);
 
@@ -1064,6 +1096,10 @@ public class TilesetEditorDialog extends JDialog {
             updateViewZOffset(tile);
             updateViewGlobalTexScale(tile);
 
+            updateIsTilableTree(tile);
+            updateFrontTileId(tile);
+            updateSideTileId(tile);
+
             jtfObjName.setText(tile.getObjFilename());
 
             updateViewTileIndex();
@@ -1170,6 +1206,22 @@ public class TilesetEditorDialog extends JDialog {
         jtfGlobalTexScale.setForeground(defaultTextPaneForeground);
         jtfGlobalTexScale.setEditable(enabled);
         jbGlobalTexScale.setEnabled(enabled);
+    }
+
+    private void updateIsTilableTree(Tile tile) {
+        boolean enabled = tile.getIsTileableTree();
+
+        isTileableTreeCheckbox.setSelected(enabled);
+        tileableTreeFSpiner.setEnabled(enabled);
+        tileableTreeSSpiner.setEnabled(enabled);
+    }
+
+    private void updateFrontTileId(Tile tile) {
+        tileableTreeFSpiner.setValue(tile.getFrontTileId());
+    }
+
+    private void updateSideTileId(Tile tile) {
+        tileableTreeSSpiner.setValue(tile.getSideTileId());
     }
 
     private void updateViewTexGenMode() {
@@ -1619,6 +1671,7 @@ public class TilesetEditorDialog extends JDialog {
 
     private void initComponents() {
         // JFormDesigner - Component initialization - DO NOT MODIFY  //GEN-BEGIN:initComponents
+        // Generated using JFormDesigner Educational license - Corentin Macé
         panel18 = new JPanel();
         tileDisplay = new TileDisplay();
         jTabbedPane2 = new JTabbedPane();
@@ -1679,9 +1732,11 @@ public class TilesetEditorDialog extends JDialog {
         jcbTileableY = new JCheckBox();
         jcbVtileable = new JCheckBox();
         panel3 = new JPanel();
+        jLabel14 = new JLabel();
         jlXOffset = new JLabel();
         jtfXOffset = new JTextField();
         jbXOffset = new JButton();
+        jLabel15 = new JLabel();
         jlYOffset = new JLabel();
         jtfYOffset = new JTextField();
         jbYOffset = new JButton();
@@ -1703,11 +1758,20 @@ public class TilesetEditorDialog extends JDialog {
         jPanel7 = new JPanel();
         panel6 = new JPanel();
         jLabel22 = new JLabel();
+        Jlabel3 = new JLabel();
         label2 = new JLabel();
         jbAddTexture = new JButton();
         jcbMaterial = new JComboBox<>();
         scrollPane1 = new JScrollPane();
         jlTileMaterials = new JList();
+        panel15 = new JPanel();
+        isTileableTreeCheckbox = new JCheckBox();
+        panel16 = new JPanel();
+        label4 = new JLabel();
+        tileableTreeFSpiner = new JSpinner();
+        panel19 = new JPanel();
+        label5 = new JLabel();
+        tileableTreeSSpiner = new JSpinner();
         textureDisplay = new TextureDisplay();
         jPanel3 = new JPanel();
         panel13 = new JPanel();
@@ -2660,6 +2724,10 @@ public class TilesetEditorDialog extends JDialog {
                         jLabel22.setPreferredSize(null);
                         panel6.add(jLabel22, "cell 0 1");
 
+                        //---- Jlabel3 ----
+                        Jlabel3.setText("Tileable Tree Options");
+                        panel6.add(Jlabel3, "cell 1 1");
+
                         //---- label2 ----
                         label2.setText("Change Material:");
                         panel6.add(label2, "cell 2 1");
@@ -2694,6 +2762,66 @@ public class TilesetEditorDialog extends JDialog {
                             scrollPane1.setViewportView(jlTileMaterials);
                         }
                         panel6.add(scrollPane1, "cell 0 2 1 3,grow");
+
+                        //======== panel15 ========
+                        {
+                            panel15.setLayout(new MigLayout(
+                                "fill,hidemode 3",
+                                // columns
+                                "[fill]" +
+                                "[fill]",
+                                // rows
+                                "[]"));
+
+                            //---- isTileableTreeCheckbox ----
+                            isTileableTreeCheckbox.setText("Is Tileable Tree?");
+                            panel15.add(isTileableTreeCheckbox, "cell 0 0");
+                        }
+                        panel6.add(panel15, "cell 1 2");
+
+                        //======== panel16 ========
+                        {
+                            panel16.setLayout(new MigLayout(
+                                "fill,hidemode 3",
+                                // columns
+                                "[fill]" +
+                                "[fill]",
+                                // rows
+                                "[]"));
+
+                            //---- label4 ----
+                            label4.setText("Front Texture ID");
+                            panel16.add(label4, "cell 0 0");
+
+                            //---- tileableTreeFSpiner ----
+                            tileableTreeFSpiner.setEnabled(false);
+                            panel16.add(tileableTreeFSpiner, "cell 1 0");
+                        }
+                        panel6.add(panel16, "cell 1 3");
+
+                        //======== panel19 ========
+                        {
+                            panel19.setLayout(new MigLayout(
+                                "fill,hidemode 3",
+                                // columns
+                                "[fill]" +
+                                "[fill]",
+                                // rows
+                                "[]" +
+                                "[]" +
+                                "[]" +
+                                "[]" +
+                                "[]"));
+
+                            //---- label5 ----
+                            label5.setText("Side Texture ID");
+                            panel19.add(label5, "cell 0 0");
+
+                            //---- tileableTreeSSpiner ----
+                            tileableTreeSSpiner.setEnabled(false);
+                            panel19.add(tileableTreeSSpiner, "cell 1 0");
+                        }
+                        panel6.add(panel19, "cell 1 4");
 
                         //======== textureDisplay ========
                         {
@@ -3267,13 +3395,13 @@ public class TilesetEditorDialog extends JDialog {
                     //======== panel7 ========
                     {
                         panel7.setLayout(new MigLayout(
-                                "insets 0,hidemode 3,gap 5 5",
-                                // columns
-                                "[grow,fill]",
-                                // rows
-                                "[fill]" +
-                                        "[fill]" +
-                                        "[fill]"));
+                            "insets 0,hidemode 3,gap 5 5",
+                            // columns
+                            "[grow,fill]",
+                            // rows
+                            "[fill]" +
+                            "[fill]" +
+                            "[fill]"));
 
                         //---- jbReplaceTexture ----
                         jbReplaceTexture.setIcon(new ImageIcon(getClass().getResource("/icons/ImportTileIcon.png")));
@@ -3304,12 +3432,12 @@ public class TilesetEditorDialog extends JDialog {
                             GroupLayout textureDisplayMaterialLayout = new GroupLayout(textureDisplayMaterial);
                             textureDisplayMaterial.setLayout(textureDisplayMaterialLayout);
                             textureDisplayMaterialLayout.setHorizontalGroup(
-                                    textureDisplayMaterialLayout.createParallelGroup()
-                                            .addGap(0, 125, Short.MAX_VALUE)
+                                textureDisplayMaterialLayout.createParallelGroup()
+                                    .addGap(0, 125, Short.MAX_VALUE)
                             );
                             textureDisplayMaterialLayout.setVerticalGroup(
-                                    textureDisplayMaterialLayout.createParallelGroup()
-                                            .addGap(0, 125, Short.MAX_VALUE)
+                                textureDisplayMaterialLayout.createParallelGroup()
+                                    .addGap(0, 125, Short.MAX_VALUE)
                             );
                         }
                         panel7.add(textureDisplayMaterial, "cell 0 2,align center center,grow 0 0");
@@ -3426,6 +3554,7 @@ public class TilesetEditorDialog extends JDialog {
     }
 
     // JFormDesigner - Variables declaration - DO NOT MODIFY  //GEN-BEGIN:variables
+    // Generated using JFormDesigner Educational license - Corentin Macé
     private JPanel panel18;
     private TileDisplay tileDisplay;
     private JTabbedPane jTabbedPane2;
@@ -3486,9 +3615,11 @@ public class TilesetEditorDialog extends JDialog {
     private JCheckBox jcbTileableY;
     private JCheckBox jcbVtileable;
     private JPanel panel3;
+    private JLabel jLabel14;
     private JLabel jlXOffset;
     private JTextField jtfXOffset;
     private JButton jbXOffset;
+    private JLabel jLabel15;
     private JLabel jlYOffset;
     private JTextField jtfYOffset;
     private JButton jbYOffset;
@@ -3510,11 +3641,20 @@ public class TilesetEditorDialog extends JDialog {
     private JPanel jPanel7;
     private JPanel panel6;
     private JLabel jLabel22;
+    private JLabel Jlabel3;
     private JLabel label2;
     private JButton jbAddTexture;
     private JComboBox<String> jcbMaterial;
     private JScrollPane scrollPane1;
     private JList jlTileMaterials;
+    private JPanel panel15;
+    private JCheckBox isTileableTreeCheckbox;
+    private JPanel panel16;
+    private JLabel label4;
+    private JSpinner tileableTreeFSpiner;
+    private JPanel panel19;
+    private JLabel label5;
+    private JSpinner tileableTreeSSpiner;
     private TextureDisplay textureDisplay;
     private JPanel jPanel3;
     private JPanel panel13;

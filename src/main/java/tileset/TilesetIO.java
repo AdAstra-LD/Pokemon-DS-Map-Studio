@@ -85,6 +85,11 @@ public class TilesetIO {
 
     private static final byte TAG_SMARTGRID = 26;
 
+    private static final byte TAG_ISTILEABLETREE = 57;
+    private static final byte TAG_FRONTTILEID = 58;
+    private static final byte TAG_SIDETILEID = 59;
+
+
     public static void writeTilesetToFile(String path, Tileset tset)
             throws FileNotFoundException, IOException {
 
@@ -154,6 +159,9 @@ public class TilesetIO {
             writeIntElement(out, TAG_TOFFSETSQUAD, tile.getTexOffsetsQuad());
             writeIntElement(out, TAG_TOFFSETSTRI, tile.getTexOffsetsTri());
             writeStringElement(out, TAG_OBJNAME, tile.getObjFilename());
+            writeBoolElement(out, TAG_ISTILEABLETREE, tile.getIsTileableTree());
+            writeIntElement(out, TAG_FRONTTILEID, tile.getFrontTileId());
+            writeIntElement(out, TAG_SIDETILEID, tile.getSideTileId());
         }
 
         out.close();
@@ -378,6 +386,15 @@ public class TilesetIO {
                     break;
                 case TAG_OBJNAME:
                     tile.setObjFilename(readStringElement(in));
+                    break;
+                case TAG_ISTILEABLETREE:
+                    tile.setIsTileableTree(readBoolElement(in));
+                    break;
+                case TAG_FRONTTILEID:
+                    tile.setTileableTreeFrontId(readIntElement(in));
+                    break;
+                case TAG_SIDETILEID:
+                    tile.setTileableTreeSideId(readIntElement(in));
                     break;
             }
         }

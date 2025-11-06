@@ -1,4 +1,4 @@
-JFDML JFormDesigner: "7.0.2.6.321" Java: "11.0.8" encoding: "UTF-8"
+JFDML JFormDesigner: "8.2.4.0.393" Java: "21.0.7" encoding: "UTF-8"
 
 new FormModel {
 	contentType: "form/swing"
@@ -18,8 +18,8 @@ new FormModel {
 				"minimumSize": new java.awt.Dimension( 200, 500 )
 				"preferredSize": new java.awt.Dimension( 400, 450 )
 				add( new FormContainer( "editor.tileseteditor.TileDisplay", new FormLayoutManager( class org.jdesktop.layout.GroupLayout ) {
-					"$horizontalGroup": "par l {space :0:322:x}"
-					"$verticalGroup": "par l {space :0:542:x}"
+					"$horizontalGroup": "par l {space :0:351:x}"
+					"$verticalGroup": "par l {space :0:620:x}"
 				} ) {
 					name: "tileDisplay"
 					"border": new javax.swing.border.BevelBorder( 1, null, null, null, null )
@@ -217,7 +217,7 @@ new FormModel {
 			} )
 			add( new FormContainer( "javax.swing.JPanel", new FormLayoutManager( class org.jdesktop.layout.GroupLayout ) {
 				"$horizontalGroup": "par l {seq l {comp jScrollPane2:::p::p, space :0:0:x}}"
-				"$verticalGroup": "par l {comp jScrollPane2::l::638:x}"
+				"$verticalGroup": "par l {comp jScrollPane2::l::716:x}"
 			} ) {
 				name: "jPanel2"
 				"border": new javax.swing.border.TitledBorder( "Tile Selector" )
@@ -240,7 +240,7 @@ new FormModel {
 			} )
 			add( new FormContainer( "javax.swing.JPanel", new FormLayoutManager( class org.jdesktop.layout.GroupLayout ) {
 				"$horizontalGroup": "par l {seq l {par l:::p {comp panel9:::::x, comp jScrollPaneSmartGrid::::95:x}, space :0:0:p}}"
-				"$verticalGroup": "par l {seq l {comp jScrollPaneSmartGrid::::574:x, space :::p, comp panel9:::p:58:p}}"
+				"$verticalGroup": "par l {seq l {comp jScrollPaneSmartGrid:::::x, space :::p, comp panel9:::p:58:p}}"
 			} ) {
 				name: "jPanel9"
 				"border": new javax.swing.border.TitledBorder( "Smart Drawing" )
@@ -256,7 +256,7 @@ new FormModel {
 					"maximumSize": sfield com.jformdesigner.model.FormObject NULL_VALUE
 					add( new FormContainer( "editor.smartdrawing.SmartGridEditableDisplay", new FormLayoutManager( class org.jdesktop.layout.GroupLayout ) {
 						"$horizontalGroup": "par l {space :0:188:x}"
-						"$verticalGroup": "par l {space :0:587:x}"
+						"$verticalGroup": "par l {space :0:650:x}"
 					} ) {
 						name: "smartGridEditableDisplay"
 						"maximumSize": sfield com.jformdesigner.model.FormObject NULL_VALUE
@@ -308,7 +308,7 @@ new FormModel {
 				add( new FormContainer( "javax.swing.JPanel", new FormLayoutManager( class net.miginfocom.swing.MigLayout ) {
 					"$columnConstraints": "[shrink 0,fill]"
 					"$rowConstraints": "0[fill]0[fill]0[fill]0[fill]0[128:n,grow,shrink 0,fill]"
-					"$layoutConstraints": ""
+					"$layoutConstraints": "fill"
 				} ) {
 					name: "jPanel1"
 					"minimumSize": sfield com.jformdesigner.model.FormObject NULL_VALUE
@@ -803,7 +803,7 @@ new FormModel {
 						"preferredSize": sfield com.jformdesigner.model.FormObject NULL_VALUE
 						add( new FormContainer( "javax.swing.JPanel", new FormLayoutManager( class net.miginfocom.swing.MigLayout ) {
 							"$layoutConstraints": "insets 0,hidemode 3,gap 5 5"
-							"$columnConstraints": "[158,grow][171,fill][fill]"
+							"$columnConstraints": "[fill][fill][fill]"
 							"$rowConstraints": "[fill][][fill][][128:128,grow,shrink 0,fill]"
 						} ) {
 							name: "panel6"
@@ -818,6 +818,12 @@ new FormModel {
 								"preferredSize": sfield com.jformdesigner.model.FormObject NULL_VALUE
 							}, new FormLayoutConstraints( class net.miginfocom.layout.CC ) {
 								"value": "cell 0 1"
+							} )
+							add( new FormComponent( "javax.swing.JLabel" ) {
+								name: "Jlabel3"
+								"text": "Tileable Tree Options"
+							}, new FormLayoutConstraints( class net.miginfocom.layout.CC ) {
+								"value": "cell 1 1"
 							} )
 							add( new FormComponent( "javax.swing.JLabel" ) {
 								name: "label2"
@@ -860,6 +866,63 @@ new FormModel {
 								} )
 							}, new FormLayoutConstraints( class net.miginfocom.layout.CC ) {
 								"value": "cell 0 2 1 3,grow"
+							} )
+							add( new FormContainer( "javax.swing.JPanel", new FormLayoutManager( class net.miginfocom.swing.MigLayout ) {
+								"$layoutConstraints": "fill,hidemode 3"
+								"$columnConstraints": "[fill][fill]"
+								"$rowConstraints": "[]"
+							} ) {
+								name: "panel15"
+								add( new FormComponent( "javax.swing.JCheckBox" ) {
+									name: "isTileableTreeCheckbox"
+									"text": "Is Tileable Tree?"
+								}, new FormLayoutConstraints( class net.miginfocom.layout.CC ) {
+									"value": "cell 0 0"
+								} )
+							}, new FormLayoutConstraints( class net.miginfocom.layout.CC ) {
+								"value": "cell 1 2"
+							} )
+							add( new FormContainer( "javax.swing.JPanel", new FormLayoutManager( class net.miginfocom.swing.MigLayout ) {
+								"$layoutConstraints": "fill,hidemode 3"
+								"$columnConstraints": "[fill][fill]"
+								"$rowConstraints": "[]"
+							} ) {
+								name: "panel16"
+								add( new FormComponent( "javax.swing.JLabel" ) {
+									name: "label4"
+									"text": "Front Texture ID"
+								}, new FormLayoutConstraints( class net.miginfocom.layout.CC ) {
+									"value": "cell 0 0"
+								} )
+								add( new FormComponent( "javax.swing.JSpinner" ) {
+									name: "tileableTreeFSpiner"
+									"enabled": false
+								}, new FormLayoutConstraints( class net.miginfocom.layout.CC ) {
+									"value": "cell 1 0"
+								} )
+							}, new FormLayoutConstraints( class net.miginfocom.layout.CC ) {
+								"value": "cell 1 3"
+							} )
+							add( new FormContainer( "javax.swing.JPanel", new FormLayoutManager( class net.miginfocom.swing.MigLayout ) {
+								"$layoutConstraints": "fill,hidemode 3"
+								"$columnConstraints": "[fill][fill]"
+								"$rowConstraints": "[][][][][]"
+							} ) {
+								name: "panel19"
+								add( new FormComponent( "javax.swing.JLabel" ) {
+									name: "label5"
+									"text": "Side Texture ID"
+								}, new FormLayoutConstraints( class net.miginfocom.layout.CC ) {
+									"value": "cell 0 0"
+								} )
+								add( new FormComponent( "javax.swing.JSpinner" ) {
+									name: "tileableTreeSSpiner"
+									"enabled": false
+								}, new FormLayoutConstraints( class net.miginfocom.layout.CC ) {
+									"value": "cell 1 0"
+								} )
+							}, new FormLayoutConstraints( class net.miginfocom.layout.CC ) {
+								"value": "cell 1 4"
 							} )
 							add( new FormContainer( "editor.tileseteditor.TextureDisplay", new FormLayoutManager( class org.jdesktop.layout.GroupLayout ) {
 								"$horizontalGroup": "par l {space :0:125:x}"
@@ -1383,7 +1446,7 @@ new FormModel {
 				} )
 			} )
 		}, new FormLayoutConstraints( null ) {
-			"size": new java.awt.Dimension( 1180, 700 )
+			"size": new java.awt.Dimension( 1180, 770 )
 			"location": new java.awt.Point( 5, 5 )
 		} )
 	}
