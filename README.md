@@ -21,7 +21,7 @@ This is due to the additional 3D layer, and the new "exportgroup" and "egcenter"
 
 ## Running
 Pokemon DS Map Studio has been tested under Windows, Linux and MacOS.
-In order to run it, Java 8 must be installed on your computer, regardless of the operating system you are using. 
+In order to run it, Java 21 must be installed on your computer, regardless of the operating system you are using. 
 Pokemon DS Map Studio can be executed by double clicking the "PokemonDsMapStudio.jar" file. 
 
 If it doesn't open, try typing the following command in a terminal:
