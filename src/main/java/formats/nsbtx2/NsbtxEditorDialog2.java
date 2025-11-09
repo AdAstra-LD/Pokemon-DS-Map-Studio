@@ -994,6 +994,7 @@ public class NsbtxEditorDialog2 extends JDialog {
 
     private void initComponents() {
         // JFormDesigner - Component initialization - DO NOT MODIFY  //GEN-BEGIN:initComponents
+        // Generated using JFormDesigner Educational license - Corentin Macé
         jMenuBar1 = new JMenuBar();
         jmFile = new JMenu();
         jmiNewNsbtx = new JMenuItem();
@@ -1258,7 +1259,7 @@ public class NsbtxEditorDialog2 extends JDialog {
                 jPanel3.setBorder(new TitledBorder("Texture Display"));
 
                 //---- nsbtxDisplay ----
-                nsbtxDisplay.setBorder(new LineBorder(new Color(102, 102, 102)));
+                nsbtxDisplay.setBorder(new LineBorder(new Color(0x666666)));
 
                 GroupLayout jPanel3Layout = new GroupLayout(jPanel3);
                 jPanel3.setLayout(jPanel3Layout);
@@ -1567,6 +1568,7 @@ public class NsbtxEditorDialog2 extends JDialog {
     }
 
     // JFormDesigner - Variables declaration - DO NOT MODIFY  //GEN-BEGIN:variables
+    // Generated using JFormDesigner Educational license - Corentin Macé
     private JMenuBar jMenuBar1;
     private JMenu jmFile;
     private JMenuItem jmiNewNsbtx;

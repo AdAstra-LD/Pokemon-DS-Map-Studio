@@ -124,7 +124,11 @@ public class AnimationEditorDialog extends JDialog {
     }
 
     private void jbApplyActionPerformed(ActionEvent e) {
-        // TODO add your code here
+        if (animHandler != null) {
+            if (animHandler.getAnimationSelected() != null) {
+                changeAnimationName();
+            }
+        }
     }
 
     public void init(MapEditorHandler handler) {
@@ -369,6 +373,7 @@ public class AnimationEditorDialog extends JDialog {
 
     private void initComponents() {
         // JFormDesigner - Component initialization - DO NOT MODIFY  //GEN-BEGIN:initComponents
+        // Generated using JFormDesigner Educational license - Corentin Macé
         jPanel1 = new JPanel();
         animationDisplay = new AnimationDisplay();
         jbPlay = new JButton();
@@ -412,10 +417,10 @@ public class AnimationEditorDialog extends JDialog {
             jPanel1.setBorder(new TitledBorder("Animation Display"));
 
             //---- animationDisplay ----
-            animationDisplay.setBorder(new LineBorder(new Color(102, 102, 102)));
+            animationDisplay.setBorder(new LineBorder(new Color(0x666666)));
 
             //---- jbPlay ----
-            jbPlay.setForeground(new Color(0, 153, 0));
+            jbPlay.setForeground(new Color(0x009900));
             jbPlay.setText("\u25b6");
             jbPlay.addActionListener(e -> jbPlayActionPerformed(e));
 
@@ -692,6 +697,7 @@ public class AnimationEditorDialog extends JDialog {
     }
 
     // JFormDesigner - Variables declaration - DO NOT MODIFY  //GEN-BEGIN:variables
+    // Generated using JFormDesigner Educational license - Corentin Macé
     private JPanel jPanel1;
     private AnimationDisplay animationDisplay;
     private JButton jbPlay;

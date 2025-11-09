@@ -9,6 +9,7 @@ import javax.swing.LayoutStyle;
 
 import editor.handler.MapData;
 import editor.handler.MapEditorHandler;
+import formats.nsbtx.NsbtxHandler;
 import formats.nsbtx2.*;
 import formats.nsbtx2.Nsbtx2;
 import formats.nsbtx2.NsbtxImd;
@@ -589,7 +590,7 @@ public class NsbtxOutputInfoDialog extends JDialog {
                                 palTexNames.put(mat.getPaletteNameImd(), mat.getTextureNameImd());
                             }
                         }
-
+                        
                         Nsbtx2 nsbtx = new Nsbtx2();
                         for (Integer matIndex : usedMaterialIndices) {
                             TilesetMaterial mat = tileset.getMaterial(matIndex);
@@ -632,6 +633,38 @@ public class NsbtxOutputInfoDialog extends JDialog {
                                 }
                             }
                         }
+
+                        String fixedTexturePath = prefs.get("FixedTextureTileset", "");
+                        if(!fixedTexturePath.equals("")) {
+                            NsbtxHandler2 nsbtxHandler2 = new NsbtxHandler2(handler, new NsbtxEditorDialog2(this)); // Initialize the handler
+                            nsbtxHandler2.loadNsbtx(fixedTexturePath);
+
+                            Nsbtx2 fixedTextures = nsbtxHandler2.getNsbtx();
+
+                            for (int i = 0; i < nsbtx.getTextures().size(); i++) {
+                                NsbtxTexture currentTexture = nsbtx.getTexture(i);
+                                String textureName = currentTexture.getName();
+
+                                int fixedTextureIndex = fixedTextures.indexOfTextureName(textureName);
+                                if (fixedTextureIndex != -1) {
+
+                                    NsbtxTexture fixedTexture = fixedTextures.getTexture(fixedTextureIndex);
+                                    nsbtx.getTextures().set(i, fixedTexture);
+                                }
+                            }
+
+                            for (int i = 0; i < nsbtx.getPalettes().size(); i++) {
+                                NsbtxPalette currentPalette = nsbtx.getPalette(i);
+                                String paletteName = currentPalette.getName();
+
+                                int fixedPaletteIndex = fixedTextures.indexOfPaletteName(paletteName);
+                                if (fixedPaletteIndex != -1) {
+                                    NsbtxPalette fixedPalette = fixedTextures.getPalette(fixedPaletteIndex);
+                                    nsbtx.getPalettes().set(i, fixedPalette);
+                                }
+                            }
+                        }
+                        
 
                         NsbtxImd imd = new NsbtxImd(nsbtx);
 

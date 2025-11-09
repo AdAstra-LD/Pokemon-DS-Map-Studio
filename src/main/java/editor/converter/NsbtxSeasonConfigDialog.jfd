@@ -88,6 +88,24 @@ new FormModel {
 					}, new FormLayoutConstraints( class net.miginfocom.layout.CC ) {
 						"value": "cell 3 3"
 					} )
+					add( new FormComponent( "javax.swing.JLabel" ) {
+						name: "label5"
+						"text": "Fixed Texture  Tileset"
+					}, new FormLayoutConstraints( class net.miginfocom.layout.CC ) {
+						"value": "cell 0 4"
+					} )
+					add( new FormComponent( "javax.swing.JTextField" ) {
+						name: "FixedTextureTilesetTxt"
+					}, new FormLayoutConstraints( class net.miginfocom.layout.CC ) {
+						"value": "cell 1 4 2 1"
+					} )
+					add( new FormComponent( "javax.swing.JButton" ) {
+						name: "browseTilesetFixedBtn"
+						"text": "Browse"
+						addEvent( new FormEvent( "java.awt.event.ActionListener", "actionPerformed", "browseTilesetFixedBtn", true ) )
+					}, new FormLayoutConstraints( class net.miginfocom.layout.CC ) {
+						"value": "cell 3 4"
+					} )
 				}, new FormLayoutConstraints( class java.lang.String ) {
 					"value": "Center"
 				} )

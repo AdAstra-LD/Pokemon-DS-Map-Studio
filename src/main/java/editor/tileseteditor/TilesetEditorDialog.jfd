@@ -8,8 +8,8 @@ new FormModel {
 			"defaultCloseOperation": 2
 			"title": "Tileset Editor"
 			"iconImage": new FormReference( "null" )
-			"minimumSize": new java.awt.Dimension( 1215, 650 )
-			"preferredSize": new java.awt.Dimension( 1565, 700 )
+			"minimumSize": new java.awt.Dimension( 1215, 700 )
+			"preferredSize": new java.awt.Dimension( 1215, 700 )
 			"modal": true
 			add( new FormContainer( "javax.swing.JPanel", new FormLayoutManager( class javax.swing.BoxLayout ) {
 				"axis": 1
@@ -18,8 +18,8 @@ new FormModel {
 				"minimumSize": new java.awt.Dimension( 200, 500 )
 				"preferredSize": new java.awt.Dimension( 400, 450 )
 				add( new FormContainer( "editor.tileseteditor.TileDisplay", new FormLayoutManager( class org.jdesktop.layout.GroupLayout ) {
-					"$horizontalGroup": "par l {space :0:322:x}"
-					"$verticalGroup": "par l {space :0:542:x}"
+					"$horizontalGroup": "par l {space :0:299:x}"
+					"$verticalGroup": "par l {space :0:550:x}"
 				} ) {
 					name: "tileDisplay"
 					"border": new javax.swing.border.BevelBorder( 1, null, null, null, null )
@@ -216,8 +216,8 @@ new FormModel {
 				} )
 			} )
 			add( new FormContainer( "javax.swing.JPanel", new FormLayoutManager( class org.jdesktop.layout.GroupLayout ) {
-				"$horizontalGroup": "par l {seq l {comp jScrollPane2:::p::p, space :0:0:x}}"
-				"$verticalGroup": "par l {comp jScrollPane2::l:p:x}"
+				"$horizontalGroup": "par l {seq l {space :::p, comp jScrollPane2:::p:128:p, space :::x}}"
+				"$verticalGroup": "par l {seq t {space :0:0:x, comp jScrollPane2:::p:645:p}}"
 			} ) {
 				name: "jPanel2"
 				"border": new javax.swing.border.TitledBorder( "Tile Selector" )
@@ -226,6 +226,8 @@ new FormModel {
 					name: "jScrollPane2"
 					"horizontalScrollBarPolicy": 31
 					"verticalScrollBarPolicy": 22
+					"inheritsPopupMenu": true
+					"maximumSize": new java.awt.Dimension( 500, 400 )
 					add( new FormContainer( "editor.tileselector.TileSelector", new FormLayoutManager( class org.jdesktop.layout.GroupLayout ) {
 						"$horizontalGroup": "par l {space :0:128:x}"
 						"$verticalGroup": "par l {space :0:0:x}"
@@ -240,7 +242,7 @@ new FormModel {
 			} )
 			add( new FormContainer( "javax.swing.JPanel", new FormLayoutManager( class org.jdesktop.layout.GroupLayout ) {
 				"$horizontalGroup": "par l {seq l {par l:::p {comp panel9:::::x, comp jScrollPaneSmartGrid::::95:x}, space :0:0:p}}"
-				"$verticalGroup": "par l {seq l {comp jScrollPaneSmartGrid:::::x, space :::p, comp panel9:::p:58:p}}"
+				"$verticalGroup": "par l {seq l {comp jScrollPaneSmartGrid::::582:x, space :::p, comp panel9:::p:58:p}}"
 			} ) {
 				name: "jPanel9"
 				"border": new javax.swing.border.TitledBorder( "Smart Drawing" )
@@ -1659,8 +1661,8 @@ new FormModel {
 				} )
 			} )
 		}, new FormLayoutConstraints( null ) {
-			"location": new java.awt.Point( 5, 5 )
-			"size": new java.awt.Dimension( 1215, 700 )
+			"location": new java.awt.Point( 5, 10 )
+			"size": new java.awt.Dimension( 1210, 700 )
 		} )
 	}
 }

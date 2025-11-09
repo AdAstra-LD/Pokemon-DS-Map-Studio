@@ -1841,8 +1841,8 @@ public class TilesetEditorDialog extends JDialog {
         setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
         setTitle("Tileset Editor");
         setIconImage(null);
-        setMinimumSize(new Dimension(1215, 650));
-        setPreferredSize(new Dimension(1565, 700));
+        setMinimumSize(new Dimension(1215, 700));
+        setPreferredSize(new Dimension(1215, 700));
         setModal(true);
         Container contentPane = getContentPane();
         contentPane.setLayout(new BoxLayout(contentPane, BoxLayout.X_AXIS));
@@ -1864,11 +1864,11 @@ public class TilesetEditorDialog extends JDialog {
                 tileDisplay.setLayout(tileDisplayLayout);
                 tileDisplayLayout.setHorizontalGroup(
                     tileDisplayLayout.createParallelGroup()
-                        .addGap(0, 322, Short.MAX_VALUE)
+                        .addGap(0, 299, Short.MAX_VALUE)
                 );
                 tileDisplayLayout.setVerticalGroup(
                     tileDisplayLayout.createParallelGroup()
-                        .addGap(0, 542, Short.MAX_VALUE)
+                        .addGap(0, 550, Short.MAX_VALUE)
                 );
             }
             panel18.add(tileDisplay);
@@ -2056,6 +2056,8 @@ public class TilesetEditorDialog extends JDialog {
             {
                 jScrollPane2.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
                 jScrollPane2.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
+                jScrollPane2.setInheritsPopupMenu(true);
+                jScrollPane2.setMaximumSize(new Dimension(500, 400));
 
                 //======== tileSelector ========
                 {
@@ -2088,12 +2090,15 @@ public class TilesetEditorDialog extends JDialog {
             jPanel2Layout.setHorizontalGroup(
                 jPanel2Layout.createParallelGroup()
                     .addGroup(jPanel2Layout.createSequentialGroup()
-                        .addComponent(jScrollPane2, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-                        .addGap(0, 0, Short.MAX_VALUE))
+                        .addContainerGap()
+                        .addComponent(jScrollPane2, GroupLayout.PREFERRED_SIZE, 128, GroupLayout.PREFERRED_SIZE)
+                        .addContainerGap(GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
             );
             jPanel2Layout.setVerticalGroup(
                 jPanel2Layout.createParallelGroup()
-                    .addComponent(jScrollPane2, GroupLayout.PREFERRED_SIZE, Short.MAX_VALUE, GroupLayout.PREFERRED_SIZE)
+                    .addGroup(GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
+                        .addGap(0, 0, Short.MAX_VALUE)
+                        .addComponent(jScrollPane2, GroupLayout.PREFERRED_SIZE, 645, GroupLayout.PREFERRED_SIZE))
             );
         }
         contentPane.add(jPanel2);
@@ -2178,7 +2183,7 @@ public class TilesetEditorDialog extends JDialog {
             jPanel9Layout.setVerticalGroup(
                 jPanel9Layout.createParallelGroup()
                     .addGroup(jPanel9Layout.createSequentialGroup()
-                        .addComponent(jScrollPaneSmartGrid, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(jScrollPaneSmartGrid, GroupLayout.DEFAULT_SIZE, 582, Short.MAX_VALUE)
                         .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(panel9, GroupLayout.PREFERRED_SIZE, 58, GroupLayout.PREFERRED_SIZE))
             );

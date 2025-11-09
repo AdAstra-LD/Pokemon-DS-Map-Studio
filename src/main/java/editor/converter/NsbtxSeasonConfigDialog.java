@@ -7,6 +7,7 @@ import javax.swing.*;
 import com.formdev.flatlaf.FlatDarculaLaf;
 import com.formdev.flatlaf.FlatLightLaf;
 import editor.MainFrame;
+import jogamp.graph.font.typecast.ot.Fixed;
 import net.miginfocom.swing.*;
 
 import static editor.MainFrame.prefs;
@@ -28,6 +29,8 @@ public class NsbtxSeasonConfigDialog extends JDialog {
             FallTextureFolderTxt.setText(fallTilesetPath);
             String winterTilesetPath = prefs.get("WinterTileset", "");
             WinterTextureFolderTxt.setText(winterTilesetPath);
+            String fixedTexturePath = prefs.get("FixedTextureTileset", "");
+            FixedTextureTilesetTxt.setText(fixedTexturePath);
         } catch (Exception ex) {
             System.err.println("Failed to get preferences");
         }
@@ -38,6 +41,7 @@ public class NsbtxSeasonConfigDialog extends JDialog {
         prefs.put("SummerTileset",  SummerTextureFolderTxt.getText());
         prefs.put("WinterTileset",  WinterTextureFolderTxt.getText());
         prefs.put("FallTileset",  FallTextureFolderTxt.getText());
+        prefs.put("FixedTextureTileset", FixedTextureTilesetTxt.getText());
         this.dispose();
     }
 
@@ -61,6 +65,23 @@ public class NsbtxSeasonConfigDialog extends JDialog {
         WinterTextureFolderTxt.setText(temp);
     }
 
+
+    private void browseTilesetFixedBtn(ActionEvent e) {
+        final JFileChooser fc = new JFileChooser();
+        File folder = new File(ExportPath);
+        fc.setCurrentDirectory(folder);
+        fc.setApproveButtonText("Select folder");
+        fc.setDialogTitle("Select the tileset with the fixed textures and palette");
+
+        int returnValOpen = fc.showOpenDialog(this);
+        if (returnValOpen == JFileChooser.APPROVE_OPTION) {
+            File file = fc.getSelectedFile();
+            if (file.exists()) {
+                FixedTextureTilesetTxt.setText(file.getPath());
+            }
+        }
+    }
+
     private String globalBrowseEventHandler(String description) {
         final JFileChooser fc = new JFileChooser();
         File folder = new File(ExportPath);
@@ -81,6 +102,7 @@ public class NsbtxSeasonConfigDialog extends JDialog {
         return null;
     }
 
+
     private void initComponents() {
         // JFormDesigner - Component initialization - DO NOT MODIFY  //GEN-BEGIN:initComponents  @formatter:off
         // Generated using JFormDesigner Educational license - Corentin Macé
@@ -98,6 +120,9 @@ public class NsbtxSeasonConfigDialog extends JDialog {
         label4 = new JLabel();
         WinterTextureFolderTxt = new JTextField();
         browseWinterTextureFolder = new JButton();
+        label5 = new JLabel();
+        FixedTextureTilesetTxt = new JTextField();
+        browseTilesetFixedBtn = new JButton();
         buttonBar = new JPanel();
         okButton = new JButton();
 
@@ -169,6 +194,16 @@ public class NsbtxSeasonConfigDialog extends JDialog {
                 browseWinterTextureFolder.setText("Browse");
                 browseWinterTextureFolder.addActionListener(e -> browseWinterTextureFolder(e));
                 contentPanel.add(browseWinterTextureFolder, "cell 3 3");
+
+                //---- label5 ----
+                label5.setText("Fixed Texture  Tileset");
+                contentPanel.add(label5, "cell 0 4");
+                contentPanel.add(FixedTextureTilesetTxt, "cell 1 4 2 1");
+
+                //---- browseTilesetFixedBtn ----
+                browseTilesetFixedBtn.setText("Browse");
+                browseTilesetFixedBtn.addActionListener(e -> browseTilesetFixedBtn(e));
+                contentPanel.add(browseTilesetFixedBtn, "cell 3 4");
             }
             dialogPane.add(contentPanel, BorderLayout.CENTER);
 
@@ -210,6 +245,9 @@ public class NsbtxSeasonConfigDialog extends JDialog {
     private JLabel label4;
     private JTextField WinterTextureFolderTxt;
     private JButton browseWinterTextureFolder;
+    private JLabel label5;
+    private JTextField FixedTextureTilesetTxt;
+    private JButton browseTilesetFixedBtn;
     private JPanel buttonBar;
     private JButton okButton;
     // JFormDesigner - End of variables declaration  //GEN-END:variables  @formatter:on
