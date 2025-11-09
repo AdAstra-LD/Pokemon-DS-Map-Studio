@@ -12,6 +12,13 @@ import editor.handler.MapEditorHandler;
 import formats.nsbtx2.*;
 import formats.nsbtx2.Nsbtx2;
 import formats.nsbtx2.NsbtxImd;
+import org.json.JSONObject;
+import org.json.JSONArray;
+
+import java.awt.image.BufferedImage;
+import java.nio.file.*;
+import java.nio.file.attribute.BasicFileAttributes;
+import java.util.*;
 
 import java.awt.CardLayout;
 import java.awt.Color;
@@ -24,7 +31,6 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.nio.file.StandardCopyOption;
 import java.util.*;
 import javax.swing.JLabel;
 import javax.swing.JTable;
@@ -34,19 +40,24 @@ import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 
 import formats.nsbtx2.exceptions.NsbtxTextureSizeException;
+import tileset.Tileset;
+import tileset.TilesetIO;
 import tileset.TilesetMaterial;
 import utils.Utils;
+
+import static editor.MainFrame.prefs;
 
 /**
  * @author Trifindo
  */
-public class NsbtxOutputInfoDialog extends javax.swing.JDialog {
+public class NsbtxOutputInfoDialog extends JDialog {
 
     private MapEditorHandler handler;
 
     private ArrayList<Integer> areaIndices;
     private String nsbtxFolderPath;
 
+    private ExportNsbtxDialog.SeasonExport seasonExport;
     private ArrayList<Nsbtx2> nsbtxData;
     private ArrayList<String> errorMsgs;
 
@@ -81,7 +92,7 @@ public class NsbtxOutputInfoDialog extends javax.swing.JDialog {
     /**
      * Creates new form ImdOutputInfoDialog
      */
-    public NsbtxOutputInfoDialog(java.awt.Frame parent, boolean modal) {
+    public NsbtxOutputInfoDialog(Frame parent, boolean modal) {
         super(parent, modal);
         initComponents();
 
@@ -110,6 +121,7 @@ public class NsbtxOutputInfoDialog extends javax.swing.JDialog {
      */
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
+    // Generated using JFormDesigner Educational license - Corentin Macé
     private void initComponents() {
         jPanel1 = new JPanel();
         jbAccept = new JButton();
@@ -400,28 +412,33 @@ public class NsbtxOutputInfoDialog extends javax.swing.JDialog {
         setLocationRelativeTo(getOwner());
     }// </editor-fold>//GEN-END:initComponents
 
-    private void formWindowActivated(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowActivated
+    private void formWindowActivated(WindowEvent evt) {//GEN-FIRST:event_formWindowActivated
         if (convertingThread == null) {
             convertingThread = new Thread(new Runnable() {
                 @Override
                 public void run() {
-                    saveAllNsbtx();
+                    try {
+                        saveAllNsbtx();
+                    } catch (Exception e) {
+                        throw new RuntimeException(e);
+                    }
                 }
             });
             convertingThread.start();
         }
     }//GEN-LAST:event_formWindowActivated
 
-    private void formWindowClosed(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowClosed
+    private void formWindowClosed(WindowEvent evt) {//GEN-FIRST:event_formWindowClosed
         convertingThread.interrupt();
     }//GEN-LAST:event_formWindowClosed
 
-    private void jbAcceptActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jbAcceptActionPerformed
+    private void jbAcceptActionPerformed(ActionEvent evt) {//GEN-FIRST:event_jbAcceptActionPerformed
         dispose();
     }//GEN-LAST:event_jbAcceptActionPerformed
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    // Generated using JFormDesigner Educational license - Corentin Macé
     private JPanel jPanel1;
     private JButton jbAccept;
     private JSplitPane jSplitPane1;
@@ -450,13 +467,24 @@ public class NsbtxOutputInfoDialog extends javax.swing.JDialog {
     // End of variables declaration//GEN-END:variables
 
     public void init(MapEditorHandler handler, ArrayList<Integer> areaIndices,
-                     String nsbtxFolderPath) {
+                     String nsbtxFolderPath, ExportNsbtxDialog.SeasonExport seasonExport) {
         this.handler = handler;
         this.areaIndices = areaIndices;
         this.nsbtxFolderPath = nsbtxFolderPath;
+        this.seasonExport = seasonExport;
     }
 
-    public void saveAllNsbtx() {
+    private void createSeasonalTileset(Tileset tileset, String season, Path basePath, Path seasonTextureFolder) throws IOException {
+        if(basePath == null || seasonTextureFolder == null) return;
+        Path tilesetPath = Paths.get(basePath + "/" + season);
+        tileset.tilesetFolderPath = tilesetPath.toString();
+        Files.createDirectory(tilesetPath);
+        TilesetIO.writeTilesetToFile(tileset.tilesetFolderPath + "/" + season +".pdsts", tileset);
+        tileset.saveImagesToFile(tileset.tilesetFolderPath);
+        Utils.copyFolder(seasonTextureFolder, tilesetPath);
+    }
+
+    public void saveAllNsbtx() throws Exception {
         DefaultTableModel tableModel = (DefaultTableModel) jTable1.getModel();
 
         nsbtxData = new ArrayList<>(areaIndices.size());
@@ -469,197 +497,247 @@ public class NsbtxOutputInfoDialog extends javax.swing.JDialog {
         int nFilesProcessed = 0;
         int nFilesConverted = 0;
         int nFilesNotConverted = 0;
+        ArrayList<Object[]> exportedNsbtx = new ArrayList<>();
         for (Integer areaIndex : areaIndices) {
-            ConvertStatus exportStatus;
+            ConvertStatus exportStatus = null;
             boolean paletteMissed = false;
             boolean textureMissed = false;
             if (!Thread.currentThread().isInterrupted()) {
                 try {
+                    Tileset baseTileset = handler.getTileset();
                     HashSet<Integer> usedMaterialIndices = new HashSet<>();
+                    Tileset springTileset = baseTileset.clone();
+                    Tileset summerTileset = baseTileset.clone();
+                    Tileset fallTileset = baseTileset.clone();
+                    Tileset winterTileset = baseTileset.clone();
+                    Path seasonsTilesetPath = Paths.get(baseTileset.tilesetFolderPath + "/seasonsTilesets");
 
-                    // Add materials always included
-                    for (int i = 0; i < handler.getTileset().getMaterials().size(); i++) {
-                        if (handler.getTileset().getMaterials().get(i).alwaysIncludeInImd()) {
-                            usedMaterialIndices.add(i);
-                        }
-                    }
-
-                    HashSet<Integer> usedTileIndices = new HashSet<>();
-                    for (MapData mapData : handler.getMapMatrix().getMatrix().values()) {
-                        if (mapData.getAreaIndex() == areaIndex) {
-                            mapData.getGrid().addTileIndicesUsed(usedTileIndices);
-                        }
-                    }
-
-                    for (Integer tileIndex : usedTileIndices) {
-                        ArrayList<Integer> texIDs = handler.getTileset().get(tileIndex).getTextureIDs();
-                        for (Integer texID : texIDs) {
-                            usedMaterialIndices.add(texID);
-                        }
-                    }
-
-                    //Map used for knowing which palette is used by a certain texture
-                    //They key is the texture name, the value is the palette name
-                    Map<String, String> texPalNames = new HashMap<>();
-                    for (Integer matIndex : usedMaterialIndices) {
-                        TilesetMaterial mat = handler.getTileset().getMaterial(matIndex);
-                        if (!texPalNames.containsKey(mat.getTextureNameImd())) {
-                            texPalNames.put(mat.getTextureNameImd(), mat.getPaletteNameImd());
-                        }
-                    }
-
-                    //Map used for knowing which texture is used by a certain palette
-                    //They key is the palette name, the value is the texture name
-                    Map<String, String> palTexNames = new HashMap<>();
-                    for (Integer matIndex : usedMaterialIndices) {
-                        TilesetMaterial mat = handler.getTileset().getMaterial(matIndex);
-                        if (!palTexNames.containsKey(mat.getPaletteNameImd())) {
-                            palTexNames.put(mat.getPaletteNameImd(), mat.getTextureNameImd());
-                        }
-                    }
-
-                    Nsbtx2 nsbtx = new Nsbtx2();
-                    for (Integer matIndex : usedMaterialIndices) {
-                        TilesetMaterial mat = handler.getTileset().getMaterial(matIndex);
-
-                        boolean isTransparent = Utils.hasTransparentColor(mat.getTextureImg());
-
-                        if ((!nsbtx.isTextureNameUsed(mat.getTextureNameImd())
-                                && (!nsbtx.isPaletteNameUsed(mat.getPaletteNameImd())))) {
-                            nsbtx.addTextureAndPalette(-1, -1,
-                                    mat.getTextureImg(),
-                                    Nsbtx2.jcbToFormatLookup[mat.getColorFormat()],
-                                    isTransparent,
-                                    mat.getTextureNameImd(),
-                                    mat.getPaletteNameImd()
-                            );
-                        } else if ((nsbtx.isTextureNameUsed(mat.getTextureNameImd()))
-                                && (!nsbtx.isPaletteNameUsed(mat.getPaletteNameImd()))) {
-                            try {
-                                nsbtx.addPalette(
-                                        nsbtx.getTextureNames().indexOf(mat.getTextureNameImd()),
-                                        nsbtx.getPaletteNames().indexOf(texPalNames.get(mat.getTextureNameImd())),
-                                        mat.getPaletteNameImd(),
-                                        mat.getTextureImg());
-                            } catch (Exception ex) {
-                                paletteMissed = true;
+                    if(Files.exists(seasonsTilesetPath) && Files.isDirectory(seasonsTilesetPath)) {
+                        Files.walkFileTree(seasonsTilesetPath, new SimpleFileVisitor<Path>() {
+                            public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
+                                Files.delete(file);
+                                return FileVisitResult.CONTINUE;
                             }
-                        } else if ((!nsbtx.isTextureNameUsed(mat.getTextureNameImd()))
-                                && (nsbtx.isPaletteNameUsed(mat.getPaletteNameImd()))) {
-                            try {
-                                nsbtx.addTexture(
-                                        nsbtx.getTextureNames().indexOf(palTexNames.get(mat.getPaletteNameImd())),
-                                        nsbtx.getPaletteNames().indexOf(mat.getPaletteNameImd()),
+
+                            @Override
+                            public FileVisitResult postVisitDirectory(Path dir, IOException exc) throws IOException {
+                                Files.delete(dir);
+                                return FileVisitResult.CONTINUE;
+                            }
+                        });
+                    }
+
+                    ArrayList<Tileset> nsbtxTilesets = new ArrayList<>();
+                    nsbtxTilesets.add(baseTileset);
+                    Files.createDirectories(seasonsTilesetPath);
+                    if(seasonExport.exportSpringNsbtx) {
+                        createSeasonalTileset(springTileset, "spring", seasonsTilesetPath, Paths.get(prefs.get("SpringTileset", "")));
+                        nsbtxTilesets.add(springTileset);
+                    }
+                    if(seasonExport.exportSummerNsbtx) {
+                        createSeasonalTileset(summerTileset, "summer", seasonsTilesetPath, Paths.get(prefs.get("SummerTileset", "")));
+                        nsbtxTilesets.add(summerTileset);
+                    }
+                    if(seasonExport.exportFallNsbtx) {
+                        createSeasonalTileset(fallTileset, "fall", seasonsTilesetPath, Paths.get(prefs.get("FallTileset", "")));
+                        nsbtxTilesets.add(fallTileset);
+                    }
+                    if(seasonExport.exportWinterNsbtx) {
+                        createSeasonalTileset(winterTileset, "winter", seasonsTilesetPath, Paths.get(prefs.get("WinterTileset", "")));
+                        nsbtxTilesets.add(winterTileset);
+                    }
+
+                    for(Tileset tileset : nsbtxTilesets) {
+
+                        // Add materials always included
+                        for (int i = 0; i < tileset.getMaterials().size(); i++) {
+                            if (tileset.getMaterials().get(i).alwaysIncludeInImd()) {
+                                usedMaterialIndices.add(i);
+                            }
+                        }
+
+                        HashSet<Integer> usedTileIndices = new HashSet<>();
+                        for (MapData mapData : handler.getMapMatrix().getMatrix().values()) {
+                            if (mapData.getAreaIndex() == areaIndex) {
+                                mapData.getGrid().addTileIndicesUsed(usedTileIndices);
+                            }
+                        }
+
+                        for (Integer tileIndex : usedTileIndices) {
+                            ArrayList<Integer> texIDs = tileset.get(tileIndex).getTextureIDs();
+                            for (Integer texID : texIDs) {
+                                usedMaterialIndices.add(texID);
+                            }
+                        }
+
+                        //Map used for knowing which palette is used by a certain texture
+                        //They key is the texture name, the value is the palette name
+                        Map<String, String> texPalNames = new HashMap<>();
+                        for (Integer matIndex : usedMaterialIndices) {
+                            TilesetMaterial mat = tileset.getMaterial(matIndex);
+                            if (!texPalNames.containsKey(mat.getTextureNameImd())) {
+                                texPalNames.put(mat.getTextureNameImd(), mat.getPaletteNameImd());
+                            }
+                        }
+
+                        //Map used for knowing which texture is used by a certain palette
+                        //They key is the palette name, the value is the texture name
+                        Map<String, String> palTexNames = new HashMap<>();
+                        for (Integer matIndex : usedMaterialIndices) {
+                            TilesetMaterial mat = tileset.getMaterial(matIndex);
+                            if (!palTexNames.containsKey(mat.getPaletteNameImd())) {
+                                palTexNames.put(mat.getPaletteNameImd(), mat.getTextureNameImd());
+                            }
+                        }
+
+                        Nsbtx2 nsbtx = new Nsbtx2();
+                        for (Integer matIndex : usedMaterialIndices) {
+                            TilesetMaterial mat = tileset.getMaterial(matIndex);
+                            mat.loadTextureImgFromPath(tileset.tilesetFolderPath + "/" + mat.getImageName());
+                            boolean isTransparent = Utils.hasTransparentColor(mat.getTextureImg());
+
+                            if ((!nsbtx.isTextureNameUsed(mat.getTextureNameImd())
+                                    && (!nsbtx.isPaletteNameUsed(mat.getPaletteNameImd())))) {
+                                nsbtx.addTextureAndPalette(-1, -1,
                                         mat.getTextureImg(),
                                         Nsbtx2.jcbToFormatLookup[mat.getColorFormat()],
                                         isTransparent,
-                                        mat.getTextureNameImd()
+                                        mat.getTextureNameImd(),
+                                        mat.getPaletteNameImd()
                                 );
-                            } catch (Exception ex) {
-                                textureMissed = true;
-                            }
-                        }
-                    }
-
-                    NsbtxImd imd = new NsbtxImd(nsbtx);
-
-                    String pathSave = nsbtxFolderPath + File.separator + "Area_" + String.valueOf(areaIndex) + ".imd";
-                    imd.saveToFile(pathSave);
-
-                    File file = new File(pathSave);
-
-                    if (file.exists()) {
-                        String filename = new File(pathSave).getName();
-                        filename = Utils.removeExtensionFromPath(filename);
-                        try {
-                            String converterPath = "converter/g3dcvtr.exe";
-                            String[] cmd;
-                            if (System.getProperty("os.name").toLowerCase().startsWith("windows")) {
-                                cmd = new String[]{converterPath, pathSave, "-etex", "-o", filename};
-                            } else {
-                                cmd = new String[]{"wine", converterPath, pathSave, "-etex", "-o", filename};
-                                // NOTE: wine call works only with relative path
-                            }
-
-                            if (!Files.exists(Paths.get(converterPath))) {
-                                throw new IOException();
-                            }
-
-                            Process p = new ProcessBuilder(cmd).start();
-
-                            BufferedReader stdError = new BufferedReader(new InputStreamReader(p.getErrorStream()));
-
-                            String outputString = "";
-                            String line = null;
-                            while ((line = stdError.readLine()) != null) {
-                                outputString += line + "\n";
-                            }
-
-                            p.waitFor();
-                            p.destroy();
-
-                            String nsbPath = Utils.removeExtensionFromPath(pathSave);
-                            nsbPath = Utils.addExtensionToPath(nsbPath, "nsbtx");
-
-                            filename = Utils.removeExtensionFromPath(filename);
-                            filename = Utils.addExtensionToPath(filename, "nsbtx");
-
-                            System.out.println(System.getProperty("user.dir"));
-                            File srcFile = new File(System.getProperty("user.dir") + File.separator + filename);
-                            File dstFile = new File(nsbPath);
-                            if (srcFile.exists()) {
+                            } else if ((nsbtx.isTextureNameUsed(mat.getTextureNameImd()))
+                                    && (!nsbtx.isPaletteNameUsed(mat.getPaletteNameImd()))) {
                                 try {
-                                    Files.move(srcFile.toPath(), dstFile.toPath(),
-                                            StandardCopyOption.REPLACE_EXISTING);
-                                    //srcFile.renameTo(new File(nsbPath));
-                                    if (paletteMissed) {
-                                        exportStatus = ConvertStatus.PALETTE_MISSED_STATUS;
-                                    } else if(textureMissed){
-                                        exportStatus = ConvertStatus.TEXTURE_MISSED_STATUS;
-                                    }else {
-                                        exportStatus = ConvertStatus.SUCCESS_STATUS;
-                                    }
-                                    nFilesConverted++;
-                                    nsbtxData.set(nFilesProcessed, nsbtx);
-                                } catch (IOException ex) {
-                                    nFilesNotConverted++;
-                                    exportStatus = ConvertStatus.MOVE_FILE_ERROR_STATUS;
-                                    errorMsgs.set(nFilesProcessed, "File was not moved to the save directory. \n"
-                                            + "Reopen Pokemon DS Map Studio and try again.");
+                                    nsbtx.addPalette(
+                                            nsbtx.getTextureNames().indexOf(mat.getTextureNameImd()),
+                                            nsbtx.getPaletteNames().indexOf(texPalNames.get(mat.getTextureNameImd())),
+                                            mat.getPaletteNameImd(),
+                                            mat.getTextureImg());
+                                } catch (Exception ex) {
+                                    paletteMissed = true;
                                 }
-
-                                if (file.exists()) {
-                                    try {
-                                        Files.delete(file.toPath());
-                                    } catch (IOException ex) {
-                                        ex.printStackTrace();
-                                    }
+                            } else if ((!nsbtx.isTextureNameUsed(mat.getTextureNameImd()))
+                                    && (nsbtx.isPaletteNameUsed(mat.getPaletteNameImd()))) {
+                                try {
+                                    nsbtx.addTexture(
+                                            nsbtx.getTextureNames().indexOf(palTexNames.get(mat.getPaletteNameImd())),
+                                            nsbtx.getPaletteNames().indexOf(mat.getPaletteNameImd()),
+                                            mat.getTextureImg(),
+                                            Nsbtx2.jcbToFormatLookup[mat.getColorFormat()],
+                                            isTransparent,
+                                            mat.getTextureNameImd()
+                                    );
+                                } catch (Exception ex) {
+                                    textureMissed = true;
                                 }
-                            } else {
-                                nFilesNotConverted++;
-                                exportStatus = ConvertStatus.CONVERSION_ERROR_STATUS;
-                                errorMsgs.set(nFilesProcessed, "There was a problem creating the NSBMD file. \n"
-                                        + "The output from the converter is:\n"
-                                        + outputString);
                             }
-                        } catch (IOException ex) {
-                            nFilesNotConverted++;
-                            exportStatus = ConvertStatus.CONVERTER_NOT_FOUND_STATUS;
-                            errorMsgs.set(nFilesProcessed,
-                                    "The program \"g3dcvtr.exe\" is not found in the \"converter\" folder.\n"
-                                            + "Put the program and its *.dll files in the folder and try again.");
-
-                        } catch (InterruptedException ex) {
-                            nFilesNotConverted++;
-                            exportStatus = ConvertStatus.INTERRUPT_ERROR_STATUS;
-                            errorMsgs.set(nFilesProcessed,
-                                    "The model was not converted (InterruptedException)");
                         }
-                    } else {
-                        nFilesNotConverted++;
-                        exportStatus = ConvertStatus.UNKNOWN_ERROR_STATUS;
-                        errorMsgs.set(nFilesProcessed, "Unknown error");
+
+                        NsbtxImd imd = new NsbtxImd(nsbtx);
+
+                        String pathSave = nsbtxFolderPath + File.separator + "Area_" + String.valueOf(areaIndex) + "_" + Paths.get(tileset.tilesetFolderPath).getFileName().toString() + ".imd";
+                        imd.saveToFile(pathSave);
+
+                        File file = new File(pathSave);
+
+                        if (file.exists()) {
+                            String filename = new File(pathSave).getName();
+                            filename = Utils.removeExtensionFromPath(filename);
+                            try {
+                                String converterPath = "converter/g3dcvtr.exe";
+                                String[] cmd;
+                                if (System.getProperty("os.name").toLowerCase().startsWith("windows")) {
+                                    cmd = new String[]{converterPath, pathSave, "-etex", "-o", filename};
+                                } else {
+                                    cmd = new String[]{"wine", converterPath, pathSave, "-etex", "-o", filename};
+                                    // NOTE: wine call works only with relative path
+                                }
+
+                                if (!Files.exists(Paths.get(converterPath))) {
+                                    throw new IOException();
+                                }
+
+                                Process p = new ProcessBuilder(cmd).start();
+
+                                BufferedReader stdError = new BufferedReader(new InputStreamReader(p.getErrorStream()));
+
+                                String outputString = "";
+                                String line = null;
+                                while ((line = stdError.readLine()) != null) {
+                                    outputString += line + "\n";
+                                }
+
+                                p.waitFor();
+                                p.destroy();
+
+                                String nsbPath = Utils.removeExtensionFromPath(pathSave);
+                                nsbPath = Utils.addExtensionToPath(nsbPath, "nsbtx");
+
+                                filename = Utils.removeExtensionFromPath(filename);
+                                filename = Utils.addExtensionToPath(filename, "nsbtx");
+
+                                System.out.println(System.getProperty("user.dir"));
+                                File srcFile = new File(System.getProperty("user.dir") + File.separator + filename);
+                                File dstFile = new File(nsbPath);
+                                if (srcFile.exists()) {
+                                    try {
+                                        Files.move(srcFile.toPath(), dstFile.toPath(),
+                                                StandardCopyOption.REPLACE_EXISTING);
+                                        //srcFile.renameTo(new File(nsbPath));
+                                        if (paletteMissed) {
+                                            exportStatus = ConvertStatus.PALETTE_MISSED_STATUS;
+                                        } else if(textureMissed){
+                                            exportStatus = ConvertStatus.TEXTURE_MISSED_STATUS;
+                                        }else {
+                                            exportStatus = ConvertStatus.SUCCESS_STATUS;
+                                        }
+                                        nFilesConverted++;
+                                        nsbtxData.set(nFilesProcessed, nsbtx);
+                                    } catch (IOException ex) {
+                                        nFilesNotConverted++;
+                                        exportStatus = ConvertStatus.MOVE_FILE_ERROR_STATUS;
+                                        errorMsgs.set(nFilesProcessed, "File was not moved to the save directory. \n"
+                                                + "Reopen Pokemon DS Map Studio and try again.");
+                                    }
+
+                                    if (file.exists()) {
+                                        try {
+                                            Files.delete(file.toPath());
+                                        } catch (IOException ex) {
+                                            ex.printStackTrace();
+                                        }
+                                    }
+                                } else {
+                                    nFilesNotConverted++;
+                                    exportStatus = ConvertStatus.CONVERSION_ERROR_STATUS;
+                                    errorMsgs.set(nFilesProcessed, "There was a problem creating the NSBMD file. \n"
+                                            + "The output from the converter is:\n"
+                                            + outputString);
+                                }
+                            } catch (IOException ex) {
+                                nFilesNotConverted++;
+                                exportStatus = ConvertStatus.CONVERTER_NOT_FOUND_STATUS;
+                                errorMsgs.set(nFilesProcessed,
+                                        "The program \"g3dcvtr.exe\" is not found in the \"converter\" folder.\n"
+                                                + "Put the program and its *.dll files in the folder and try again.");
+
+                            } catch (InterruptedException ex) {
+                                nFilesNotConverted++;
+                                exportStatus = ConvertStatus.INTERRUPT_ERROR_STATUS;
+                                errorMsgs.set(nFilesProcessed,
+                                        "The model was not converted (InterruptedException)");
+                            }
+                            exportedNsbtx.add(new Object[] {
+                                    "Area_" + String.valueOf(areaIndex) + "_" + Paths.get(tileset.tilesetFolderPath).getFileName().toString(),
+                                    exportStatus
+                            });
+                        } else {
+                            nFilesNotConverted++;
+                            exportStatus = ConvertStatus.UNKNOWN_ERROR_STATUS;
+                            errorMsgs.set(nFilesProcessed, "Unknown error");
+                        }
                     }
+
                 } catch (Exception ex) {
                     nFilesNotConverted++;
                     exportStatus = ConvertStatus.UNKNOWN_ERROR_STATUS;
@@ -692,6 +770,10 @@ public class NsbtxOutputInfoDialog extends javax.swing.JDialog {
                         "Area_" + String.valueOf(areaIndex),
                         exportStatus
                 });
+
+                for(Object[] exported : exportedNsbtx) {
+                    tableModel.addRow(exported);
+                }
 
                 nFilesProcessed++;
 

@@ -2044,10 +2044,12 @@ public class MainFrame extends JFrame {
 
         if (configDialog.getReturnValue() == ExportImdDialog.APPROVE_OPTION) {
             ArrayList<Integer> areaIndices = configDialog.getSelectedAreaIndices();
+            ExportNsbtxDialog.SeasonExport seasonExport = configDialog.getSeasonExportSettings();
             String nsbtxFolderPath = configDialog.getNsbtxFolderPath();
 
+
             final NsbtxOutputInfoDialog outputDialog = new NsbtxOutputInfoDialog(this, true);
-            outputDialog.init(handler, areaIndices, nsbtxFolderPath);
+            outputDialog.init(handler, areaIndices, nsbtxFolderPath, seasonExport);
             outputDialog.setLocationRelativeTo(null);
             outputDialog.setVisible(true);
         }

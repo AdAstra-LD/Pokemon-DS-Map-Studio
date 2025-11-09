@@ -16,6 +16,7 @@ dependencies {
     implementation fileTree(include: ['*.jar'], dir: 'libs')
     implementation group: 'com.formdev', name: 'flatlaf', version: '3.0'
     implementation group: 'com.miglayout', name: 'miglayout-swing', version: '11.0'
+    implementation 'org.json:json:20231013'
 }
 
 version '2.2'
