@@ -1004,23 +1004,29 @@ new FormModel {
 					"maximumSize": sfield com.jformdesigner.model.FormObject NULL_VALUE
 					add( new FormContainer( "javax.swing.JPanel", new FormLayoutManager( class java.awt.GridBagLayout ) {
 						"$columnSpecs": "151:1.0"
-						"$rowSpecs": "0, 0:1.0"
+						"$rowSpecs": "0, 0, 0:1.0"
 						"$hGap": 5
 						"$vGap": 5
 						"$alignLeft": true
 						"$alignTop": true
 					} ) {
 						name: "panel13"
-						"minimumSize": new java.awt.Dimension( 120, 0 )
+						"minimumSize": new java.awt.Dimension( 130, 0 )
 						"maximumSize": sfield com.jformdesigner.model.FormObject NULL_VALUE
 						"preferredSize": sfield com.jformdesigner.model.FormObject NULL_VALUE
+						add( new FormComponent( "javax.swing.JTextField" ) {
+							name: "materialSearchBox"
+							addEvent( new FormEvent( "javax.swing.event.CaretListener", "caretUpdate", "materialSearchBoxCaretUpdate", true ) )
+						}, new FormLayoutConstraints( class com.jformdesigner.runtime.GridBagConstraintsEx ) )
 						add( new FormComponent( "javax.swing.JLabel" ) {
 							name: "jLabel21"
 							"text": "Material list:"
 							"maximumSize": sfield com.jformdesigner.model.FormObject NULL_VALUE
 							"minimumSize": sfield com.jformdesigner.model.FormObject NULL_VALUE
 							"preferredSize": sfield com.jformdesigner.model.FormObject NULL_VALUE
-						}, new FormLayoutConstraints( class com.jformdesigner.runtime.GridBagConstraintsEx ) )
+						}, new FormLayoutConstraints( class com.jformdesigner.runtime.GridBagConstraintsEx ) {
+							"gridy": 1
+						} )
 						add( new FormContainer( "javax.swing.JScrollPane", new FormLayoutManager( class javax.swing.JScrollPane ) ) {
 							name: "jScrollPane1"
 							"verticalScrollBarPolicy": 22
@@ -1039,10 +1045,10 @@ new FormModel {
 								addEvent( new FormEvent( "javax.swing.event.ListSelectionListener", "valueChanged", "jlistINamesValueChanged", true ) )
 							} )
 						}, new FormLayoutConstraints( class com.jformdesigner.runtime.GridBagConstraintsEx ) {
-							"gridy": 1
+							"gridy": 2
 						} )
 					}, new FormLayoutConstraints( class net.miginfocom.layout.CC ) {
-						"value": "cell 0 0"
+						"value": "pad 0 0 0 10,cell 0 0,gapx null 15"
 					} )
 					add( new FormContainer( "javax.swing.JPanel", new FormLayoutManager( class net.miginfocom.swing.MigLayout ) {
 						"$layoutConstraints": "insets 0,gap 5 5"

@@ -767,14 +767,14 @@ public class NsbtxOutputInfoDialog extends JDialog {
                         } else {
                             nFilesNotConverted++;
                             exportStatus = ConvertStatus.UNKNOWN_ERROR_STATUS;
-                            errorMsgs.set(nFilesProcessed, "Unknown error");
+                            errorMsgs.set(nFilesProcessed, "Unknown error ");
                         }
                     }
 
                 } catch (Exception ex) {
                     nFilesNotConverted++;
                     exportStatus = ConvertStatus.UNKNOWN_ERROR_STATUS;
-                    errorMsgs.set(nFilesProcessed, "Unknown error");
+                    errorMsgs.set(nFilesProcessed, "Unknown error" +  ex);
                 }
 
                 if (nFilesConverted > 0) {

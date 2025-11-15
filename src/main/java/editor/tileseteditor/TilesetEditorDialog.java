@@ -27,6 +27,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Objects;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.DefaultListCellRenderer;
 import javax.swing.DefaultListModel;
@@ -78,6 +79,8 @@ public class TilesetEditorDialog extends JDialog {
 
     private ArrayList<ImageIcon> materialIcons = new ArrayList<>();
     private ArrayList<ImageIcon> tileMaterialIcons = new ArrayList<>();
+
+    private String oldSearchValue = "";
 
     public TilesetEditorDialog(Window owner) {
         super(owner);
@@ -404,9 +407,10 @@ public class TilesetEditorDialog extends JDialog {
 
     private void jlistINamesValueChanged(ListSelectionEvent evt) {
         if (handler.getTileset().size() > 0) {
-            int index = jlistINames.getSelectedIndex();
-            if (index != -1) {
-                tileHandler.setMaterialIndexSelected(jlistINames.getSelectedIndex());
+            int selectedIndex = jlistINames.getSelectedIndex();
+            if (selectedIndex != -1 && selectedIndex < filteredMaterialIndices.size()) {
+                int realIndex = filteredMaterialIndices.get(selectedIndex);
+                tileHandler.setMaterialIndexSelected(realIndex);
             }
 
             updateViewMaterialProperties();
@@ -1046,6 +1050,10 @@ public class TilesetEditorDialog extends JDialog {
         updateJComboBox();
 
         updateView();
+        filteredMaterialIndices = new ArrayList<>();
+        for (int i = 0; i < handler.getTileset().getMaterials().size(); i++) {
+            filteredMaterialIndices.add(i);
+        }
     }
 
     private void updateJComboBox() {
@@ -1300,7 +1308,11 @@ public class TilesetEditorDialog extends JDialog {
         }
         jlistINames.setSelectedIndex(0);
         jlistINames.setModel(demoList);
-        jlistINames.setSelectedIndex(0);
+
+        filteredMaterialIndices.clear();
+        for (int i = 0; i < handler.getTileset().getMaterials().size(); i++) {
+            filteredMaterialIndices.add(i);
+        }
 
         materialIcons = new ArrayList<>(handler.getTileset().getMaterials().size());
         for (int i = 0; i < handler.getTileset().getMaterials().size(); i++) {
@@ -1311,18 +1323,22 @@ public class TilesetEditorDialog extends JDialog {
             @Override
             public Component getListCellRendererComponent(JList list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
                 JLabel label = (JLabel) super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
-                if (index < materialIcons.size() && index >= 0) {
-                    label.setIcon(materialIcons.get(index));
+                if (index >= 0 && index < filteredMaterialIndices.size()) {
+                    int realIndex = filteredMaterialIndices.get(index);
+                    if (realIndex < materialIcons.size()) {
+                        label.setIcon(materialIcons.get(realIndex));
+                    }
                 }
                 return label;
             }
         });
 
+        jlistINames.setSelectedIndex(0);
     }
-
     public void updateViewMaterialName() {
-        if (jlistINames.getSelectedIndex() != -1) {
-            String mName = handler.getTileset().getMaterialName(jlistINames.getSelectedIndex());
+        int realIndex = tileHandler.getMaterialIndexSelected();
+        if (realIndex != -1 && realIndex < handler.getTileset().getMaterials().size()) {
+            String mName = handler.getTileset().getMaterialName(realIndex);
             jtfMaterialNameActive.value = false;
             jtfMaterialName.setText(mName);
             jtfMaterialName.setBackground(defaultTextPaneBackground);
@@ -1332,8 +1348,9 @@ public class TilesetEditorDialog extends JDialog {
     }
 
     private void updateViewPaletteNameImd() {
-        if (jlistINames.getSelectedIndex() != -1) {
-            String pName = handler.getTileset().getPaletteNameImd(jlistINames.getSelectedIndex());
+        int realIndex = tileHandler.getMaterialIndexSelected();
+        if (realIndex != -1 && realIndex < handler.getTileset().getMaterials().size()) {
+            String pName = handler.getTileset().getPaletteNameImd(realIndex);
             jtfPaletteNameActive.value = false;
             jtfPaletteName.setText(pName);
             jtfPaletteName.setBackground(defaultTextPaneBackground);
@@ -1343,8 +1360,9 @@ public class TilesetEditorDialog extends JDialog {
     }
 
     private void updateViewTextureNameImd() {
-        if (jlistINames.getSelectedIndex() != -1) {
-            String tName = handler.getTileset().getTextureNameImd(jlistINames.getSelectedIndex());
+        int realIndex = tileHandler.getMaterialIndexSelected();
+        if (realIndex != -1 && realIndex < handler.getTileset().getMaterials().size()) {
+            String tName = handler.getTileset().getTextureNameImd(realIndex);
             jtfTextureNameActive.value = false;
             jtfTextureName.setText(tName);
             jtfTextureName.setBackground(defaultTextPaneBackground);
@@ -1656,6 +1674,43 @@ public class TilesetEditorDialog extends JDialog {
             }
         });
     }
+    private ArrayList<Integer> filteredMaterialIndices = new ArrayList<>();
+
+    private void materialSearchBoxCaretUpdate(CaretEvent e) {
+        if(Objects.equals(oldSearchValue, materialSearchBox.getText())) return;
+        oldSearchValue = materialSearchBox.getText();
+
+        String searchText = materialSearchBox.getText().toLowerCase().trim();
+
+        DefaultListModel<String> filteredModel = new DefaultListModel<>();
+        filteredMaterialIndices.clear();
+
+        if (searchText.isEmpty()) {
+            for (int i = 0; i < handler.getTileset().getMaterials().size(); i++) {
+                filteredModel.addElement(handler.getTileset().getMaterials().get(i).getImageName());
+                filteredMaterialIndices.add(i);
+            }
+        } else {
+            for (int i = 0; i < handler.getTileset().getMaterials().size(); i++) {
+                String materialName = handler.getTileset().getMaterials().get(i).getImageName();
+                if (materialName.toLowerCase().contains(searchText)) {
+                    filteredModel.addElement(materialName);
+                    filteredMaterialIndices.add(i);
+                }
+            }
+        }
+
+        jlistINames.setModel(filteredModel);
+
+        if (filteredModel.getSize() > 0) {
+            jlistINames.setSelectedIndex(0);
+
+            int realIndex = filteredMaterialIndices.get(0);
+            tileHandler.setMaterialIndexSelected(realIndex);
+            updateViewMaterialProperties();
+            textureDisplayMaterial.repaint();
+        }
+    }
 
 
 
@@ -1775,6 +1830,7 @@ public class TilesetEditorDialog extends JDialog {
         textureDisplay = new TextureDisplay();
         jPanel3 = new JPanel();
         panel13 = new JPanel();
+        materialSearchBox = new JTextField();
         jLabel21 = new JLabel();
         jScrollPane1 = new JScrollPane();
         jlistINames = new JList<>();
@@ -2873,21 +2929,27 @@ public class TilesetEditorDialog extends JDialog {
 
                 //======== panel13 ========
                 {
-                    panel13.setMinimumSize(new Dimension(120, 0));
+                    panel13.setMinimumSize(new Dimension(130, 0));
                     panel13.setMaximumSize(null);
                     panel13.setPreferredSize(null);
                     panel13.setLayout(new GridBagLayout());
                     ((GridBagLayout)panel13.getLayout()).columnWidths = new int[] {151, 0};
-                    ((GridBagLayout)panel13.getLayout()).rowHeights = new int[] {0, 0, 0};
+                    ((GridBagLayout)panel13.getLayout()).rowHeights = new int[] {0, 0, 0, 0};
                     ((GridBagLayout)panel13.getLayout()).columnWeights = new double[] {1.0, 1.0E-4};
-                    ((GridBagLayout)panel13.getLayout()).rowWeights = new double[] {0.0, 1.0, 1.0E-4};
+                    ((GridBagLayout)panel13.getLayout()).rowWeights = new double[] {0.0, 0.0, 1.0, 1.0E-4};
+
+                    //---- materialSearchBox ----
+                    materialSearchBox.addCaretListener(e -> materialSearchBoxCaretUpdate(e));
+                    panel13.add(materialSearchBox, new GridBagConstraints(0, 0, 1, 1, 0.0, 0.0,
+                        GridBagConstraints.CENTER, GridBagConstraints.BOTH,
+                        new Insets(0, 0, 5, 0), 0, 0));
 
                     //---- jLabel21 ----
                     jLabel21.setText("Material list:");
                     jLabel21.setMaximumSize(null);
                     jLabel21.setMinimumSize(null);
                     jLabel21.setPreferredSize(null);
-                    panel13.add(jLabel21, new GridBagConstraints(0, 0, 1, 1, 0.0, 0.0,
+                    panel13.add(jLabel21, new GridBagConstraints(0, 1, 1, 1, 0.0, 0.0,
                         GridBagConstraints.CENTER, GridBagConstraints.BOTH,
                         new Insets(0, 0, 5, 0), 0, 0));
 
@@ -2906,11 +2968,11 @@ public class TilesetEditorDialog extends JDialog {
                         jlistINames.addListSelectionListener(e -> jlistINamesValueChanged(e));
                         jScrollPane1.setViewportView(jlistINames);
                     }
-                    panel13.add(jScrollPane1, new GridBagConstraints(0, 1, 1, 1, 0.0, 0.0,
+                    panel13.add(jScrollPane1, new GridBagConstraints(0, 2, 1, 1, 0.0, 0.0,
                         GridBagConstraints.CENTER, GridBagConstraints.BOTH,
                         new Insets(0, 0, 0, 0), 0, 0));
                 }
-                jPanel3.add(panel13, "cell 0 0");
+                jPanel3.add(panel13, "pad 0 0 0 10,cell 0 0,gapx null 15");
 
                 //======== panel11 ========
                 {
@@ -3664,6 +3726,7 @@ public class TilesetEditorDialog extends JDialog {
     private TextureDisplay textureDisplay;
     private JPanel jPanel3;
     private JPanel panel13;
+    private JTextField materialSearchBox;
     private JLabel jLabel21;
     private JScrollPane jScrollPane1;
     private JList<String> jlistINames;
