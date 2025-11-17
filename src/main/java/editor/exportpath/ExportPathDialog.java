@@ -9,6 +9,9 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.io.File;
 import java.util.Objects;
+import javafx.stage.DirectoryChooser;
+import javafx.application.Platform;
+import utils.FileChooserUtils;
 
 import static editor.mapmatrix.MapMatrix.ExportPath;
 
@@ -37,23 +40,19 @@ public class ExportPathDialog extends JDialog {
     }
 
     private void BrowseActionPerformed(ActionEvent evt) {//GEN-FIRST:event_jbNsbBrowseActionPerformed
-        final JFileChooser fc = new JFileChooser();
         File folder = new File(ExportPath);
-        fc.setCurrentDirectory(folder);
-        fc.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
-        fc.setApproveButtonText("Select folder");
-        fc.setDialogTitle("Select the default export folder that you want");
 
-        int returnValOpen = fc.showOpenDialog(this);
-        if (returnValOpen == JFileChooser.APPROVE_OPTION) {
-            File file = fc.getSelectedFile();
-            if (file.exists() && file.isDirectory()) {
-                browsePathText = file.getPath();
-                browsePath.setText(browsePathText);
-                ExportPath = file.getPath();
-                // NEED TO SAVE HERE
-            }
-        }
+        FileChooserUtils.selectDirectory(
+                "Select the default export folder that you want",
+                folder,
+                selectedDirectory -> {
+                    if (selectedDirectory != null && selectedDirectory.isDirectory()) {
+                        browsePathText = selectedDirectory.getPath();
+                        browsePath.setText(browsePathText);
+                        ExportPath = selectedDirectory.getPath();
+                    }
+                }
+        );
     }//GEN-LAST:event_jbNsbBrowseActionPerformed
     private void initComponents() {
         // JFormDesigner - Component initialization - DO NOT MODIFY  //GEN-BEGIN:initComponents

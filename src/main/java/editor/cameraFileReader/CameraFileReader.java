@@ -4,6 +4,7 @@ import editor.MainFrame;
 import editor.game.Game;
 import net.miginfocom.swing.MigLayout;
 import utils.BinaryReader;
+import utils.FileChooserUtils;
 
 import java.io.*;
 import javax.swing.*;
@@ -150,23 +151,20 @@ public class CameraFileReader extends JDialog {
 
     private void browseButton(ActionEvent evt) {//GEN-FIRST:event_jbNsbBrowseActionPerformed
 
-        final JFileChooser fc = new JFileChooser();
         File folder = new File(browsePathText);
-        fc.setCurrentDirectory(folder);
-        fc.setFileSelectionMode(JFileChooser.FILES_ONLY);
-        fc.setApproveButtonText("Select file");
-        fc.setDialogTitle("Select the camera file");
 
-        int returnValOpen = fc.showOpenDialog(this);
-        if (returnValOpen == JFileChooser.APPROVE_OPTION) {
-            File file = fc.getSelectedFile();
-            if (file.exists() && file.isFile()) {
-                browsePathText = file.getPath();
-                browsePath.setText(browsePathText);
-                readCamerBinFile(browsePathText);
-                populateTable();
-            }
-        }
+        FileChooserUtils.selectFile(
+                "Select the camera file",
+                folder,
+                selectedFile -> {
+                    if (selectedFile != null && selectedFile.isFile()) {
+                        browsePathText = selectedFile.getPath();
+                        browsePath.setText(browsePathText);
+                        readCamerBinFile(browsePathText);
+                        populateTable();
+                    }
+                }
+        );
     }//GEN-LAST:event_jbNsbBrowseActionPerformed
 
     private void ok(ActionEvent e) {

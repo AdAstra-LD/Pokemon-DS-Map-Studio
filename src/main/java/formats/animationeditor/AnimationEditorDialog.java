@@ -2,6 +2,7 @@ package formats.animationeditor;
 
 import editor.handler.MapEditorHandler;
 import formats.nsbtx2.Nsbtx2;
+import utils.FileChooserUtils;
 import utils.Utils;
 
 import javax.swing.*;
@@ -266,74 +267,85 @@ public class AnimationEditorDialog extends JDialog {
     }
 
     public void openAnimationFileWithDialog() {
-        final JFileChooser fc = new JFileChooser();
-        if (handler.getLastNsbtxDirectoryUsed() != null) {
-            fc.setCurrentDirectory(new File(handler.getLastNsbtxDirectoryUsed()));
-        }
-        fc.setApproveButtonText("Open");
-        fc.setDialogTitle("Open Animation File File");
-        final int returnVal = fc.showOpenDialog(this);
-        if (returnVal == JFileChooser.APPROVE_OPTION) {
-            handler.setLastNsbtxDirectoryUsed(fc.getSelectedFile().getParent());
-            try {
-                animHandler.readAnimationFile(fc.getSelectedFile().getPath());
+        File lastDir = handler.getLastNsbtxDirectoryUsed() != null
+                ? new File(handler.getLastNsbtxDirectoryUsed())
+                : null;
 
-                updateView();
+        FileChooserUtils.selectFile(
+                "Open Animation File File",
+                lastDir,
+                selectedFile -> {
+                    if (selectedFile != null) {
+                        handler.setLastNsbtxDirectoryUsed(selectedFile.getParent());
+                        try {
+                            animHandler.readAnimationFile(selectedFile.getPath());
 
-                updateViewAnimationListNames(0);
+                            updateView();
 
-            } catch (IOException ex) {
-                JOptionPane.showMessageDialog(this, "Can't open file.",
-                        "Error opening animation file", JOptionPane.ERROR_MESSAGE);
-            }
-        }
+                            updateViewAnimationListNames(0);
+
+                        } catch (IOException ex) {
+                            JOptionPane.showMessageDialog(this, "Can't open file.",
+                                    "Error opening animation file", JOptionPane.ERROR_MESSAGE);
+                        }
+                    }
+                }
+        );
     }
 
     public void openNsbtxWithDialog() {
-        final JFileChooser fc = new JFileChooser();
-        if (handler.getLastNsbtxDirectoryUsed() != null) {
-            fc.setCurrentDirectory(new File(handler.getLastNsbtxDirectoryUsed()));
-        }
-        fc.setFileFilter(new FileNameExtensionFilter("NSBTX (*.nsbtx)", "nsbtx"));
-        fc.setApproveButtonText("Open");
-        fc.setDialogTitle("Open NSBTX File");
-        final int returnVal = fc.showOpenDialog(this);
-        if (returnVal == JFileChooser.APPROVE_OPTION) {
-            handler.setLastNsbtxDirectoryUsed(fc.getSelectedFile().getParent());
-            try {
-                animHandler.readNsbtx(fc.getSelectedFile().getPath());
+        File lastDir = handler.getLastNsbtxDirectoryUsed() != null
+                ? new File(handler.getLastNsbtxDirectoryUsed())
+                : null;
 
-                updateView();
-                updateViewTextureNames(0);
+        FileChooserUtils.selectFile(
+                "Open NSBTX File",
+                lastDir,
+                "NSBTX (*.nsbtx)",
+                new String[]{"*.nsbtx"},
+                selectedFile -> {
+                    if (selectedFile != null) {
+                        handler.setLastNsbtxDirectoryUsed(selectedFile.getParent());
+                        try {
+                            animHandler.readNsbtx(selectedFile.getPath());
 
-            } catch (IOException ex) {
-                JOptionPane.showMessageDialog(this, "Can't open file.",
-                        "Error opening NSBTX", JOptionPane.ERROR_MESSAGE);
-            }
-        }
+                            updateView();
+                            updateViewTextureNames(0);
+
+                        } catch (IOException ex) {
+                            JOptionPane.showMessageDialog(this, "Can't open file.",
+                                    "Error opening NSBTX", JOptionPane.ERROR_MESSAGE);
+                        }
+                    }
+                }
+        );
     }
 
     private void saveAnimationFileWithDialog() {
         if (animHandler.getAnimationFile() != null) {
-            final JFileChooser fc = new JFileChooser();
-            if (handler.getLastNsbtxDirectoryUsed() != null) {
-                fc.setCurrentDirectory(new File(handler.getLastNsbtxDirectoryUsed()));
-            }
-            fc.setApproveButtonText("Save");
-            fc.setDialogTitle("Save Animation File");
-            final int returnVal = fc.showOpenDialog(this);
-            if (returnVal == JFileChooser.APPROVE_OPTION) {
-                handler.setLastNsbtxDirectoryUsed(fc.getSelectedFile().getParent());
-                try {
-                    String path = fc.getSelectedFile().getPath();
+            File lastDir = handler.getLastNsbtxDirectoryUsed() != null
+                    ? new File(handler.getLastNsbtxDirectoryUsed())
+                    : null;
 
-                    animHandler.saveAnimationFile(path);
+            FileChooserUtils.saveFile(
+                    "Save Animation File",
+                    lastDir,
+                    null, null,
+                    selectedFile -> {
+                        if (selectedFile != null) {
+                            handler.setLastNsbtxDirectoryUsed(selectedFile.getParent());
+                            try {
+                                String path = selectedFile.getPath();
 
-                } catch (IOException ex) {
-                    JOptionPane.showMessageDialog(this, "There was an error saving the IMD",
-                            "Error saving IMD", JOptionPane.ERROR_MESSAGE);
-                }
-            }
+                                animHandler.saveAnimationFile(path);
+
+                            } catch (IOException ex) {
+                                JOptionPane.showMessageDialog(this, "There was an error saving the IMD",
+                                        "Error saving IMD", JOptionPane.ERROR_MESSAGE);
+                            }
+                        }
+                    }
+            );
         }
     }
 

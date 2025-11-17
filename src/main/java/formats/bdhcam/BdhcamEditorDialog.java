@@ -29,6 +29,7 @@ import javax.swing.plaf.basic.BasicComboBoxRenderer;
 
 import net.miginfocom.swing.*;
 import utils.BinaryReader;
+import utils.FileChooserUtils;
 
 import static editor.mapmatrix.MapMatrix.ExportPath;
 
@@ -285,69 +286,68 @@ public class BdhcamEditorDialog extends JDialog {
 
 
     private void jbImportBdhcamActionPerformed(ActionEvent e) {
-        final JFileChooser fc = new JFileChooser();
-        fc.setCurrentDirectory(new File(ExportPath));
-        fc.setFileFilter(new FileNameExtensionFilter("Terrain File (*.bdhcam)", Bdhcam.fileExtension));
-        fc.setApproveButtonText("Open");
-        fc.setDialogTitle("Open BDHCAM");
-        final int returnVal = fc.showOpenDialog(this);
-        if (returnVal == JFileChooser.APPROVE_OPTION) {
-            try {
-                String path = fc.getSelectedFile().getPath();
-                handler.setLastBdhcDirectoryUsed(fc.getSelectedFile().getParent());
+        FileChooserUtils.selectFile(
+                "Open BDHCAM",
+                new File(ExportPath),
+                "Terrain File (*.bdhcam)",
+                new String[]{"*." + Bdhcam.fileExtension},
+                selectedFile -> {
+                    if (selectedFile != null) {
+                        try {
+                            String path = selectedFile.getPath();
+                            handler.setLastBdhcDirectoryUsed(selectedFile.getParent());
 
-                Bdhcam bdhcam = BdhcamLoader.loadBdhcam(path);
-                bdhcamHandler.setBdhcam(bdhcam);
+                            Bdhcam bdhcam = BdhcamLoader.loadBdhcam(path);
+                            bdhcamHandler.setBdhcam(bdhcam);
 
-                updateView();
-            } catch (Exception ex) {
-                JOptionPane.showMessageDialog(this, "Can't open file",
-                        "Error opening BDHCAM file", JOptionPane.ERROR_MESSAGE);
-            }
-
-        }
+                            updateView();
+                        } catch (Exception ex) {
+                            JOptionPane.showMessageDialog(this, "Can't open file",
+                                    "Error opening BDHCAM file", JOptionPane.ERROR_MESSAGE);
+                        }
+                    }
+                }
+        );
     }
 
     private void jbExportBdhcamActionPerformed(ActionEvent e) {
-        final JFileChooser fc = new JFileChooser();
-        fc.setCurrentDirectory(new File(ExportPath));
-        fc.setFileFilter(new FileNameExtensionFilter("Camera File (*.bdhcam)", Bdhcam.fileExtension));
-        fc.setApproveButtonText("Save");
-        fc.setDialogTitle("Save BDHCAM");
-        final int returnVal = fc.showOpenDialog(this);
-        if (returnVal == JFileChooser.APPROVE_OPTION) {
-            try {
-                String path = fc.getSelectedFile().getPath();
-                handler.setLastBdhcDirectoryUsed(fc.getSelectedFile().getParent());
+        FileChooserUtils.saveFile(
+                "Save BDHCAM",
+                new File(ExportPath),
+                "Camera File (*.bdhcam)",
+                new String[]{"*." + Bdhcam.fileExtension},
+                selectedFile -> {
+                    if (selectedFile != null) {
+                        try {
+                            String path = selectedFile.getPath();
+                            handler.setLastBdhcDirectoryUsed(selectedFile.getParent());
 
-                BdhcamWriter.writeBdhcamToFile(path, bdhcamHandler.getBdhcam(), handler.getBdhc(), handler.getGameIndex());
-                //BdhcamWriter.writeBdhcamToFile(path, bdhcamHandler.getBdhcam());
-            } catch (Exception ex) {
-                ex.printStackTrace();
-                JOptionPane.showMessageDialog(this, "Can't save file",
-                        "Error saving BDHCAM", JOptionPane.ERROR_MESSAGE);
-            }
-
-        }
+                            BdhcamWriter.writeBdhcamToFile(path, bdhcamHandler.getBdhcam(), handler.getBdhc(), handler.getGameIndex());
+                            //BdhcamWriter.writeBdhcamToFile(path, bdhcamHandler.getBdhcam());
+                        } catch (Exception ex) {
+                            ex.printStackTrace();
+                            JOptionPane.showMessageDialog(this, "Can't save file",
+                                    "Error saving BDHCAM", JOptionPane.ERROR_MESSAGE);
+                        }
+                    }
+                }
+        );
     }
 
     private void BrowseButton(ActionEvent e) {
-        final JFileChooser fc = new JFileChooser();
         File folder = new File(browsePathText);
-        fc.setCurrentDirectory(folder);
-        fc.setFileSelectionMode(JFileChooser.FILES_ONLY);
-        fc.setApproveButtonText("Select file");
-        fc.setDialogTitle("Select the camera file");
 
-        int returnValOpen = fc.showOpenDialog(this);
-        if (returnValOpen == JFileChooser.APPROVE_OPTION) {
-            File file = fc.getSelectedFile();
-            if (file.exists() && file.isFile()) {
-                browsePathText = file.getPath();
-                cameraFilePathField.setText(browsePathText);
-                readCamerBinFile(browsePathText);
-            }
-        }
+        FileChooserUtils.selectFile(
+                "Select the camera file",
+                folder,
+                selectedFile -> {
+                    if (selectedFile != null && selectedFile.isFile()) {
+                        browsePathText = selectedFile.getPath();
+                        cameraFilePathField.setText(browsePathText);
+                        readCamerBinFile(browsePathText);
+                    }
+                }
+        );
     }
 
 

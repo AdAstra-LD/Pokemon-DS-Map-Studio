@@ -1,8 +1,16 @@
 package editor;
 
 import com.formdev.flatlaf.FlatDarculaLaf;
+import com.formdev.flatlaf.FlatIntelliJLaf;
 import com.formdev.flatlaf.FlatLightLaf;
+import com.formdev.flatlaf.intellijthemes.*;
+import com.formdev.flatlaf.themes.FlatMacDarkLaf;
+import com.formdev.flatlaf.themes.FlatMacLightLaf;
 import com.jogamp.opengl.GLContext;
+import com.sun.java.swing.plaf.gtk.GTKLookAndFeel;
+import com.sun.java.swing.plaf.motif.MotifLookAndFeel;
+import com.sun.java.swing.plaf.windows.WindowsClassicLookAndFeel;
+import com.sun.java.swing.plaf.windows.WindowsLookAndFeel;
 import editor.about.AboutDialog;
 import editor.buildingeditor2.BuildingEditorChooser;
 import editor.cameraFileReader.CameraFileReader;
@@ -54,11 +62,13 @@ import formats.nsbtx2.NsbtxLoader2;
 import formats.obj.ExportMapsObjDialog;
 import formats.obj.ExportSingleMapObjDialog;
 import formats.obj.ObjWriter;
+import javafx.embed.swing.JFXPanel;
 import net.arikia.dev.drpc.DiscordEventHandlers;
 import net.arikia.dev.drpc.DiscordRPC;
 import net.arikia.dev.drpc.DiscordRichPresence;
 import net.miginfocom.swing.MigLayout;
 import tileset.*;
+import utils.FileChooserUtils;
 import utils.Utils;
 
 import javax.imageio.ImageIO;
@@ -68,6 +78,10 @@ import javax.swing.border.LineBorder;
 import javax.swing.border.TitledBorder;
 import javax.swing.event.ChangeEvent;
 import javax.swing.filechooser.FileNameExtensionFilter;
+import javax.swing.plaf.metal.MetalLookAndFeel;
+import javax.swing.plaf.multi.MultiLookAndFeel;
+import javax.swing.plaf.nimbus.NimbusLookAndFeel;
+import javax.swing.plaf.synth.SynthLookAndFeel;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.TransformerException;
 import java.awt.*;
@@ -79,9 +93,12 @@ import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.util.List;
 import java.util.*;
+import java.util.function.Consumer;
 import java.util.prefs.Preferences;
 
+
 import static editor.mapmatrix.MapMatrix.ExportPath;
+
 
 /**
  * @author Trifindo, JackHack96
@@ -96,20 +113,114 @@ public class MainFrame extends JFrame {
     private boolean opened_map = false;
 
     public static void main(String[] args) {
+        new JFXPanel();
         try {
-            String theme = prefs.get("Theme", "Native");
-            switch (theme) {
+            String theme = prefs.get("Theme", "Native"); switch (theme) {
                 case "Native":
                     UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
                     break;
                 case "FlatLaf":
                     UIManager.setLookAndFeel(new FlatLightLaf());
                     break;
-                case "FlatLaf Dark":
+                case "FlatLaf Intellij":
+                    UIManager.setLookAndFeel(new FlatIntelliJLaf());
+                    break;
+                case "FlatLaf Darcula":
                     UIManager.setLookAndFeel(new FlatDarculaLaf());
+                    break;
+                case "FlatMac Light":
+                    UIManager.setLookAndFeel(new FlatMacLightLaf());
+                    break;
+                case "FlatMac Dark":
+                    UIManager.setLookAndFeel(new FlatMacDarkLaf());
+                    break;
+                case "IntelliJ":
+                    UIManager.setLookAndFeel(new FlatIntelliJLaf());
+                    break;
+                case "Motif":
+                    UIManager.setLookAndFeel(new MotifLookAndFeel());
+                    break;
+                case "Windows Classic":
+                    UIManager.setLookAndFeel(new WindowsClassicLookAndFeel());
+                    break;
+                case "Windows":
+                    UIManager.setLookAndFeel(new WindowsLookAndFeel());
+                    break;
+                case "Nimbus":
+                    UIManager.setLookAndFeel(new NimbusLookAndFeel());
+                    break;
+                case "Metal":
+                    UIManager.setLookAndFeel(new MetalLookAndFeel());
+                    break;
+                case "Multi":
+                    UIManager.setLookAndFeel(new MultiLookAndFeel());
+                    break;
+                case "Arc":
+                    UIManager.setLookAndFeel(new FlatArcIJTheme());
+                    break;
+                case "Arc - Orange":
+                    UIManager.setLookAndFeel(new FlatArcOrangeIJTheme());
+                    break;
+                case "Arc Dark":
+                    UIManager.setLookAndFeel(new FlatArcDarkIJTheme());
+                    break;
+                case "Arc Dark - Orange":
+                    UIManager.setLookAndFeel(new FlatArcDarkOrangeIJTheme());
+                    break;
+                case "Carbon":
+                    UIManager.setLookAndFeel(new FlatCarbonIJTheme());
+                    break;
+                case "Cobalt 2":
+                    UIManager.setLookAndFeel(new FlatCobalt2IJTheme());
+                    break;
+                case "Cyan light":
+                    UIManager.setLookAndFeel(new FlatCyanLightIJTheme());
+                    break;
+                case "Dark Flat":
+                    UIManager.setLookAndFeel(new FlatDarkFlatIJTheme());
+                    break;
+                case "Dark purple":
+                    UIManager.setLookAndFeel(new FlatDarkPurpleIJTheme());
+                    break;
+                case "Dracula":
+                    UIManager.setLookAndFeel(new FlatDraculaIJTheme());
+                    break;
+                case "Gradianto Dark Fuchsia":
+                    UIManager.setLookAndFeel(new FlatGradiantoDarkFuchsiaIJTheme());
+                    break;
+                case "Gradianto Deep Ocean":
+                    UIManager.setLookAndFeel(new FlatGradiantoDeepOceanIJTheme());
+                    break;
+                case "Gradianto Midnight Blue":
+                    UIManager.setLookAndFeel(new FlatGradiantoMidnightBlueIJTheme());
+                    break;
+                case "Gradianto Nature Green":
+                    UIManager.setLookAndFeel(new FlatGradiantoNatureGreenIJTheme());
+                    break;
+                case "Gray":
+                    UIManager.setLookAndFeel(new FlatGrayIJTheme());
+                    break;
+                case "Gruvbox Dark Hard":
+                    UIManager.setLookAndFeel(new FlatGruvboxDarkHardIJTheme());
+                    break;
+                case "Gruvbox Dark Medium":
+                    UIManager.setLookAndFeel(new FlatGruvboxDarkMediumIJTheme());
+                    break;
+                case "Gruvbox Dark Soft":
+                    UIManager.setLookAndFeel(new FlatGruvboxDarkSoftIJTheme());
+                    break;
+                case "Hiberbee Dark":
+                    UIManager.setLookAndFeel(new FlatHiberbeeDarkIJTheme());
+                    break;
+                case "High contrast":
+                    UIManager.setLookAndFeel(new FlatHighContrastIJTheme());
+                    break;
+                case "Light Flat":
+                    UIManager.setLookAndFeel(new FlatLightFlatIJTheme());
                     break;
             }
             loadRecentMaps();
+
         } catch (Exception ex) {
             System.err.println("Failed to initialize LaF");
         }
@@ -289,15 +400,21 @@ public class MainFrame extends JFrame {
     }
 
     private void jmiExportObjWithTextActionPerformed(ActionEvent e) {
-        saveMapAsObjWithDialog(true);
+        saveMapAsObjWithDialog(true, success -> {
+            if (success) {
+                // Code à exécuter si succès
+            } else {
+                // Code à exécuter si échec ou annulation
+            }
+        });
     }
 
     private void jmiExportMapAsImdActionPerformed(ActionEvent e) {
-        singleObjToImdDialog();
+        singleObjToImdDialog(null);
     }
 
     private void jmiExportMapAsNsbActionPerformed(ActionEvent e) {
-        saveMapAsNsbWithDialog();
+        saveMapAsNsbWithDialog(null);
     }
 
     private void jmiExportMapBtxActionPerformed(ActionEvent e) {
@@ -448,7 +565,7 @@ public class MainFrame extends JFrame {
     }
 
     private void jbExportObjActionPerformed(ActionEvent e) {
-        saveMapsAsObjWithDialog(true);
+        saveMapsAsObjWithDialog(true, null);
     }
 
     private void jbExportImdActionPerformed(ActionEvent e) {
@@ -474,21 +591,28 @@ public class MainFrame extends JFrame {
     }
 
     private void jbExportAndConvertAllActionPerformed(ActionEvent e) {
-        boolean ret = saveMapsAsObjWithDialog(true);
-        if (ret)
-            ret = multipleObjsToImdDialog();
-        if (ret)
-            ret = saveMapsAsNsbWithDialog();
-        if (ret)
-            saveMapBtxWithDialog();
+        saveMapsAsObjWithDialog(true, success -> {
+            if (success) {
+                if (success)
+                    success = multipleObjsToImdDialog();
+                if (success)
+                    success = saveMapsAsNsbWithDialog();
+                if (success)
+                    saveMapBtxWithDialog();
+            }
+        });
+
     }
 
     private void jbExportAndConvertActionPerformed(ActionEvent e) {
-        boolean ret = saveMapAsObjWithDialog(true);
-        if (ret)
-            ret = singleObjToImdDialog();
-        if (ret)
-            saveMapAsNsbWithDialog();
+        saveMapAsObjWithDialog(true, success -> {
+            if (success) {
+                singleObjToImdDialog(success2 -> {
+                    if (success2) {
+                        saveMapAsNsbWithDialog(null);
+                    }});
+                }
+        });
     }
 
 
@@ -882,51 +1006,54 @@ public class MainFrame extends JFrame {
     }
 
     public void openMapWithDialog() {
-        final JFileChooser fc = new JFileChooser();
-        if (handler.getLastMapDirectoryUsed() != null) {
-            fc.setCurrentDirectory(new File(handler.getLastMapDirectoryUsed()));
-        }
+        File lastDir = handler.getLastMapDirectoryUsed() != null
+                ? new File(handler.getLastMapDirectoryUsed())
+                : null;
 
-        fc.setFileFilter(new FileNameExtensionFilter("Pokemon DS map (*.pdsmap)", MapMatrix.fileExtension));
-        fc.setApproveButtonText("Open");
-        fc.setDialogTitle("Open Map");
-        final int returnVal = fc.showOpenDialog(this);
-        if (returnVal == JFileChooser.APPROVE_OPTION) {
-            addRecentMap(Utils.addExtensionToPath(fc.getSelectedFile().getPath(), MapMatrix.fileExtension));
-            updateRecentMaps();
-            updateRecentMapsMenu();
-            openMap(fc.getSelectedFile().getPath());
-        }
+        FileChooserUtils.selectFile(
+                "Open Map",
+                lastDir,
+                "Pokemon DS map (*.pdsmap)",
+                new String[]{"*." + MapMatrix.fileExtension},
+                selectedFile -> {
+                    if (selectedFile != null) {
+                        addRecentMap(Utils.addExtensionToPath(selectedFile.getPath(), MapMatrix.fileExtension));
+                        updateRecentMaps();
+                        updateRecentMapsMenu();
+                        openMap(selectedFile.getPath());
+                    }
+                }
+        );
     }
 
     public void addMapWithDialog() {
-        final JFileChooser fc = new JFileChooser();
-        if (handler.getLastMapDirectoryUsed() != null) {
-            fc.setCurrentDirectory(new File(handler.getLastMapDirectoryUsed()));
-        }
+        File lastDir = handler.getLastMapDirectoryUsed() != null
+                ? new File(handler.getLastMapDirectoryUsed())
+                : null;
 
-        fc.setFileFilter(new FileNameExtensionFilter("Pokemon DS map (*.pdsmap)", MapMatrix.fileExtension));
-        fc.setApproveButtonText("Open");
-        fc.setDialogTitle("Add Maps from PDSMAP file");
-        final int returnVal = fc.showOpenDialog(this);
-        if (returnVal == JFileChooser.APPROVE_OPTION) {
-            if (fc.getSelectedFile().exists()) {
-                handler.setLastMapDirectoryUsed(fc.getSelectedFile().getParent());
-                try {
-                    HashMap<Point, MapData> maps = MapMatrix.getGridsFromFile(fc.getSelectedFile().getPath(), handler);
+        FileChooserUtils.selectFile(
+                "Add Maps from PDSMAP file",
+                lastDir,
+                "Pokemon DS map (*.pdsmap)",
+                new String[]{"*." + MapMatrix.fileExtension},
+                selectedFile -> {
+                    if (selectedFile != null && selectedFile.exists()) {
+                        handler.setLastMapDirectoryUsed(selectedFile.getParent());
+                        try {
+                            HashMap<Point, MapData> maps = MapMatrix.getGridsFromFile(selectedFile.getPath(), handler);
 
-                    final MapMatrixImportDialog dialog = new MapMatrixImportDialog(this);
-                    dialog.init(handler, fc.getSelectedFile().getPath(), maps);
-                    dialog.setLocationRelativeTo(this);
-                    dialog.setVisible(true);
+                            final MapMatrixImportDialog dialog = new MapMatrixImportDialog(this);
+                            dialog.init(handler, selectedFile.getPath(), maps);
+                            dialog.setLocationRelativeTo(this);
+                            dialog.setVisible(true);
 
-                } catch (Exception ex) {
-                    JOptionPane.showMessageDialog(this, "There was a problem importing the maps",
-                            "Can't add maps", JOptionPane.ERROR_MESSAGE);
+                        } catch (Exception ex) {
+                            JOptionPane.showMessageDialog(this, "There was a problem importing the maps",
+                                    "Can't add maps", JOptionPane.ERROR_MESSAGE);
+                        }
+                    }
                 }
-            }
-        }
-
+        );
     }
 
     public void openTilesetEditor() {
@@ -1183,42 +1310,48 @@ public class MainFrame extends JFrame {
     }
 
     public void openTilesetWithDialog() {
-        final JFileChooser fc = new JFileChooser();
-        if (handler.getLastTilesetDirectoryUsed() != null) {
-            fc.setCurrentDirectory(new File(handler.getLastTilesetDirectoryUsed()));
-        }
-        fc.setFileFilter(new FileNameExtensionFilter("Pokemon DS Tileset (*.pdsts)", Tileset.fileExtension));
-        fc.setApproveButtonText("Open");
-        fc.setDialogTitle("Open");
-        final int returnVal = fc.showOpenDialog(this);
-        if (returnVal == JFileChooser.APPROVE_OPTION) {
-            String path = fc.getSelectedFile().getPath();
-            openTileset(path);
-        }
+        File lastDir = handler.getLastTilesetDirectoryUsed() != null
+                ? new File(handler.getLastTilesetDirectoryUsed())
+                : null;
+
+        FileChooserUtils.selectFile(
+            "Open",
+            lastDir,
+            "Pokemon DS Tileset (*.pdsts)",
+            new String[] { "*." + Tileset.fileExtension },
+            selectedFile -> {
+                String path = selectedFile.getPath();
+                openTileset(path);
+            }
+        );
     }
 
     private void openBackImgWithDialog() {
-        final JFileChooser fc = new JFileChooser();
-        if (handler.getLastMapDirectoryUsed() != null) {
-            fc.setCurrentDirectory(new File(handler.getLastMapDirectoryUsed()));
-        }
-        fc.setFileFilter(new FileNameExtensionFilter("PNG (*.png)", "png"));
-        fc.setApproveButtonText("Open");
-        fc.setDialogTitle("Open Background Image");
-        final int returnVal = fc.showOpenDialog(this);
-        if (returnVal == JFileChooser.APPROVE_OPTION) {
-            try {
-                BufferedImage img = ImageIO.read(fc.getSelectedFile());
+        File lastDir = handler.getLastMapDirectoryUsed() != null
+                ? new File(handler.getLastMapDirectoryUsed())
+                : null;
 
-                mapDisplay.setBackImage(img);
-                mapDisplay.setBackImageEnabled(true);
-                jcbUseBackImage.setSelected(true); //Redundant
+        FileChooserUtils.selectFile(
+                "Open Background Image",
+                lastDir,
+                "PNG (*.png)",
+                new String[]{"*.png"},
+                selectedFile -> {
+                    if (selectedFile != null) {
+                        try {
+                            BufferedImage img = ImageIO.read(selectedFile);
 
-                mapDisplay.repaint();
-            } catch (IOException ex) {
-                JOptionPane.showMessageDialog(this, "Can't open file", "Error opening image", JOptionPane.ERROR_MESSAGE);
-            }
-        }
+                            mapDisplay.setBackImage(img);
+                            mapDisplay.setBackImageEnabled(true);
+                            jcbUseBackImage.setSelected(true); //Redundant
+
+                            mapDisplay.repaint();
+                        } catch (IOException ex) {
+                            JOptionPane.showMessageDialog(this, "Can't open file", "Error opening image", JOptionPane.ERROR_MESSAGE);
+                        }
+                    }
+                }
+        );
     }
 
     private void newMap() {
@@ -1317,89 +1450,90 @@ public class MainFrame extends JFrame {
     }
 
     private void saveMapWithDialog() {
-        final JFileChooser fc = new JFileChooser();
-        if (handler.getLastMapDirectoryUsed() != null) {
-            fc.setCurrentDirectory(new File(handler.getLastMapDirectoryUsed()));
-        }
-        fc.setFileFilter(new FileNameExtensionFilter("Pokemon DS map (*.pdsmap)", MapMatrix.fileExtension));
-        fc.setApproveButtonText("Save");
-        fc.setDialogTitle("Save");
-        final int returnVal = fc.showOpenDialog(this);
-        if (returnVal == JFileChooser.APPROVE_OPTION) {
-            handler.setLastMapDirectoryUsed(fc.getSelectedFile().getParent());
+        File lastDir = handler.getLastMapDirectoryUsed() != null
+                ? new File(handler.getLastMapDirectoryUsed())
+                : null;
 
-            stringForTextThread = "Saving map data";
-            Thread textThread = this.startProgressText(jlStatus,6, 75);
-            Thread t = new Thread ( () -> {
-                try {
-                    setGUIBlock(true);
+        FileChooserUtils.saveFile(
+                "Save",
+                lastDir,
+                "Pokemon DS map (*.pdsmap)",
+                new String[]{"*." + MapMatrix.fileExtension},
+                selectedFile -> {
+                    if (selectedFile != null) {
+                        handler.setLastMapDirectoryUsed(selectedFile.getParent());
 
-                    String path = fc.getSelectedFile().getPath();
-                    Set <Map.Entry<Point, MapData>> entrySet = handler.getMapMatrix().getMatrix().entrySet();
+                        stringForTextThread = "Saving map data";
+                        Thread textThread = this.startProgressText(jlStatus, 6, 75);
+                        Thread t = new Thread(() -> {
+                            try {
+                                setGUIBlock(true);
 
-                    handler.getMapMatrix().saveGridsToFile(path, entrySet);
-                    handler.getMapMatrix().filePath = path;
-                    setTitle(handler.getMapName() + " - " + handler.getVersionName());
+                                String path = selectedFile.getPath();
+                                Set<Map.Entry<Point, MapData>> entrySet = handler.getMapMatrix().getMatrix().entrySet();
 
-                    stringForTextThread = "Saving tileset and textures";
-                    writeTileset();
-                    saveMapThumbnail();
+                                handler.getMapMatrix().saveGridsToFile(path, entrySet);
+                                handler.getMapMatrix().filePath = path;
+                                setTitle(handler.getMapName() + " - " + handler.getVersionName());
 
-                    stringForTextThread = "Saving map files";
-                    handler.getMapMatrix().saveCollisions(entrySet);
-                    handler.getMapMatrix().saveBacksounds(entrySet);
-                    handler.getMapMatrix().saveBDHCs(entrySet);
-                    handler.getMapMatrix().saveBdhcams(entrySet);
-                    handler.getMapMatrix().saveBuildings(entrySet);
+                                stringForTextThread = "Saving tileset and textures";
+                                writeTileset();
+                                saveMapThumbnail();
 
-                    //handler.getMapMatrix().saveBinaryMaps();
-	                //saveCollisions();
-	                //saveBacksound();
-	                //saveBdhc();
-	                //saveBuildings();
+                                stringForTextThread = "Saving map files";
+                                handler.getMapMatrix().saveCollisions(entrySet);
+                                handler.getMapMatrix().saveBacksounds(entrySet);
+                                handler.getMapMatrix().saveBDHCs(entrySet);
+                                handler.getMapMatrix().saveBdhcams(entrySet);
+                                handler.getMapMatrix().saveBuildings(entrySet);
 
-                    stringForTextThread = "Almost done";
-                    addRecentMap(Utils.addExtensionToPath(path, MapMatrix.fileExtension));
-                    updateRecentMaps();
-                    updateRecentMapsMenu();
-                } catch (ParserConfigurationException | TransformerException | IOException ex) {
-                    JOptionPane.showMessageDialog(this, "There was a problem saving all the map files",
-                            "Error saving map files", JOptionPane.ERROR_MESSAGE);
-                } finally {
-                    textThread.interrupt();
-                    setGUIBlock(false);
+                                stringForTextThread = "Almost done";
+                                addRecentMap(Utils.addExtensionToPath(path, MapMatrix.fileExtension));
+                                updateRecentMaps();
+                                updateRecentMapsMenu();
+                            } catch (ParserConfigurationException | TransformerException | IOException ex) {
+                                JOptionPane.showMessageDialog(this, "There was a problem saving all the map files",
+                                        "Error saving map files", JOptionPane.ERROR_MESSAGE);
+                            } finally {
+                                textThread.interrupt();
+                                setGUIBlock(false);
+                            }
+                        });
+                        t.start();
+                    }
                 }
-            });
-            t.start();
-        }
+        );
     }
 
     private void saveTilesetWithDialog() {
         if (handler.getTileset().size() > 0) {
-            final JFileChooser fc = new JFileChooser();
-            if (handler.getLastTilesetDirectoryUsed() != null) {
-                fc.setCurrentDirectory(new File(handler.getLastTilesetDirectoryUsed()));
-            }
-            fc.setFileFilter(new FileNameExtensionFilter("Pokemon DS tileset (*.pdsts)", Tileset.fileExtension));
-            fc.setApproveButtonText("Save");
-            fc.setDialogTitle("Save Tileset");
-            final int returnVal = fc.showOpenDialog(this);
-            if (returnVal == JFileChooser.APPROVE_OPTION) {
-                handler.setLastMapDirectoryUsed(fc.getSelectedFile().getParent());
-                try {
-                    File file = fc.getSelectedFile();
-                    String path = file.getParent();
-                    String filename = Utils.removeExtensionFromPath(file.getName()) + "." + Tileset.fileExtension;
-                    TilesetIO.writeTilesetToFile(path + File.separator + filename, handler.getTileset());
-                    handler.getTileset().saveImagesToFile(path);
+            File lastDir = handler.getLastTilesetDirectoryUsed() != null
+                    ? new File(handler.getLastTilesetDirectoryUsed())
+                    : null;
 
-                    saveTilesetThumbnail(path + File.separator + "TilesetThumbnail.png");
+            FileChooserUtils.saveFile(
+                    "Save Tileset",
+                    lastDir,
+                    "Pokemon DS tileset (*.pdsts)",
+                    new String[]{"*." + Tileset.fileExtension},
+                    selectedFile -> {
+                        if (selectedFile != null) {
+                            handler.setLastMapDirectoryUsed(selectedFile.getParent());
+                            try {
+                                String path = selectedFile.getParent();
+                                String filename = Utils.removeExtensionFromPath(selectedFile.getName()) + "." + Tileset.fileExtension;
+                                TilesetIO.writeTilesetToFile(path + File.separator + filename, handler.getTileset());
+                                handler.getTileset().saveImagesToFile(path);
 
-                    JOptionPane.showMessageDialog(this, "Tileset succesfully exported.", "Tileset saved", JOptionPane.INFORMATION_MESSAGE);
-                } catch (IOException ex) {
-                    JOptionPane.showMessageDialog(this, "Can't save file", "Error saving tileset", JOptionPane.ERROR_MESSAGE);
-                }
-            }
+                                saveTilesetThumbnail(path + File.separator + "TilesetThumbnail.png");
+
+                                JOptionPane.showMessageDialog(this, "Tileset succesfully exported.", "Tileset saved", JOptionPane.INFORMATION_MESSAGE);
+                            } catch (IOException ex) {
+                                JOptionPane.showMessageDialog(this, "Can't save file", "Error saving tileset", JOptionPane.ERROR_MESSAGE);
+                            }
+                        }
+                    }
+            );
         } else {
             JOptionPane.showMessageDialog(this, "The tileset is empty", "Error saving tileset", JOptionPane.ERROR_MESSAGE);
         }
@@ -1415,26 +1549,28 @@ public class MainFrame extends JFrame {
                 boolean flip = exportTileDialog.flip();
                 boolean includeVertexColors = exportTileDialog.includeVertexColors();
 
-                final JFileChooser fc = new JFileChooser();
-                if (handler.getLastTileObjDirectoryUsed() != null) {
-                    fc.setCurrentDirectory(new File(handler.getLastTileObjDirectoryUsed()));
-                }
-                fc.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
-                fc.setApproveButtonText("Save");
-                fc.setDialogTitle("Select folder for saving all tiles as OBJ");
-                final int returnVal = fc.showOpenDialog(this);
-                if (returnVal == JFileChooser.APPROVE_OPTION) {
-                    handler.setLastTileObjDirectoryUsed(fc.getSelectedFile().getPath());
-                    try {
-                        ObjWriter objWriter = new ObjWriter(handler.getTileset(),
-                                handler.getGrid(), fc.getSelectedFile().getPath(),
-                                handler.getGameIndex(), true, includeVertexColors, 1.0f);
-                        objWriter.writeAllTilesObj(scale, flip);
-                        JOptionPane.showMessageDialog(this, "Tiles succesfully exported.", "Tiles saved", JOptionPane.INFORMATION_MESSAGE);
-                    } catch (IOException ex) {
-                        JOptionPane.showMessageDialog(this, "Can't save tiles", "Error saving tiles", JOptionPane.ERROR_MESSAGE);
-                    }
-                }
+                File lastDir = handler.getLastTileObjDirectoryUsed() != null
+                        ? new File(handler.getLastTileObjDirectoryUsed())
+                        : null;
+
+                FileChooserUtils.selectDirectory(
+                        "Select folder for saving all tiles as OBJ",
+                        lastDir,
+                        selectedDirectory -> {
+                            if (selectedDirectory != null) {
+                                handler.setLastTileObjDirectoryUsed(selectedDirectory.getPath());
+                                try {
+                                    ObjWriter objWriter = new ObjWriter(handler.getTileset(),
+                                            handler.getGrid(), selectedDirectory.getPath(),
+                                            handler.getGameIndex(), true, includeVertexColors, 1.0f);
+                                    objWriter.writeAllTilesObj(scale, flip);
+                                    JOptionPane.showMessageDialog(this, "Tiles succesfully exported.", "Tiles saved", JOptionPane.INFORMATION_MESSAGE);
+                                } catch (IOException ex) {
+                                    JOptionPane.showMessageDialog(this, "Can't save tiles", "Error saving tiles", JOptionPane.ERROR_MESSAGE);
+                                }
+                            }
+                        }
+                );
             }
         } else {
             JOptionPane.showMessageDialog(this, "The tileset is empty", "Error saving tiles", JOptionPane.ERROR_MESSAGE);
@@ -1442,7 +1578,7 @@ public class MainFrame extends JFrame {
     }
 
 
-    private boolean saveMapAsObjWithDialog(boolean saveTextures) {
+    private void saveMapAsObjWithDialog(boolean saveTextures, Consumer<Boolean> onComplete) {
         final ExportSingleMapObjDialog exportMapDialog = new ExportSingleMapObjDialog(this, "Export Single OBJ Map - Settings");
         exportMapDialog.setLocationRelativeTo(this);
         exportMapDialog.setVisible(true);
@@ -1452,45 +1588,52 @@ public class MainFrame extends JFrame {
             boolean useExportgroups = exportMapDialog.useExportgroups();
             float tileUpscale = exportMapDialog.getTileUpscaling();
 
-            final JFileChooser fc = new JFileChooser();
-            fc.setSelectedFile(new File(Utils.removeExtensionFromPath(handler.getMapMatrix().filePath)));
+            File initialFile = new File(Utils.removeExtensionFromPath(handler.getMapMatrix().filePath));
+            File lastDir = handler.getLastMapDirectoryUsed() != null
+                    ? new File(handler.getLastMapDirectoryUsed())
+                    : initialFile.getParentFile();
 
-            if (handler.getLastMapDirectoryUsed() != null) {
-                fc.setCurrentDirectory(new File(handler.getLastMapDirectoryUsed()));
-            }
+            FileChooserUtils.saveFile(
+                    "Select a name for the OBJ map",
+                    lastDir,
+                    "OBJ (*.obj)",
+                    new String[]{"*.obj"},
+                    selectedFile -> {
+                        boolean success = false;
+                        if (selectedFile != null) {
+                            handler.setLastMapDirectoryUsed(selectedFile.getParent());
+                            try {
+                                String path = selectedFile.getPath();
 
-            fc.setFileFilter(new FileNameExtensionFilter("OBJ (*.obj)", "obj"));
-            fc.setApproveButtonText("Save");
-            fc.setDialogTitle("Select a name for the OBJ map");
-            final int returnVal = fc.showOpenDialog(this);
+                                String type;
+                                int currentExpGroupIndex = handler.getCurrentMap().getExportGroupIndex();
+                                if (useExportgroups && currentExpGroupIndex != 0) {
+                                    type = "group";
 
-            if (returnVal == JFileChooser.APPROVE_OPTION) {
-                handler.setLastMapDirectoryUsed(fc.getSelectedFile().getParent());
-                try {
-                    String path = fc.getSelectedFile().getPath();
+                                    HashSet<Integer> groupsToExport = new HashSet();
+                                    groupsToExport.add(currentExpGroupIndex);
 
-                    String type;
-                    int currentExpGroupIndex = handler.getCurrentMap().getExportGroupIndex();
-                    if (useExportgroups && currentExpGroupIndex != 0) {
-                        type = "group";
+                                    handler.getMapMatrix().saveMapsAsObj(path, saveTextures, includeVertexColors, groupsToExport, tileUpscale);
+                                } else {
+                                    type = "map";
 
-                        HashSet<Integer> groupsToExport = new HashSet();
-                        groupsToExport.add(currentExpGroupIndex);
-
-                        handler.getMapMatrix().saveMapsAsObj(path, saveTextures, includeVertexColors, groupsToExport, tileUpscale);
-                    } else {
-                        type = "map";
-
-                        handler.getGrid().saveMapToOBJ(handler.getTileset(), path, saveTextures, includeVertexColors, tileUpscale);
+                                    handler.getGrid().saveMapToOBJ(handler.getTileset(), path, saveTextures, includeVertexColors, tileUpscale);
+                                }
+                                JOptionPane.showMessageDialog(this, "OBJ " + type + " succesfully exported.",
+                                        type.substring(0, 1).toUpperCase() + type.substring(1) + " saved",
+                                        JOptionPane.INFORMATION_MESSAGE);
+                                success = true;
+                            } catch (FileNotFoundException ex) {
+                                JOptionPane.showMessageDialog(this, "Can't save file.",
+                                        "Error saving map", JOptionPane.ERROR_MESSAGE);
+                            }
+                        }
+                        onComplete.accept(success);
                     }
-                    JOptionPane.showMessageDialog(this, "OBJ " + type + " succesfully exported.", type.substring(0, 1).toUpperCase() + type.substring(1) + " saved", JOptionPane.INFORMATION_MESSAGE);
-                } catch (FileNotFoundException ex) {
-                    JOptionPane.showMessageDialog(this, "Can't save file.", "Error saving map", JOptionPane.ERROR_MESSAGE);
-                }
-                return true;
-            }
+            );
+        } else {
+            onComplete.accept(false);
         }
-        return false;
     }
 
     private void saveMapAsBinWithDialog(){
@@ -1519,7 +1662,7 @@ public class MainFrame extends JFrame {
         }
     }
 
-    private boolean saveMapsAsObjWithDialog(boolean saveTextures) {
+    private void saveMapsAsObjWithDialog(boolean saveTextures, Consumer<Boolean> onComplete) {
         final ExportMapsObjDialog exportMapDialog = new ExportMapsObjDialog(this, "Export OBJ Maps Settings");
         exportMapDialog.setLocationRelativeTo(null);
         exportMapDialog.setVisible(true);
@@ -1532,15 +1675,10 @@ public class MainFrame extends JFrame {
             boolean useExportgroups = exportMapDialog.useExportgroups();
             float tileUpscale = exportMapDialog.getTileUpscaling();
 
-            final JFileChooser fc = new JFileChooser();
-            fc.setSelectedFile(new File(Utils.removeExtensionFromPath(handler.getMapMatrix().filePath)));
-            if (handler.getLastMapDirectoryUsed() != null) {
-                fc.setCurrentDirectory(new File(ExportPath));
-            }
-            fc.setFileFilter(new FileNameExtensionFilter("OBJ (*.obj)", "obj"));
-            fc.setApproveButtonText("Save");
-            fc.setDialogTitle("Select a name for saving the maps as OBJ");
-            final int returnVal = fc.showOpenDialog(this);
+            File initialFile = new File(Utils.removeExtensionFromPath(handler.getMapMatrix().filePath));
+            File lastDir = handler.getLastMapDirectoryUsed() != null
+                    ? new File(ExportPath)
+                    : null;
 
             String type;
             if (useExportgroups) {
@@ -1549,45 +1687,57 @@ public class MainFrame extends JFrame {
                 type = "maps";
             }
 
-            if (returnVal == JFileChooser.APPROVE_OPTION) {
-                handler.setLastMapDirectoryUsed(fc.getSelectedFile().getParent());
-                try {
-                    String path = fc.getSelectedFile().getPath();
-                    if (exportAllMapsBothModes) {
-                        path = Utils.removeMapCoordsFromName(path);
-                        handler.getMapMatrix().saveMapsAsObj(path, saveTextures, includeVertexColors, handler.getMapMatrix().getExportGroupIndices(), tileUpscale);
-                        handler.getMapMatrix().saveMapsAsObjJoined(path, saveTextures, includeVertexColors, tileUpscale);
+            FileChooserUtils.saveFile(
+                    "Select a name for saving the maps as OBJ",
+                    lastDir,
+                    "OBJ (*.obj)",
+                    new String[]{"*.obj"},
+                    selectedFile -> {
+                        if (selectedFile != null) {
+                            handler.setLastMapDirectoryUsed(selectedFile.getParent());
+                            try {
+                                String path = selectedFile.getPath();
+                                if (exportAllMapsBothModes) {
+                                    path = Utils.removeMapCoordsFromName(path);
+                                    handler.getMapMatrix().saveMapsAsObj(path, saveTextures, includeVertexColors, handler.getMapMatrix().getExportGroupIndices(), tileUpscale);
+                                    handler.getMapMatrix().saveMapsAsObjJoined(path, saveTextures, includeVertexColors, tileUpscale);
 
-                        JOptionPane.showMessageDialog(this, "OBJ " + type + " succesfully exported in both modes.", type.substring(0, 1).toUpperCase() + type.substring(1) + " saved", JOptionPane.INFORMATION_MESSAGE);
-                    } else if (exportAllMapsSeparately) {
-                        path = Utils.removeMapCoordsFromName(path);
-                        handler.getMapMatrix().saveMapsAsObj(path, saveTextures, includeVertexColors, handler.getMapMatrix().getExportGroupIndices(), tileUpscale);
+                                    JOptionPane.showMessageDialog(this, "OBJ " + type + " succesfully exported in both modes.", type.substring(0, 1).toUpperCase() + type.substring(1) + " saved", JOptionPane.INFORMATION_MESSAGE);
+                                } else if (exportAllMapsSeparately) {
+                                    path = Utils.removeMapCoordsFromName(path);
+                                    handler.getMapMatrix().saveMapsAsObj(path, saveTextures, includeVertexColors, handler.getMapMatrix().getExportGroupIndices(), tileUpscale);
 
-                        JOptionPane.showMessageDialog(this, "OBJ " + type + " succesfully exported separately.", type.substring(0, 1).toUpperCase() + type.substring(1) + " saved", JOptionPane.INFORMATION_MESSAGE);
-                    } else if (exportAllMapsJoined) {
-                        path = Utils.removeMapCoordsFromName(path);
-                        handler.getMapMatrix().saveMapsAsObjJoined(path, saveTextures, includeVertexColors, tileUpscale);
+                                    JOptionPane.showMessageDialog(this, "OBJ " + type + " succesfully exported separately.", type.substring(0, 1).toUpperCase() + type.substring(1) + " saved", JOptionPane.INFORMATION_MESSAGE);
+                                } else if (exportAllMapsJoined) {
+                                    path = Utils.removeMapCoordsFromName(path);
+                                    handler.getMapMatrix().saveMapsAsObjJoined(path, saveTextures, includeVertexColors, tileUpscale);
 
-                        JOptionPane.showMessageDialog(this, "OBJ maps succesfully exported as one.", "Map saved", JOptionPane.INFORMATION_MESSAGE);
-                    } else { //Mappa singola
-                        if (useExportgroups) {
-                            HashSet<Integer> groupsToExport = new HashSet();
-                            groupsToExport.add(handler.getCurrentMap().getExportGroupIndex());
+                                    JOptionPane.showMessageDialog(this, "OBJ maps succesfully exported as one.", "Map saved", JOptionPane.INFORMATION_MESSAGE);
+                                } else { //Mappa singola
+                                    if (useExportgroups) {
+                                        HashSet<Integer> groupsToExport = new HashSet();
+                                        groupsToExport.add(handler.getCurrentMap().getExportGroupIndex());
 
-                            handler.getMapMatrix().saveMapsAsObj(path, saveTextures, includeVertexColors, groupsToExport, tileUpscale);
+                                        handler.getMapMatrix().saveMapsAsObj(path, saveTextures, includeVertexColors, groupsToExport, tileUpscale);
+                                    } else {
+                                        handler.getGrid().saveMapToOBJ(handler.getTileset(), path, saveTextures, includeVertexColors, tileUpscale);
+                                    }
+
+                                    JOptionPane.showMessageDialog(this, "OBJ map succesfully exported.", "Map saved", JOptionPane.INFORMATION_MESSAGE);
+                                }
+                                onComplete.accept(true);
+                            } catch (FileNotFoundException ex) {
+                                JOptionPane.showMessageDialog(this, "Can't save file.", "Error saving map", JOptionPane.ERROR_MESSAGE);
+                                onComplete.accept(false);
+                            }
                         } else {
-                            handler.getGrid().saveMapToOBJ(handler.getTileset(), path, saveTextures, includeVertexColors, tileUpscale);
+                            onComplete.accept(false);
                         }
-
-                        JOptionPane.showMessageDialog(this, "OBJ map succesfully exported.", "Map saved", JOptionPane.INFORMATION_MESSAGE);
                     }
-                } catch (FileNotFoundException ex) {
-                    JOptionPane.showMessageDialog(this, "Can't save file.", "Error saving map", JOptionPane.ERROR_MESSAGE);
-                }
-                return true;
-            }
+            );
+        } else {
+            onComplete.accept(false);
         }
-        return false;
     }
 
     public void writeTileset() throws FileNotFoundException, ParserConfigurationException, TransformerException, IOException {
@@ -1689,7 +1839,7 @@ public class MainFrame extends JFrame {
         return false;
     }
 
-    public boolean singleObjToImdDialog() {
+    public void singleObjToImdDialog(Consumer<Boolean> onComplete) {
         if (handler.getTileset().size() == 0) {
             JOptionPane.showMessageDialog(this,
                     "There is no tileset loaded.\n"
@@ -1698,83 +1848,94 @@ public class MainFrame extends JFrame {
                     JOptionPane.WARNING_MESSAGE);
         }
 
-        final JFileChooser fcOpen = new JFileChooser();
-        fcOpen.setSelectedFile(new File(Utils.removeExtensionFromPath(handler.getMapMatrix().filePath) + ".obj"));
-        if (handler.getLastMapDirectoryUsed() != null) {
-            fcOpen.setCurrentDirectory(new File(handler.getLastMapDirectoryUsed()));
-        }
-        fcOpen.setFileFilter(new FileNameExtensionFilter("OBJ (*.obj)", "obj"));
-        fcOpen.setApproveButtonText("Open");
-        fcOpen.setDialogTitle("Open OBJ Map for converting into IMD");
-        final int returnValOpen = fcOpen.showOpenDialog(this);
-        if (returnValOpen == JFileChooser.APPROVE_OPTION) {
-            if (fcOpen.getSelectedFile().exists()) {
-                String pathOpen = fcOpen.getSelectedFile().getPath();
+        File initialFile = new File(Utils.removeExtensionFromPath(handler.getMapMatrix().filePath) + ".obj");
+        File lastDir = handler.getLastMapDirectoryUsed() != null
+                ? new File(handler.getLastMapDirectoryUsed())
+                : null;
 
-                final JFileChooser fcSave = new JFileChooser();
-                fcSave.setSelectedFile(new File(Utils.removeExtensionFromPath(handler.getMapMatrix().filePath)));
-                fcSave.setCurrentDirectory(fcOpen.getSelectedFile().getParentFile());
-                fcSave.setFileFilter(new FileNameExtensionFilter("IMD (*.imd)", "imd"));
-                fcSave.setApproveButtonText("Save");
-                fcSave.setDialogTitle("Save");
-                final int returnValSave = fcSave.showOpenDialog(this);
-                if (returnValSave == JFileChooser.APPROVE_OPTION) {
-                    String pathSave = fcSave.getSelectedFile().getPath();
+        FileChooserUtils.selectFile(
+                "Open OBJ Map for converting into IMD",
+                lastDir,
+                "OBJ (*.obj)",
+                new String[]{"*.obj"},
+                selectedObjFile -> {
+                    if (selectedObjFile != null && selectedObjFile.exists()) {
+                        String pathOpen = selectedObjFile.getPath();
 
-                    try {
-                        ImdModel model = new ImdModel(pathOpen, pathSave, handler.getTileset().getMaterials());
-                        final int numVertices = model.getNumVertices();
-                        final int numPolygons = model.getNumPolygons();
-                        final int numTris = model.getNumTris();
-                        final int numQuads = model.getNumQuads();
-                        JOptionPane.showMessageDialog(this, "IMD map succesfully exported.\n\n"
-                                        + "Number of Materials: " + model.getNumMaterials() + "\n"
-                                        + "Number of Vertices: " + numVertices + "\n"
-                                        + "Number of Polygons: " + numPolygons + "\n"
-                                        + "Number of Triangles: " + numTris + "\n"
-                                        + "Number of Quads: " + numQuads,
-                                "Map saved", JOptionPane.INFORMATION_MESSAGE);
-                        final int maxNumPolygons = 1800;
-                        final int maxNumTris = 1200;
-                        if (numTris > maxNumTris) {
-                            JOptionPane.showMessageDialog(this, "The map might not work properly in game.\n\n"
-                                            + "The map contains " + numTris + " triangles" + "\n"
-                                            + "Try to use less than " + maxNumTris + " triangles" + "\n"
-                                            + "Or try to use quads instead of triangles" + "\n",
-                                    "Too many triangles", JOptionPane.INFORMATION_MESSAGE);
-                        } else if (numPolygons > maxNumPolygons) {
-                            JOptionPane.showMessageDialog(this, "The map may not work properly in game.\n\n"
-                                            + "The map contains " + numPolygons + " polygons" + "\n"
-                                            + "Try to use less than " + maxNumPolygons + " polygons",
-                                    "Too many polygons", JOptionPane.WARNING_MESSAGE);
-                        }
-                    } catch (ParserConfigurationException | TransformerException ex) {
+                        File saveInitialFile = new File(Utils.removeExtensionFromPath(handler.getMapMatrix().filePath));
+
+                        FileChooserUtils.saveFile(
+                                "Save",
+                                selectedObjFile.getParentFile(),
+                                "IMD (*.imd)",
+                                new String[]{"*.imd"},
+                                selectedImdFile -> {
+                                    if (selectedImdFile != null) {
+                                        String pathSave = selectedImdFile.getPath();
+
+                                        try {
+                                            ImdModel model = new ImdModel(pathOpen, pathSave, handler.getTileset().getMaterials());
+                                            final int numVertices = model.getNumVertices();
+                                            final int numPolygons = model.getNumPolygons();
+                                            final int numTris = model.getNumTris();
+                                            final int numQuads = model.getNumQuads();
+                                            JOptionPane.showMessageDialog(this, "IMD map succesfully exported.\n\n"
+                                                            + "Number of Materials: " + model.getNumMaterials() + "\n"
+                                                            + "Number of Vertices: " + numVertices + "\n"
+                                                            + "Number of Polygons: " + numPolygons + "\n"
+                                                            + "Number of Triangles: " + numTris + "\n"
+                                                            + "Number of Quads: " + numQuads,
+                                                    "Map saved", JOptionPane.INFORMATION_MESSAGE);
+                                            final int maxNumPolygons = 1800;
+                                            final int maxNumTris = 1200;
+                                            if (numTris > maxNumTris) {
+                                                JOptionPane.showMessageDialog(this, "The map might not work properly in game.\n\n"
+                                                                + "The map contains " + numTris + " triangles" + "\n"
+                                                                + "Try to use less than " + maxNumTris + " triangles" + "\n"
+                                                                + "Or try to use quads instead of triangles" + "\n",
+                                                        "Too many triangles", JOptionPane.INFORMATION_MESSAGE);
+                                            } else if (numPolygons > maxNumPolygons) {
+                                                JOptionPane.showMessageDialog(this, "The map may not work properly in game.\n\n"
+                                                                + "The map contains " + numPolygons + " polygons" + "\n"
+                                                                + "Try to use less than " + maxNumPolygons + " polygons",
+                                                        "Too many polygons", JOptionPane.WARNING_MESSAGE);
+                                            }
+                                            onComplete.accept(true);
+                                        } catch (ParserConfigurationException | TransformerException ex) {
+                                            JOptionPane.showMessageDialog(this,
+                                                    "There was a problem parsing the XML data of the IMD",
+                                                    "Can't export IMD",
+                                                    JOptionPane.ERROR_MESSAGE);
+                                            onComplete.accept(false);
+                                        } catch (IOException ex) {
+                                            JOptionPane.showMessageDialog(this,
+                                                    "There was a problem exporting the IMD",
+                                                    "Can't export IMD",
+                                                    JOptionPane.ERROR_MESSAGE);
+                                            onComplete.accept(false);
+                                        } catch (TextureNotFoundException | NormalsNotFoundException ex) {
+                                            JOptionPane.showMessageDialog(this,
+                                                    ex.getMessage(),
+                                                    "Can't export IMD",
+                                                    JOptionPane.ERROR_MESSAGE);
+                                            onComplete.accept(false);
+                                        }
+                                    } else {
+                                        onComplete.accept(false);
+                                    }
+                                }
+                        );
+                    } else if (selectedObjFile != null) {
                         JOptionPane.showMessageDialog(this,
-                                "There was a problem parsing the XML data of the IMD",
-                                "Can't export IMD",
+                                "The selected OBJ file could not be opened",
+                                "Can't open OBJ",
                                 JOptionPane.ERROR_MESSAGE);
-                    } catch (IOException ex) {
-                        JOptionPane.showMessageDialog(this,
-                                "There was a problem exporting the IMD",
-                                "Can't export IMD",
-                                JOptionPane.ERROR_MESSAGE);
-                    } catch (TextureNotFoundException | NormalsNotFoundException ex) {
-                        JOptionPane.showMessageDialog(this,
-                                ex.getMessage(),
-                                "Can't export IMD",
-                                JOptionPane.ERROR_MESSAGE);
+                        onComplete.accept(false);
+                    } else {
+                        onComplete.accept(false);
                     }
-                    return true;
                 }
-            } else {
-                JOptionPane.showMessageDialog(this,
-                        "The selected OBJ file could not be opened",
-                        "Can't open OBJ",
-                        JOptionPane.ERROR_MESSAGE);
-            }
-        }
-
-        return false;
+        );
     }
 
     public boolean saveMapsAsNsbWithDialog() {
@@ -1798,242 +1959,261 @@ public class MainFrame extends JFrame {
         return false;
     }
 
-    public boolean saveMapAsNsbWithDialog() {
+    public void saveMapAsNsbWithDialog(Consumer<Boolean> onComplete) {
         final ConverterDialog convDialog = new ConverterDialog(this);
         convDialog.setLocationRelativeTo(this);
         convDialog.setVisible(true);
+
         if (convDialog.getReturnValue() == ConverterDialog.APPROVE_OPTION) {
             boolean includeNsbtx = convDialog.includeNsbtxInNsbmd();
-            try {
-                final JFileChooser fcOpen = new JFileChooser();
-                fcOpen.setSelectedFile(new File(Utils.removeExtensionFromPath(handler.getMapMatrix().filePath) + ".imd"));
-                if (handler.getLastMapDirectoryUsed() != null) {
-                    fcOpen.setCurrentDirectory(new File(handler.getLastMapDirectoryUsed()));
-                }
-                fcOpen.setFileFilter(new FileNameExtensionFilter("IMD (*.imd)", "imd"));
-                fcOpen.setApproveButtonText("Open");
-                fcOpen.setDialogTitle("Open IMD Map for converting into NSBMD");
-                final int returnVal = fcOpen.showOpenDialog(this);
-                if (returnVal == JFileChooser.APPROVE_OPTION) {
-                    String imdPath;
-                    if (System.getProperty("os.name").toLowerCase().startsWith("windows")) {
-                        imdPath = fcOpen.getSelectedFile().getPath();
-                    } else {
-                        String cwd = System.getProperty("user.dir"); // get current user directory
-                        imdPath = new File(cwd).toURI().relativize(fcOpen.getSelectedFile().toPath().toRealPath().toUri()).getPath(); //this is some serious java shit
-                    }
-                    final JFileChooser fcSave = new JFileChooser();
-                    fcSave.setSelectedFile(new File(Utils.removeExtensionFromPath(handler.getMapMatrix().filePath)));
-                    fcSave.setCurrentDirectory(fcOpen.getSelectedFile().getParentFile());
-                    fcSave.setFileFilter(new FileNameExtensionFilter("NSBMD (*.nsbmd)", "nsbmd"));
-                    fcSave.setApproveButtonText("Save");
-                    fcSave.setDialogTitle("Save");
-                    final int returnValSave = fcSave.showOpenDialog(this);
+            File initialFile = new File(Utils.removeExtensionFromPath(handler.getMapMatrix().filePath) + ".imd");
+            File lastDir = handler.getLastMapDirectoryUsed() != null
+                    ? new File(handler.getLastMapDirectoryUsed())
+                    : null;
 
-                    if (returnValSave == JFileChooser.APPROVE_OPTION) {
-                        String nsbPath = fcSave.getSelectedFile().getPath();
-                        String filename = new File(nsbPath).getName();
-
-                        try {
-                            String converterPath = "converter/g3dcvtr.exe";
-                            String[] cmd;
-                            if (System.getProperty("os.name").toLowerCase().startsWith("windows")) {
-                                if (includeNsbtx) {
-                                    cmd = new String[]{converterPath, imdPath, "-eboth", "-o", filename};
+            FileChooserUtils.selectFile(
+                    "Open IMD Map for converting into NSBMD",
+                    lastDir,
+                    "IMD (*.imd)",
+                    new String[]{"*.imd"},
+                    selectedImdFile -> {
+                        if (selectedImdFile != null) {
+                            try {
+                                String imdPath;
+                                if (System.getProperty("os.name").toLowerCase().startsWith("windows")) {
+                                    imdPath = selectedImdFile.getPath();
                                 } else {
-                                    cmd = new String[]{converterPath, imdPath, "-emdl", "-o", filename};
+                                    String cwd = System.getProperty("user.dir");
+                                    imdPath = new File(cwd).toURI().relativize(selectedImdFile.toPath().toRealPath().toUri()).getPath();
                                 }
 
-                            } else {
-                                if (includeNsbtx) {
-                                    cmd = new String[]{"wine", converterPath, imdPath, "-eboth", "-o", filename};
-                                } else {
-                                    cmd = new String[]{"wine", converterPath, imdPath, "-emdl", "-o", filename};
-                                }
-                                // NOTE: wine call works only with relative path
+                                File saveInitialFile = new File(Utils.removeExtensionFromPath(handler.getMapMatrix().filePath));
+
+                                FileChooserUtils.saveFile(
+                                        "Save",
+                                        selectedImdFile.getParentFile(),
+                                        "NSBMD (*.nsbmd)",
+                                        new String[]{"*.nsbmd"},
+                                        selectedNsbFile -> {
+                                            if (selectedNsbFile != null) {
+                                                String nsbPath = selectedNsbFile.getPath();
+                                                String filename = new File(nsbPath).getName();
+
+                                                try {
+                                                    String converterPath = "converter/g3dcvtr.exe";
+                                                    String[] cmd;
+                                                    if (System.getProperty("os.name").toLowerCase().startsWith("windows")) {
+                                                        if (includeNsbtx) {
+                                                            cmd = new String[]{converterPath, imdPath, "-eboth", "-o", filename};
+                                                        } else {
+                                                            cmd = new String[]{converterPath, imdPath, "-emdl", "-o", filename};
+                                                        }
+                                                    } else {
+                                                        if (includeNsbtx) {
+                                                            cmd = new String[]{"wine", converterPath, imdPath, "-eboth", "-o", filename};
+                                                        } else {
+                                                            cmd = new String[]{"wine", converterPath, imdPath, "-emdl", "-o", filename};
+                                                        }
+                                                    }
+
+                                                    if (!Files.exists(Paths.get(converterPath))) {
+                                                        throw new IOException();
+                                                    }
+
+                                                    Process p = new ProcessBuilder(cmd).start();
+
+                                                    BufferedReader stdError = new BufferedReader(new InputStreamReader(p.getErrorStream()));
+
+                                                    String outputString = "";
+                                                    String line = null;
+                                                    while ((line = stdError.readLine()) != null) {
+                                                        outputString += line + "\n";
+                                                    }
+
+                                                    p.waitFor();
+                                                    p.destroy();
+
+                                                    if (!filename.endsWith("nsbmd")) {
+                                                        filename += ".nsbmd";
+                                                    }
+                                                    if (!nsbPath.endsWith("nsbmd")) {
+                                                        nsbPath += ".nsbmd";
+                                                    }
+
+                                                    System.out.println(System.getProperty("user.dir"));
+                                                    File srcFile = new File(System.getProperty("user.dir") + File.separator + filename);
+                                                    File dstFile = new File(nsbPath);
+                                                    if (srcFile.exists()) {
+                                                        try {
+                                                            Files.move(srcFile.toPath(), dstFile.toPath(),
+                                                                    StandardCopyOption.REPLACE_EXISTING);
+
+                                                            try {
+                                                                byte[] nsbmdData = Files.readAllBytes(dstFile.toPath());
+
+                                                                ExportNsbmdResultDialog resultDialog = new ExportNsbmdResultDialog(this);
+                                                                resultDialog.init(nsbmdData);
+                                                                resultDialog.setLocationRelativeTo(this);
+                                                                resultDialog.setVisible(true);
+                                                            } catch (IOException ex) {
+                                                                JOptionPane.showMessageDialog(this, "NSBMD succesfully exported.",
+                                                                        "NSBMD saved", JOptionPane.INFORMATION_MESSAGE);
+                                                            }
+                                                            onComplete.accept(true);
+                                                        } catch (IOException ex) {
+                                                            JOptionPane.showMessageDialog(this,
+                                                                    "File was not moved to the save directory. \n"
+                                                                            + "Reopen Pokemon DS Map Studio and try again.",
+                                                                    "Problem saving generated file",
+                                                                    JOptionPane.ERROR_MESSAGE);
+                                                            onComplete.accept(false);
+                                                        }
+                                                    } else {
+                                                        ConverterErrorDialog dialog = new ConverterErrorDialog(this);
+                                                        dialog.init("There was a problem creating the NSBMD file. \n"
+                                                                        + "The output from the converter is:",
+                                                                outputString);
+                                                        dialog.setTitle("Problem generating file");
+                                                        dialog.setLocationRelativeTo(this);
+                                                        dialog.setVisible(true);
+                                                        onComplete.accept(false);
+                                                    }
+                                                } catch (IOException ex) {
+                                                    JOptionPane.showMessageDialog(this,
+                                                            "The program \"g3dcvtr.exe\" is not found in the \"converter\" folder.\n"
+                                                                    + "Put the program and its *.dll files in the folder and try again.",
+                                                            "Converter not found",
+                                                            JOptionPane.ERROR_MESSAGE);
+                                                    onComplete.accept(false);
+                                                } catch (InterruptedException ex) {
+                                                    JOptionPane.showMessageDialog(this,
+                                                            "The model was not converted",
+                                                            "Problem converting the model",
+                                                            JOptionPane.ERROR_MESSAGE);
+                                                    onComplete.accept(false);
+                                                }
+                                            } else {
+                                                onComplete.accept(false);
+                                            }
+                                        }
+                                );
+                            } catch (IOException ex) {
+                                JOptionPane.showMessageDialog(this,
+                                        "There was a problem reading the IMD file",
+                                        "Error loading the IMD file",
+                                        JOptionPane.ERROR_MESSAGE);
+                                onComplete.accept(false);
                             }
-
-                            if (!Files.exists(Paths.get(converterPath))) {
-                                throw new IOException();
-                            }
-
-                            Process p = new ProcessBuilder(cmd).start();
-
-                            BufferedReader stdError = new BufferedReader(new InputStreamReader(p.getErrorStream()));
-
-                            String outputString = "";
-                            String line = null;
-                            while ((line = stdError.readLine()) != null) {
-                                outputString += line + "\n";
-                            }
-
-                            p.waitFor();
-                            p.destroy();
-
-                            if (!filename.endsWith("nsbmd")) {
-                                filename += ".nsbmd";
-                            }
-                            if (!nsbPath.endsWith("nsbmd")) {
-                                nsbPath += ".nsbmd";
-                            }
-
-                            System.out.println(System.getProperty("user.dir"));
-                            File srcFile = new File(System.getProperty("user.dir") + File.separator + filename);
-                            File dstFile = new File(nsbPath);
-                            if (srcFile.exists()) {
-                                try {
-                                    Files.move(srcFile.toPath(), dstFile.toPath(),
-                                            StandardCopyOption.REPLACE_EXISTING);
-
-                                    try {
-                                        byte[] nsbmdData = Files.readAllBytes(dstFile.toPath());
-
-                                        ExportNsbmdResultDialog resultDialog = new ExportNsbmdResultDialog(this);
-                                        resultDialog.init(nsbmdData);
-                                        resultDialog.setLocationRelativeTo(this);
-                                        resultDialog.setVisible(true);
-                                    } catch (IOException ex) {
-                                        JOptionPane.showMessageDialog(this, "NSBMD succesfully exported.",
-                                                "NSBMD saved", JOptionPane.INFORMATION_MESSAGE);
-                                    }
-                                } catch (IOException ex) {
-                                    JOptionPane.showMessageDialog(this,
-                                            "File was not moved to the save directory. \n"
-                                                    + "Reopen Pokemon DS Map Studio and try again.",
-                                            "Problem saving generated file",
-                                            JOptionPane.ERROR_MESSAGE);
-                                }
-                            } else {
-                                ConverterErrorDialog dialog = new ConverterErrorDialog(this);
-                                dialog.init("There was a problem creating the NSBMD file. \n"
-                                                + "The output from the converter is:",
-                                        outputString);
-                                dialog.setTitle("Problem generating file");
-                                dialog.setLocationRelativeTo(this);
-                                dialog.setVisible(true);
-                            }
-                        } catch (IOException ex) {
-                            JOptionPane.showMessageDialog(this,
-                                    "The program \"g3dcvtr.exe\" is not found in the \"converter\" folder.\n"
-                                            + "Put the program and its *.dll files in the folder and try again.",
-                                    "Converter not found",
-                                    JOptionPane.ERROR_MESSAGE);
-                        } catch (InterruptedException ex) {
-                            JOptionPane.showMessageDialog(this,
-                                    "The model was not converted",
-                                    "Problem converting the model",
-                                    JOptionPane.ERROR_MESSAGE);
+                        } else {
+                            onComplete.accept(false);
                         }
-                        return true;
                     }
-                }
-            } catch (IOException ex) {
-                JOptionPane.showMessageDialog(this,
-                        "There was a problem reading the IMD file",
-                        "Error loading the IMD file",
-                        JOptionPane.ERROR_MESSAGE);
-            }
+            );
+        } else {
+            onComplete.accept(false);
         }
-        return false;
     }
 
     public void saveMapBtxWithDialog() {
-        final JFileChooser fcOpen = new JFileChooser();
-        fcOpen.setSelectedFile(new File(Utils.removeExtensionFromPath(ExportPath) + ".imd"));
-        fcOpen.setCurrentDirectory(new File(ExportPath));
-        fcOpen.setFileFilter(new FileNameExtensionFilter("IMD (*.imd)", "imd"));
-        fcOpen.setApproveButtonText("Open");
-        fcOpen.setDialogTitle("Open IMD Map for converting into NSBTX");
-        final int returnVal = fcOpen.showOpenDialog(this);
-        if (returnVal == JFileChooser.APPROVE_OPTION) {
-            String imdPath = fcOpen.getSelectedFile().getPath();
+        File initialFile = new File(Utils.removeExtensionFromPath(ExportPath) + ".imd");
 
-            final JFileChooser fcSave = new JFileChooser();
-            fcSave.setSelectedFile(new File(ExportPath));
-            fcSave.setCurrentDirectory(fcOpen.getSelectedFile().getParentFile());
-            fcSave.setFileFilter(new FileNameExtensionFilter("NSBTX (*.nsbtx)", "nsbtx"));
-            fcSave.setApproveButtonText("Save");
-            fcSave.setDialogTitle("Save");
-            final int returnValSave = fcSave.showOpenDialog(this);
+        FileChooserUtils.selectFile(
+                "Open IMD Map for converting into NSBTX",
+                new File(ExportPath),
+                "IMD (*.imd)",
+                new String[]{"*.imd"},
+                selectedImdFile -> {
+                    if (selectedImdFile != null) {
+                        String imdPath = selectedImdFile.getPath();
 
-            if (returnValSave == JFileChooser.APPROVE_OPTION) {
-                String nsbPath = fcSave.getSelectedFile().getPath();
-                String filename = new File(nsbPath).getName();
+                        FileChooserUtils.saveFile(
+                                "Save",
+                                selectedImdFile.getParentFile(),
+                                "NSBTX (*.nsbtx)",
+                                new String[]{"*.nsbtx"},
+                                selectedNsbtxFile -> {
+                                    if (selectedNsbtxFile != null) {
+                                        String nsbPath = selectedNsbtxFile.getPath();
+                                        String filename = new File(nsbPath).getName();
 
-                System.out.println(filename);
-                String converterPath = "converter/g3dcvtr.exe";
-                String[] cmd = {converterPath, imdPath, "-etex", "-o", filename};
-                Process p;
-                try {
-                    p = new ProcessBuilder(cmd).start();
+                                        System.out.println(filename);
+                                        String converterPath = "converter/g3dcvtr.exe";
+                                        String[] cmd = {converterPath, imdPath, "-etex", "-o", filename};
+                                        Process p;
+                                        try {
+                                            p = new ProcessBuilder(cmd).start();
 
-                    BufferedReader stdError = new BufferedReader(new InputStreamReader(p.getErrorStream()));
+                                            BufferedReader stdError = new BufferedReader(new InputStreamReader(p.getErrorStream()));
 
-                    StringBuilder outputString = new StringBuilder();
-                    String line = null;
-                    while ((line = stdError.readLine()) != null) {
-                        outputString.append(line).append("\n");
+                                            StringBuilder outputString = new StringBuilder();
+                                            String line = null;
+                                            while ((line = stdError.readLine()) != null) {
+                                                outputString.append(line).append("\n");
+                                            }
+
+                                            p.waitFor();
+                                            p.destroy();
+
+                                            if (!filename.endsWith("nsbtx")) {
+                                                filename += ".nsbtx";
+                                            }
+                                            if (!nsbPath.endsWith("nsbtx")) {
+                                                nsbPath += ".nsbtx";
+                                            }
+
+                                            System.out.println(System.getProperty("user.dir"));
+                                            File srcFile = new File(System.getProperty("user.dir") + "/" + filename);
+                                            File dstFile = new File(nsbPath);
+                                            if (srcFile.exists()) {
+                                                try {
+                                                    Files.move(srcFile.toPath(), dstFile.toPath(),
+                                                            StandardCopyOption.REPLACE_EXISTING);
+                                                    try {
+                                                        byte[] nsbtxData = Files.readAllBytes(dstFile.toPath());
+                                                        Nsbtx2 nsbtx = NsbtxLoader2.loadNsbtx(nsbtxData);
+
+                                                        ExportNsbtxResultDialog resultDialog = new ExportNsbtxResultDialog(this, true);
+                                                        resultDialog.init(nsbtx);
+                                                        resultDialog.setLocationRelativeTo(this);
+                                                        resultDialog.setVisible(true);
+                                                    } catch (Exception ex) {
+                                                        JOptionPane.showMessageDialog(this, "NSBTX succesfully exported.",
+                                                                "NSBTX saved", JOptionPane.INFORMATION_MESSAGE);
+                                                    }
+                                                } catch (IOException ex) {
+                                                    JOptionPane.showMessageDialog(this,
+                                                            "File was not moved to the save directory. \n"
+                                                                    + "Reopen Pokemon DS Map Studio and try again.",
+                                                            "Problem saving generated file",
+                                                            JOptionPane.ERROR_MESSAGE);
+                                                }
+                                            } else {
+                                                ConverterErrorDialog dialog = new ConverterErrorDialog(this);
+                                                dialog.init("There was a problem creating the NSBTX file. \n"
+                                                                + "The output from the converter is:",
+                                                        outputString.toString());
+                                                dialog.setTitle("Problem generating file");
+                                                dialog.setLocationRelativeTo(this);
+                                                dialog.setVisible(true);
+                                            }
+                                        } catch (IOException ex) {
+                                            JOptionPane.showMessageDialog(this,
+                                                    "The program \"g3dcvtr.exe\" is not found in the \"converter\" folder.\n"
+                                                            + "Put the program and its *.dll files in the folder and try again.",
+                                                    "Converter not found",
+                                                    JOptionPane.ERROR_MESSAGE);
+                                        } catch (InterruptedException ex) {
+                                            JOptionPane.showMessageDialog(this,
+                                                    "The model was not converted",
+                                                    "Problem converting the model",
+                                                    JOptionPane.ERROR_MESSAGE);
+                                        }
+                                    }
+                                }
+                        );
                     }
-
-                    p.waitFor();
-                    p.destroy();
-
-                    if (!filename.endsWith("nsbtx")) {
-                        filename += ".nsbtx";
-                    }
-                    if (!nsbPath.endsWith("nsbtx")) {
-                        nsbPath += ".nsbtx";
-                    }
-
-                    System.out.println(System.getProperty("user.dir"));
-                    File srcFile = new File(System.getProperty("user.dir") + "/" + filename);
-                    File dstFile = new File(nsbPath);
-                    if (srcFile.exists()) {
-                        try {
-                            Files.move(srcFile.toPath(), dstFile.toPath(),
-                                    StandardCopyOption.REPLACE_EXISTING);
-                            try {
-                                byte[] nsbtxData = Files.readAllBytes(dstFile.toPath());
-                                Nsbtx2 nsbtx = NsbtxLoader2.loadNsbtx(nsbtxData);
-
-                                ExportNsbtxResultDialog resultDialog = new ExportNsbtxResultDialog(this, true);
-                                resultDialog.init(nsbtx);
-                                resultDialog.setLocationRelativeTo(this);
-                                resultDialog.setVisible(true);
-                            } catch (Exception ex) {
-                                JOptionPane.showMessageDialog(this, "NSBTX succesfully exported.",
-                                        "NSBTX saved", JOptionPane.INFORMATION_MESSAGE);
-                            }
-                        } catch (IOException ex) {
-                            JOptionPane.showMessageDialog(this,
-                                    "File was not moved to the save directory. \n"
-                                            + "Reopen Pokemon DS Map Studio and try again.",
-                                    "Problem saving generated file",
-                                    JOptionPane.ERROR_MESSAGE);
-                        }
-                    } else {
-                        ConverterErrorDialog dialog = new ConverterErrorDialog(this);
-                        dialog.init("There was a problem creating the NSBTX file. \n"
-                                        + "The output from the converter is:",
-                                outputString.toString());
-                        dialog.setTitle("Problem generating file");
-                        dialog.setLocationRelativeTo(this);
-                        dialog.setVisible(true);
-                    }
-                } catch (IOException ex) {
-                    JOptionPane.showMessageDialog(this,
-                            "The program \"g3dcvtr.exe\" is not found in the \"converter\" folder.\n"
-                                    + "Put the program and its *.dll files in the folder and try again.",
-                            "Converter not found",
-                            JOptionPane.ERROR_MESSAGE);
-                } catch (InterruptedException ex) {
-                    JOptionPane.showMessageDialog(this,
-                            "The model was not converted",
-                            "Problem converting the model",
-                            JOptionPane.ERROR_MESSAGE);
                 }
-            }
-        }
+        );
     }
 
     public void saveAreasAsBtxWithDialog() {

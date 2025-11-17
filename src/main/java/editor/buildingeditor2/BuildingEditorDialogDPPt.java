@@ -28,6 +28,7 @@ import java.awt.Color;
 
 import nitroreader.nsbva.NSBVA;
 import nitroreader.nsbva.NSBVAreader;
+import utils.FileChooserUtils;
 import utils.Utils.MutableBoolean;
 
 import java.awt.Component;
@@ -205,90 +206,104 @@ public class BuildingEditorDialogDPPt extends JDialog {
 
     private void jbAddBuildingActionPerformed(ActionEvent evt) {
         if (buildHandler.getBuildModelList() != null) {
-            final JFileChooser fc = new JFileChooser();
-            if (handler.getLastBuildDirectoryUsed() != null) {
-                fc.setCurrentDirectory(new File(handler.getLastBuildDirectoryUsed()));
-            }
-            fc.setFileFilter(new FileNameExtensionFilter("NSBMD (*.nsbmd)", "nsbmd"));
-            fc.setApproveButtonText("Open");
-            fc.setDialogTitle("Add a new NSBMD Building Model");
-            final int returnVal = fc.showOpenDialog(this);
-            if (returnVal == JFileChooser.APPROVE_OPTION) {
-                try {
-                    handler.setLastBuildDirectoryUsed(fc.getSelectedFile().getParent());
+            File lastDir = handler.getLastBuildDirectoryUsed() != null
+                    ? new File(handler.getLastBuildDirectoryUsed())
+                    : null;
 
-                    buildHandler.addBuilding(fc.getSelectedFile().getPath());
+            FileChooserUtils.selectFile(
+                    "Add a new NSBMD Building Model",
+                    lastDir,
+                    "NSBMD (*.nsbmd)",
+                    new String[]{"*.nsbmd"},
+                    selectedFile -> {
+                        if (selectedFile != null) {
+                            try {
+                                handler.setLastBuildDirectoryUsed(selectedFile.getParent());
 
-                    updateViewBuildModelList(buildHandler.getBuildModelList().getSize() - 1);
-                    updateViewSelectedBuildAnimationsList(0);
-                    updateViewMaterialOrderList(0);
-                } catch (IOException ex) {
-                    JOptionPane.showMessageDialog(this, "There was a problem reading the NSBMD file",
-                            "Error opening NSBMD file", JOptionPane.ERROR_MESSAGE);
-                }
-            }
+                                buildHandler.addBuilding(selectedFile.getPath());
+
+                                updateViewBuildModelList(buildHandler.getBuildModelList().getSize() - 1);
+                                updateViewSelectedBuildAnimationsList(0);
+                                updateViewMaterialOrderList(0);
+                            } catch (IOException ex) {
+                                JOptionPane.showMessageDialog(this, "There was a problem reading the NSBMD file",
+                                        "Error opening NSBMD file", JOptionPane.ERROR_MESSAGE);
+                            }
+                        }
+                    }
+            );
         }
     }
 
     private void jbReplaceBuildingActionPerformed(ActionEvent evt) {
         if (buildHandler.getBuildModelList() != null) {
-            final JFileChooser fc = new JFileChooser();
-            if (handler.getLastBuildDirectoryUsed() != null) {
-                fc.setCurrentDirectory(new File(handler.getLastBuildDirectoryUsed()));
-            }
-            fc.setFileFilter(new FileNameExtensionFilter("NSBMD (*.nsbmd)", "nsbmd"));
-            fc.setApproveButtonText("Open");
-            fc.setDialogTitle("Select the new NSBMD Building Model (material order will be deleted)");
-            final int returnVal = fc.showOpenDialog(this);
-            if (returnVal == JFileChooser.APPROVE_OPTION) {
-                try {
-                    handler.setLastBuildDirectoryUsed(fc.getSelectedFile().getParent());
+            File lastDir = handler.getLastBuildDirectoryUsed() != null
+                    ? new File(handler.getLastBuildDirectoryUsed())
+                    : null;
 
-                    buildHandler.replaceBuilding(jlBuildModel.getSelectedIndex(), fc.getSelectedFile().getPath());
+            FileChooserUtils.selectFile(
+                    "Select the new NSBMD Building Model (material order will be deleted)",
+                    lastDir,
+                    "NSBMD (*.nsbmd)",
+                    new String[]{"*.nsbmd"},
+                    selectedFile -> {
+                        if (selectedFile != null) {
+                            try {
+                                handler.setLastBuildDirectoryUsed(selectedFile.getParent());
 
-                    updateViewBuildModelList(jlBuildModel.getSelectedIndex());
-                    updateViewSelectedBuildAnimationsList(0);
-                    updateViewMaterialOrderList(0);
+                                buildHandler.replaceBuilding(jlBuildModel.getSelectedIndex(), selectedFile.getPath());
 
-                } catch (IOException ex) {
-                    JOptionPane.showMessageDialog(this, "There was a problem reading the NSBMD file",
-                            "Error opening NSBMD file", JOptionPane.ERROR_MESSAGE);
-                }
-            }
+                                updateViewBuildModelList(jlBuildModel.getSelectedIndex());
+                                updateViewSelectedBuildAnimationsList(0);
+                                updateViewMaterialOrderList(0);
+
+                            } catch (IOException ex) {
+                                JOptionPane.showMessageDialog(this, "There was a problem reading the NSBMD file",
+                                        "Error opening NSBMD file", JOptionPane.ERROR_MESSAGE);
+                            }
+                        }
+                    }
+            );
         }
     }
 
     private void jbExportBuildingActionPerformed(ActionEvent evt) {
         if (buildHandler.getBuildModelList() != null) {
-            final JFileChooser fc = new JFileChooser();
-            if (handler.getLastBuildDirectoryUsed() != null) {
-                fc.setCurrentDirectory(new File(handler.getLastBuildDirectoryUsed()));
-            }
-            fc.setFileFilter(new FileNameExtensionFilter("NSBMD (*.nsbmd)", "nsbmd"));
-            fc.setApproveButtonText("Save");
-            fc.setDialogTitle("Save the NSBMD Building Model");
-            try {//TODO: Replace this with some index bounds cheking?
+            File lastDir = handler.getLastBuildDirectoryUsed() != null
+                    ? new File(handler.getLastBuildDirectoryUsed())
+                    : null;
+
+            File initialFile = null;
+            try {
                 String fileName = buildHandler.getBuildModelList().getModelsName().get(jlBuildModel.getSelectedIndex());
-                fc.setSelectedFile(new File(fileName + ".nsbmd"));
+                initialFile = new File(fileName + ".nsbmd");
             } catch (Exception ex) {
                 ex.printStackTrace();
             }
-            final int returnVal = fc.showOpenDialog(this);
-            if (returnVal == JFileChooser.APPROVE_OPTION) {
-                try {
-                    handler.setLastBuildDirectoryUsed(fc.getSelectedFile().getParent());
 
-                    if (!fc.getSelectedFile().getPath().isEmpty()) {
-                        buildHandler.saveBuilding(jlBuildModel.getSelectedIndex(), fc.getSelectedFile().getPath());
-                    } else {
-                        JOptionPane.showMessageDialog(this, "The entered name must be valid",
-                                "Enter a valid name", JOptionPane.ERROR_MESSAGE);
+            FileChooserUtils.saveFile(
+                    "Save the NSBMD Building Model",
+                    lastDir != null ? lastDir : (initialFile != null ? initialFile.getParentFile() : null),
+                    "NSBMD (*.nsbmd)",
+                    new String[]{"*.nsbmd"},
+                    selectedFile -> {
+                        if (selectedFile != null) {
+                            try {
+                                handler.setLastBuildDirectoryUsed(selectedFile.getParent());
+
+                                if (!selectedFile.getPath().isEmpty()) {
+                                    buildHandler.saveBuilding(jlBuildModel.getSelectedIndex(), selectedFile.getPath());
+                                } else {
+                                    JOptionPane.showMessageDialog(this, "The entered name must be valid",
+                                            "Enter a valid name", JOptionPane.ERROR_MESSAGE);
+                                }
+                            } catch (IOException ex) {
+                                JOptionPane.showMessageDialog(this, "There was a problem writing the NSBMD file",
+                                        "Error writing NSBMD file", JOptionPane.ERROR_MESSAGE);
+                            }
+                        }
                     }
-                } catch (IOException ex) {
-                    JOptionPane.showMessageDialog(this, "There was a problem writing the NSBMD file",
-                            "Error writing NSBMD file", JOptionPane.ERROR_MESSAGE);
-                }
-            }
+            );
         }
     }
 
@@ -447,87 +462,101 @@ public class BuildingEditorDialogDPPt extends JDialog {
 
     private void jbAddAnimActionPerformed(ActionEvent evt) {
         if (buildHandler.getGlobalAnimationsList() != null) {
-            final JFileChooser fc = new JFileChooser();
-            if (handler.getLastBuildDirectoryUsed() != null) {
-                fc.setCurrentDirectory(new File(handler.getLastBuildDirectoryUsed()));
-            }
-            fc.setFileFilter(new FileNameExtensionFilter("Animation Files (*.nsbca, *.nsbta, *.nsbtp, *.nsbma, *.nsbva)", "nsbca", "nsbta", "nsbtp", "nsbma", "nsbva"));
-            fc.setApproveButtonText("Open");
-            fc.setDialogTitle("Add a new Animation");
-            final int returnVal = fc.showOpenDialog(this);
-            if (returnVal == JFileChooser.APPROVE_OPTION) {
-                try {
-                    handler.setLastBuildDirectoryUsed(fc.getSelectedFile().getParent());
+            File lastDir = handler.getLastBuildDirectoryUsed() != null
+                    ? new File(handler.getLastBuildDirectoryUsed())
+                    : null;
 
-                    buildHandler.addAnimationFile(fc.getSelectedFile().getPath());
+            FileChooserUtils.selectFile(
+                    "Add a new Animation",
+                    lastDir,
+                    "Animation Files (*.nsbca, *.nsbta, *.nsbtp, *.nsbma, *.nsbva)",
+                    new String[]{"*.nsbca", "*.nsbta", "*.nsbtp", "*.nsbma", "*.nsbva"},
+                    selectedFile -> {
+                        if (selectedFile != null) {
+                            try {
+                                handler.setLastBuildDirectoryUsed(selectedFile.getParent());
 
-                    updateViewAnimationsList(jlAnimationsList.getModel().getSize());
-                } catch (IOException ex) {
-                    JOptionPane.showMessageDialog(this, "There was a problem reading the animation file",
-                            "Error opening animation file", JOptionPane.ERROR_MESSAGE);
-                }
-            }
+                                buildHandler.addAnimationFile(selectedFile.getPath());
+
+                                updateViewAnimationsList(jlAnimationsList.getModel().getSize());
+                            } catch (IOException ex) {
+                                JOptionPane.showMessageDialog(this, "There was a problem reading the animation file",
+                                        "Error opening animation file", JOptionPane.ERROR_MESSAGE);
+                            }
+                        }
+                    }
+            );
         }
     }
 
     private void jbReplaceAnimActionPerformed(ActionEvent evt) {
         if (buildHandler.getGlobalAnimationsList() != null) {
-            final JFileChooser fc = new JFileChooser();
-            if (handler.getLastBuildDirectoryUsed() != null) {
-                fc.setCurrentDirectory(new File(handler.getLastBuildDirectoryUsed()));
-            }
-            fc.setFileFilter(new FileNameExtensionFilter("Animation Files (*.nsbca, *.nsbta, *.nsbtp, *.nsbma, *.nsbva)", "nsbca", "nsbta", "nsbtp", "nsbma", "nsbva"));
-            fc.setApproveButtonText("Open");
-            fc.setDialogTitle("Select the new Animation");
-            final int returnVal = fc.showOpenDialog(this);
-            if (returnVal == JFileChooser.APPROVE_OPTION) {
-                try {
-                    handler.setLastBuildDirectoryUsed(fc.getSelectedFile().getParent());
+            File lastDir = handler.getLastBuildDirectoryUsed() != null
+                    ? new File(handler.getLastBuildDirectoryUsed())
+                    : null;
 
-                    buildHandler.replaceAnimationFile(jlAnimationsList.getSelectedIndex(), fc.getSelectedFile().getPath());
+            FileChooserUtils.selectFile(
+                    "Select the new Animation",
+                    lastDir,
+                    "Animation Files (*.nsbca, *.nsbta, *.nsbtp, *.nsbma, *.nsbva)",
+                    new String[]{"*.nsbca", "*.nsbta", "*.nsbtp", "*.nsbma", "*.nsbva"},
+                    selectedFile -> {
+                        if (selectedFile != null) {
+                            try {
+                                handler.setLastBuildDirectoryUsed(selectedFile.getParent());
 
-                    updateViewAnimationsList(jlAnimationsList.getSelectedIndex());
-                } catch (IOException ex) {
-                    JOptionPane.showMessageDialog(this, "There was a problem reading the animation file",
-                            "Error opening animation file", JOptionPane.ERROR_MESSAGE);
-                }
-            }
+                                buildHandler.replaceAnimationFile(jlAnimationsList.getSelectedIndex(), selectedFile.getPath());
+
+                                updateViewAnimationsList(jlAnimationsList.getSelectedIndex());
+                            } catch (IOException ex) {
+                                JOptionPane.showMessageDialog(this, "There was a problem reading the animation file",
+                                        "Error opening animation file", JOptionPane.ERROR_MESSAGE);
+                            }
+                        }
+                    }
+            );
         }
     }
 
     private void jbExportAnimationActionPerformed(ActionEvent evt) {
         if (buildHandler.getGlobalAnimationsList() != null) {
-            final JFileChooser fc = new JFileChooser();
-            if (handler.getLastBuildDirectoryUsed() != null) {
-                fc.setCurrentDirectory(new File(handler.getLastBuildDirectoryUsed()));
-            }
+            File lastDir = handler.getLastBuildDirectoryUsed() != null
+                    ? new File(handler.getLastBuildDirectoryUsed())
+                    : null;
+
             String type = buildHandler.getGlobalAnimationsList().getAnimations().get(jlAnimationsList.getSelectedIndex()).getExtensionName();
 
-            fc.setFileFilter(new FileNameExtensionFilter(type.toUpperCase() + " (*." + type + ")", type));
-            fc.setApproveButtonText("Save");
-            fc.setDialogTitle("Save the Animation");
-            try {//TODO: Replace this with some index bounds cheking?
+            File initialFile = null;
+            try {
                 String fileName = buildHandler.getGlobalAnimationsList().getAnimations().get(jlAnimationsList.getSelectedIndex()).getName();
-                fc.setSelectedFile(new File(fileName + "." + type));
+                initialFile = new File(fileName + "." + type);
             } catch (Exception ex) {
                 ex.printStackTrace();
             }
-            final int returnVal = fc.showOpenDialog(this);
-            if (returnVal == JFileChooser.APPROVE_OPTION) {
-                try {
-                    handler.setLastBuildDirectoryUsed(fc.getSelectedFile().getParent());
 
-                    if (!fc.getSelectedFile().getPath().isEmpty()) {
-                        buildHandler.saveAnimationFile(jlAnimationsList.getSelectedIndex(), fc.getSelectedFile().getPath());
-                    } else {
-                        JOptionPane.showMessageDialog(this, "The entered name must be valid",
-                                "Enter a valid name", JOptionPane.ERROR_MESSAGE);
+            FileChooserUtils.saveFile(
+                    "Save the Animation",
+                    lastDir != null ? lastDir : (initialFile != null ? initialFile.getParentFile() : null),
+                    type.toUpperCase() + " (*." + type + ")",
+                    new String[]{"*." + type},
+                    selectedFile -> {
+                        if (selectedFile != null) {
+                            try {
+                                handler.setLastBuildDirectoryUsed(selectedFile.getParent());
+
+                                if (!selectedFile.getPath().isEmpty()) {
+                                    buildHandler.saveAnimationFile(jlAnimationsList.getSelectedIndex(), selectedFile.getPath());
+                                } else {
+                                    JOptionPane.showMessageDialog(this, "The entered name must be valid",
+                                            "Enter a valid name", JOptionPane.ERROR_MESSAGE);
+                                }
+                            } catch (IOException ex) {
+                                JOptionPane.showMessageDialog(this, "There was a problem writing the Animation file",
+                                        "Error writing Animation file", JOptionPane.ERROR_MESSAGE);
+                            }
+                        }
                     }
-                } catch (IOException ex) {
-                    JOptionPane.showMessageDialog(this, "There was a problem writing the Animation file",
-                            "Error writing Animation file", JOptionPane.ERROR_MESSAGE);
-                }
-            }
+            );
         }
     }
 
@@ -805,62 +834,70 @@ public class BuildingEditorDialogDPPt extends JDialog {
     private void jbAddTsetActionPerformed(ActionEvent evt) {
         if (buildHandler.getBuildTilesetList() != null && buildHandler.getAreaBuildList() != null) {
 
-            final JFileChooser fc = new JFileChooser();
-            if (handler.getLastBuildDirectoryUsed() != null) {
-                fc.setCurrentDirectory(new File(handler.getLastBuildDirectoryUsed()));
-            }
-            fc.setFileFilter(new FileNameExtensionFilter("NSBTX (*.nsbtx)", "nsbtx"));
-            fc.setApproveButtonText("Open");
-            fc.setDialogTitle("Add a new Building NSBTX");
-            final int returnVal = fc.showOpenDialog(this);
-            if (returnVal == JFileChooser.APPROVE_OPTION) {
-                try {
-                    handler.setLastBuildDirectoryUsed(fc.getSelectedFile().getParent());
+            File lastDir = handler.getLastBuildDirectoryUsed() != null
+                    ? new File(handler.getLastBuildDirectoryUsed())
+                    : null;
 
-                    byte[] data = Files.readAllBytes(fc.getSelectedFile().toPath());
+            FileChooserUtils.selectFile(
+                    "Add a new Building NSBTX",
+                    lastDir,
+                    "NSBTX (*.nsbtx)",
+                    new String[]{"*.nsbtx"},
+                    selectedFile -> {
+                        if (selectedFile != null) {
+                            try {
+                                handler.setLastBuildDirectoryUsed(selectedFile.getParent());
 
-                    buildHandler.addBuildingTileset(data);
+                                byte[] data = Files.readAllBytes(selectedFile.toPath());
 
-                    updateViewBuildTsetList(buildHandler.getBuildTilesetList().getTilesets().size() - 1);
-                    updateViewAreaBuildList(buildHandler.getAreaBuildList().getAreaBuilds().size() - 1);
+                                buildHandler.addBuildingTileset(data);
 
-                } catch (Exception ex) {
-                    ex.printStackTrace();
-                    JOptionPane.showMessageDialog(this,
-                            "There was a problem adding the NSBTX",
-                            "Can't add NSBTX", JOptionPane.ERROR_MESSAGE);
-                }
-            }
+                                updateViewBuildTsetList(buildHandler.getBuildTilesetList().getTilesets().size() - 1);
+                                updateViewAreaBuildList(buildHandler.getAreaBuildList().getAreaBuilds().size() - 1);
+
+                            } catch (Exception ex) {
+                                ex.printStackTrace();
+                                JOptionPane.showMessageDialog(this,
+                                        "There was a problem adding the NSBTX",
+                                        "Can't add NSBTX", JOptionPane.ERROR_MESSAGE);
+                            }
+                        }
+                    }
+            );
         }
     }
 
     private void jbReplaceTsetActionPerformed(ActionEvent evt) {
         if (buildHandler.getBuildTilesetList() != null && buildHandler.getAreaBuildList() != null) {
 
-            final JFileChooser fc = new JFileChooser();
-            if (handler.getLastBuildDirectoryUsed() != null) {
-                fc.setCurrentDirectory(new File(handler.getLastBuildDirectoryUsed()));
-            }
-            fc.setFileFilter(new FileNameExtensionFilter("NSBTX (*.nsbtx)", "nsbtx"));
-            fc.setApproveButtonText("Open");
-            fc.setDialogTitle("Replace the Building NSBTX");
-            final int returnVal = fc.showOpenDialog(this);
-            if (returnVal == JFileChooser.APPROVE_OPTION) {
-                try {
-                    handler.setLastBuildDirectoryUsed(fc.getSelectedFile().getParent());
+            File lastDir = handler.getLastBuildDirectoryUsed() != null
+                    ? new File(handler.getLastBuildDirectoryUsed())
+                    : null;
 
-                    byte[] data = Files.readAllBytes(fc.getSelectedFile().toPath());
+            FileChooserUtils.selectFile(
+                    "Replace the Building NSBTX",
+                    lastDir,
+                    "NSBTX (*.nsbtx)",
+                    new String[]{"*.nsbtx"},
+                    selectedFile -> {
+                        if (selectedFile != null) {
+                            try {
+                                handler.setLastBuildDirectoryUsed(selectedFile.getParent());
 
-                    buildHandler.replaceBuildingTileset(jlBuildTsetList.getSelectedIndex(), data);
+                                byte[] data = Files.readAllBytes(selectedFile.toPath());
 
-                    updateViewBuildTsetList(jlBuildTsetList.getSelectedIndex());
-                } catch (Exception ex) {
-                    ex.printStackTrace();
-                    JOptionPane.showMessageDialog(this,
-                            "There was a problem adding the NSBTX",
-                            "Can't add NSBTX", JOptionPane.ERROR_MESSAGE);
-                }
-            }
+                                buildHandler.replaceBuildingTileset(jlBuildTsetList.getSelectedIndex(), data);
+
+                                updateViewBuildTsetList(jlBuildTsetList.getSelectedIndex());
+                            } catch (Exception ex) {
+                                ex.printStackTrace();
+                                JOptionPane.showMessageDialog(this,
+                                        "There was a problem adding the NSBTX",
+                                        "Can't add NSBTX", JOptionPane.ERROR_MESSAGE);
+                            }
+                        }
+                    }
+            );
         }
 
 
@@ -868,35 +905,41 @@ public class BuildingEditorDialogDPPt extends JDialog {
 
     private void jbExportTilesetActionPerformed(ActionEvent evt) {
         if (buildHandler.getBuildModelList() != null) {
-            final JFileChooser fc = new JFileChooser();
-            if (handler.getLastBuildDirectoryUsed() != null) {
-                fc.setCurrentDirectory(new File(handler.getLastBuildDirectoryUsed()));
-            }
-            fc.setFileFilter(new FileNameExtensionFilter("NSBTX (*.nsbtx)", "nsbtx"));
-            fc.setApproveButtonText("Save");
-            fc.setDialogTitle("Save Building's NSBTX");
-            try {//TODO: Replace this with some index bounds cheking?
+            File lastDir = handler.getLastBuildDirectoryUsed() != null
+                    ? new File(handler.getLastBuildDirectoryUsed())
+                    : null;
+
+            File initialFile = null;
+            try {
                 String fileName = "Building Tileset " + String.valueOf(jlBuildTsetList.getSelectedIndex());
-                fc.setSelectedFile(new File(fileName + ".nsbtx"));
+                initialFile = new File(fileName + ".nsbtx");
             } catch (Exception ex) {
                 ex.printStackTrace();
             }
-            final int returnVal = fc.showOpenDialog(this);
-            if (returnVal == JFileChooser.APPROVE_OPTION) {
-                try {
-                    handler.setLastBuildDirectoryUsed(fc.getSelectedFile().getParent());
 
-                    if (!fc.getSelectedFile().getPath().isEmpty()) {
-                        buildHandler.saveBuildingTileset(jlBuildTsetList.getSelectedIndex(), fc.getSelectedFile().getPath());
-                    } else {
-                        JOptionPane.showMessageDialog(this, "The entered name must be valid",
-                                "Enter a valid name", JOptionPane.ERROR_MESSAGE);
+            FileChooserUtils.saveFile(
+                    "Save Building's NSBTX",
+                    lastDir != null ? lastDir : (initialFile != null ? initialFile.getParentFile() : null),
+                    "NSBTX (*.nsbtx)",
+                    new String[]{"*.nsbtx"},
+                    selectedFile -> {
+                        if (selectedFile != null) {
+                            try {
+                                handler.setLastBuildDirectoryUsed(selectedFile.getParent());
+
+                                if (!selectedFile.getPath().isEmpty()) {
+                                    buildHandler.saveBuildingTileset(jlBuildTsetList.getSelectedIndex(), selectedFile.getPath());
+                                } else {
+                                    JOptionPane.showMessageDialog(this, "The entered name must be valid",
+                                            "Enter a valid name", JOptionPane.ERROR_MESSAGE);
+                                }
+                            } catch (IOException ex) {
+                                JOptionPane.showMessageDialog(this, "There was a problem writing the NSBTX file",
+                                        "Error writing NSBTX file", JOptionPane.ERROR_MESSAGE);
+                            }
+                        }
                     }
-                } catch (IOException ex) {
-                    JOptionPane.showMessageDialog(this, "There was a problem writing the NSBTX file",
-                            "Error writing NSBTX file", JOptionPane.ERROR_MESSAGE);
-                }
-            }
+            );
         }
     }
 
@@ -1005,64 +1048,74 @@ public class BuildingEditorDialogDPPt extends JDialog {
     }
 
     private void jbImportBldActionPerformed(ActionEvent evt) {
-        final JFileChooser fc = new JFileChooser();
-        if (handler.getLastBuildDirectoryUsed() != null) {
-            fc.setCurrentDirectory(new File(handler.getLastBuildDirectoryUsed()));
-        }
-        fc.setFileFilter(new FileNameExtensionFilter("BLD (*.bld)", "bld"));
-        fc.setApproveButtonText("Open");
-        fc.setDialogTitle("Import Buildings File");
-        final int returnVal = fc.showOpenDialog(this);
-        if (returnVal == JFileChooser.APPROVE_OPTION) {
-            try {
-                handler.setLastBuildDirectoryUsed(fc.getSelectedFile().getParent());
+        File lastDir = handler.getLastBuildDirectoryUsed() != null
+                ? new File(handler.getLastBuildDirectoryUsed())
+                : null;
 
-                BuildFile buildFile = new BuildFile(fc.getSelectedFile().getAbsolutePath());
+        FileChooserUtils.selectFile(
+                "Import Buildings File",
+                lastDir,
+                "BLD (*.bld)",
+                new String[]{"*.bld"},
+                selectedFile -> {
+                    if (selectedFile != null) {
+                        try {
+                            handler.setLastBuildDirectoryUsed(selectedFile.getParent());
 
-                handler.setBuildings(buildFile);
+                            BuildFile buildFile = new BuildFile(selectedFile.getAbsolutePath());
 
-                updateViewBuildFileList(0);
-                updateViewNitroDisplayMap();
-            } catch (IOException ex) {
-                JOptionPane.showMessageDialog(this,
-                        "There was a problem importing the BLD file.",
-                        "Can't import BLD file", JOptionPane.ERROR_MESSAGE);
-            }
-        }
+                            handler.setBuildings(buildFile);
+
+                            updateViewBuildFileList(0);
+                            updateViewNitroDisplayMap();
+                        } catch (IOException ex) {
+                            JOptionPane.showMessageDialog(this,
+                                    "There was a problem importing the BLD file.",
+                                    "Can't import BLD file", JOptionPane.ERROR_MESSAGE);
+                        }
+                    }
+                }
+        );
     }
 
     private void jbExportBldActionPerformed(ActionEvent evt) {
         if (handler.getBuildings() != null) {
-            final JFileChooser fc = new JFileChooser();
-            if (handler.getLastMapDirectoryUsed() != null) {
-                fc.setCurrentDirectory(new File(handler.getLastMapDirectoryUsed()));
-            }
-            fc.setFileFilter(new FileNameExtensionFilter("BLD (*.bld)", "bld"));
-            fc.setApproveButtonText("Save");
-            fc.setDialogTitle("Save Building File");
-            try {//TODO: Replace this with some index bounds cheking?
+            File lastDir = handler.getLastMapDirectoryUsed() != null
+                    ? new File(handler.getLastMapDirectoryUsed())
+                    : null;
+
+            File initialFile = null;
+            try {
                 File file = new File(handler.getMapMatrix().filePath);
                 String fileName = Utils.removeExtensionFromPath(file.getName()) + "." + BuildFile.fileExtension;
-                fc.setSelectedFile(new File(fileName));
+                initialFile = new File(fileName);
             } catch (Exception ex) {
                 ex.printStackTrace();
             }
-            final int returnVal = fc.showOpenDialog(this);
-            if (returnVal == JFileChooser.APPROVE_OPTION) {
-                try {
-                    handler.setLastMapDirectoryUsed(fc.getSelectedFile().getParent());
 
-                    if (!fc.getSelectedFile().getPath().isEmpty()) {
-                        handler.getBuildings().saveToFile(fc.getSelectedFile().getPath());
-                    } else {
-                        JOptionPane.showMessageDialog(this, "The entered name must be valid",
-                                "Enter a valid name", JOptionPane.ERROR_MESSAGE);
+            FileChooserUtils.saveFile(
+                    "Save Building File",
+                    lastDir != null ? lastDir : (initialFile != null ? initialFile.getParentFile() : null),
+                    "BLD (*.bld)",
+                    new String[]{"*.bld"},
+                    selectedFile -> {
+                        if (selectedFile != null) {
+                            try {
+                                handler.setLastMapDirectoryUsed(selectedFile.getParent());
+
+                                if (!selectedFile.getPath().isEmpty()) {
+                                    handler.getBuildings().saveToFile(selectedFile.getPath());
+                                } else {
+                                    JOptionPane.showMessageDialog(this, "The entered name must be valid",
+                                            "Enter a valid name", JOptionPane.ERROR_MESSAGE);
+                                }
+                            } catch (IOException ex) {
+                                JOptionPane.showMessageDialog(this, "There was a problem writing the BLD file",
+                                        "Error writing BLD file", JOptionPane.ERROR_MESSAGE);
+                            }
+                        }
                     }
-                } catch (IOException ex) {
-                    JOptionPane.showMessageDialog(this, "There was a problem writing the BLD file",
-                            "Error writing BLD file", JOptionPane.ERROR_MESSAGE);
-                }
-            }
+            );
         }
     }
 
@@ -1227,28 +1280,32 @@ public class BuildingEditorDialogDPPt extends JDialog {
     }
 
     private void jbOpenMapActionPerformed(ActionEvent evt) {
-        final JFileChooser fc = new JFileChooser();
-        if (handler.getLastMapDirectoryUsed() != null) {
-            fc.setCurrentDirectory(new File(handler.getLastMapDirectoryUsed()));
-        }
-        fc.setFileFilter(new FileNameExtensionFilter("NSBMD (*.nsbmd)", "nsbmd"));
-        fc.setApproveButtonText("Open");
-        fc.setDialogTitle("Open Map's NSBMD");
-        final int returnVal = fc.showOpenDialog(this);
-        if (returnVal == JFileChooser.APPROVE_OPTION) {
-            try {
-                handler.setLastMapDirectoryUsed(fc.getSelectedFile().getParent());
+        File lastDir = handler.getLastMapDirectoryUsed() != null
+                ? new File(handler.getLastMapDirectoryUsed())
+                : null;
 
-                byte[] mapData = Files.readAllBytes(fc.getSelectedFile().toPath());
-                nitroDisplayMap.getObjectGL(0).setNsbmdData(mapData);
+        FileChooserUtils.selectFile(
+                "Open Map's NSBMD",
+                lastDir,
+                "NSBMD (*.nsbmd)",
+                new String[]{"*.nsbmd"},
+                selectedFile -> {
+                    if (selectedFile != null) {
+                        try {
+                            handler.setLastMapDirectoryUsed(selectedFile.getParent());
 
-                nitroDisplayMap.requestUpdate();
-            } catch (Exception ex) {
-                JOptionPane.showMessageDialog(this,
-                        "There was problem importing the map's NSBMD",
-                        "Can't import map", JOptionPane.ERROR_MESSAGE);
-            }
-        }
+                            byte[] mapData = Files.readAllBytes(selectedFile.toPath());
+                            nitroDisplayMap.getObjectGL(0).setNsbmdData(mapData);
+
+                            nitroDisplayMap.requestUpdate();
+                        } catch (Exception ex) {
+                            JOptionPane.showMessageDialog(this,
+                                    "There was problem importing the map's NSBMD",
+                                    "Can't import map", JOptionPane.ERROR_MESSAGE);
+                        }
+                    }
+                }
+        );
 
     }
 

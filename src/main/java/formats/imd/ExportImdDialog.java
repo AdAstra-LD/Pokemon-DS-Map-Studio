@@ -8,6 +8,7 @@ import javax.swing.LayoutStyle;
 import javax.swing.border.*;
 import net.miginfocom.swing.*;
 
+import utils.FileChooserUtils;
 import utils.swing.*;
 import editor.handler.MapEditorHandler;
 
@@ -47,42 +48,25 @@ public class ExportImdDialog extends JDialog {
     }
 
     private void jbObjBrowseActionPerformed(ActionEvent e) {
-        final JFileChooser fc = new JFileChooser();
         File folder = new File(ExportPath);
-        fc.setCurrentDirectory(folder);
-        //fc.setSelectedFile(folder);
-        fc.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
-        fc.setFileFilter(new FileFilter() {
-            @Override
-            public boolean accept(File f) {
-                try {
-                    return f.isDirectory() || f.getName().endsWith(".obj");
-                } catch (Exception ex) {
-                    return false;
-                }
-            }
 
-            @Override
-            public String getDescription() {
-                return "Folder or OBJ file (*.obj)";
-            }
-        });
-        fc.setApproveButtonText("Select folder");
-        fc.setDialogTitle("Select the folder that contains the OBJ files");
-
-        final int returnValOpen = fc.showOpenDialog(this);
-        if (returnValOpen == JFileChooser.APPROVE_OPTION) {
-            File file = fc.getSelectedFile();
-            if (file.exists()) {
-                String folderPath;
-                if (file.isDirectory()) {
-                    folderPath = file.getPath();
-                } else {
-                    folderPath = file.getParent();
+        FileChooserUtils.selectFileOrDirectory(
+                "Select the folder that contains the OBJ files",
+                folder,
+                "OBJ file (*.obj)",
+                new String[]{"*.obj"},
+                selected -> {
+                    if (selected != null && selected.exists()) {
+                        String folderPath;
+                        if (selected.isDirectory()) {
+                            folderPath = selected.getPath();
+                        } else {
+                            folderPath = selected.getParent();
+                        }
+                        loadObjFilesFromFolder(folderPath);
+                    }
                 }
-                loadObjFilesFromFolder(folderPath);
-            }
-        }
+        );
     }
 
     private void jbSelectAllActionPerformed(ActionEvent e) {
@@ -138,21 +122,18 @@ public class ExportImdDialog extends JDialog {
     }
 
     private void jbImdBrowseActionPerformed(ActionEvent e) {
-        final JFileChooser fc = new JFileChooser();
         File folder = new File(ExportPath);
-        fc.setCurrentDirectory(folder);
-        fc.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
-        fc.setApproveButtonText("Select folder");
-        fc.setDialogTitle("Select the folder for exporting the IMD files");
 
-        final int returnValOpen = fc.showOpenDialog(this);
-        if (returnValOpen == JFileChooser.APPROVE_OPTION) {
-            File file = fc.getSelectedFile();
-            if (file.exists() && file.isDirectory()) {
-                imdFolderPath = file.getPath();
-                jtfImdFolderPath.setText(imdFolderPath);
-            }
-        }
+        FileChooserUtils.selectDirectory(
+                "Select the folder for exporting the IMD files",
+                folder,
+                selectedDirectory -> {
+                    if (selectedDirectory != null && selectedDirectory.isDirectory()) {
+                        imdFolderPath = selectedDirectory.getPath();
+                        jtfImdFolderPath.setText(imdFolderPath);
+                    }
+                }
+        );
     }
 
     public void init(MapEditorHandler handler) {

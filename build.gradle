@@ -2,21 +2,32 @@ plugins {
     id 'java'
     id 'idea'
     id 'application'
+    id 'org.openjfx.javafxplugin' version '0.1.0'
+}
+
+java {
+    sourceCompatibility = JavaVersion.VERSION_11
+    targetCompatibility = JavaVersion.VERSION_11
 }
 
 repositories {
     mavenCentral()
-    jcenter()
     flatDir {
         dirs 'libs'
     }
 }
 
+javafx {
+    version = "21"
+    modules = ['javafx.controls', 'javafx.swing']
+}
+
 dependencies {
     implementation fileTree(include: ['*.jar'], dir: 'libs')
-    implementation group: 'com.formdev', name: 'flatlaf', version: '3.0'
-    implementation group: 'com.miglayout', name: 'miglayout-swing', version: '11.0'
-    implementation 'org.json:json:20231013'
+    implementation group: 'com.formdev', name: 'flatlaf', version: '3.5.2'
+    implementation group: 'com.formdev', name: 'flatlaf-intellij-themes', version: '3.5.2'
+    implementation group: 'com.miglayout', name: 'miglayout-swing', version: '11.4.2'
+    implementation 'org.json:json:20240303'
 }
 
 version '2.2'

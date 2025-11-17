@@ -23,6 +23,7 @@ import javax.swing.JOptionPane;
 import javax.swing.filechooser.FileFilter;
 import net.miginfocom.swing.*;
 
+import utils.FileChooserUtils;
 import utils.Utils;
 import utils.swing.*;
 
@@ -335,21 +336,18 @@ public class ExportNsbtxDialog extends javax.swing.JDialog {
     }//GEN-LAST:event_jbDeselectAllActionPerformed
 
     private void jbNsbBrowseActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jbNsbBrowseActionPerformed
-        final JFileChooser fc = new JFileChooser();
         File folder = new File(ExportPath);
-        fc.setCurrentDirectory(folder);
-        fc.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
-        fc.setApproveButtonText("Select folder");
-        fc.setDialogTitle("Select the folder for exporting the IMD files");
 
-        final int returnValOpen = fc.showOpenDialog(this);
-        if (returnValOpen == JFileChooser.APPROVE_OPTION) {
-            File file = fc.getSelectedFile();
-            if (file.exists() && file.isDirectory()) {
-                nsbtxFolderPath = file.getPath();
-                jtfNsbtxFolderPath.setText(nsbtxFolderPath);
-            }
-        }
+        FileChooserUtils.selectDirectory(
+                "Select the folder for exporting the IMD files",
+                folder,
+                selectedDirectory -> {
+                    if (selectedDirectory != null && selectedDirectory.isDirectory()) {
+                        nsbtxFolderPath = selectedDirectory.getPath();
+                        jtfNsbtxFolderPath.setText(nsbtxFolderPath);
+                    }
+                }
+        );
     }//GEN-LAST:event_jbNsbBrowseActionPerformed
 
 

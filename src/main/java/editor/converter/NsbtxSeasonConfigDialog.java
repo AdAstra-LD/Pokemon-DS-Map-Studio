@@ -2,13 +2,17 @@ package editor.converter;
 import java.awt.*;
 import java.awt.event.*;
 import java.io.File;
+import java.util.function.Consumer;
 import javax.swing.*;
 
 import com.formdev.flatlaf.FlatDarculaLaf;
 import com.formdev.flatlaf.FlatLightLaf;
 import editor.MainFrame;
+import editor.buildingeditor2.tileset.BuildTileset;
+import editor.mapmatrix.MapMatrix;
 import jogamp.graph.font.typecast.ot.Fixed;
 import net.miginfocom.swing.*;
+import utils.FileChooserUtils;
 
 import static editor.MainFrame.prefs;
 import static editor.mapmatrix.MapMatrix.ExportPath;
@@ -46,60 +50,67 @@ public class NsbtxSeasonConfigDialog extends JDialog {
     }
 
     private void browseSpringTextureFolder(ActionEvent e) {
-        String temp = globalBrowseEventHandler("Select the folder of the spring textures");
-        springTextureFoldertxt.setText(temp);
+        globalBrowseEventHandler("Select the folder of the spring textures", path -> {
+            if (path != null) {
+                springTextureFoldertxt.setText(path);
+            }
+        });
     }
 
     private void browseSummerTextureFolder(ActionEvent e) {
-        String temp = globalBrowseEventHandler("Select the folder of the summer textures");
-        SummerTextureFolderTxt.setText(temp);
+        globalBrowseEventHandler("Select the folder of the summer textures", path -> {
+            if (path != null) {
+                SummerTextureFolderTxt.setText(path);
+            }
+        });
     }
 
     private void browseFallTextureFolder(ActionEvent e) {
-        String temp = globalBrowseEventHandler("Select the folder of the fall textures");
-        FallTextureFolderTxt.setText(temp);
+        globalBrowseEventHandler("Select the folder of the fall textures", path -> {
+            if (path != null) {
+                FallTextureFolderTxt.setText(path);
+            }
+        });
     }
 
     private void browseWinterTextureFolder(ActionEvent e) {
-        String temp = globalBrowseEventHandler("Select the folder of the winter textures");
-        WinterTextureFolderTxt.setText(temp);
+        globalBrowseEventHandler("Select the folder of the winter textures", path -> {
+            if (path != null) {
+                WinterTextureFolderTxt.setText(path);
+            }
+        });
     }
-
 
     private void browseTilesetFixedBtn(ActionEvent e) {
-        final JFileChooser fc = new JFileChooser();
         File folder = new File(ExportPath);
-        fc.setCurrentDirectory(folder);
-        fc.setApproveButtonText("Select folder");
-        fc.setDialogTitle("Select the tileset with the fixed textures and palette");
 
-        int returnValOpen = fc.showOpenDialog(this);
-        if (returnValOpen == JFileChooser.APPROVE_OPTION) {
-            File file = fc.getSelectedFile();
-            if (file.exists()) {
-                FixedTextureTilesetTxt.setText(file.getPath());
-            }
-        }
+        FileChooserUtils.selectFile(
+                "Select the tileset with the fixed textures and palette",
+                folder,
+                "NSBTX (*.nsbtx)",
+                new String[]{"*." + BuildTileset.ext },
+                selectedFile -> {
+                    if (selectedFile != null && selectedFile.exists()) {
+                        FixedTextureTilesetTxt.setText(selectedFile.getPath());
+                    }
+                }
+        );
     }
 
-    private String globalBrowseEventHandler(String description) {
-        final JFileChooser fc = new JFileChooser();
+    private void globalBrowseEventHandler(String description, Consumer<String> onFolderSelected) {
         File folder = new File(ExportPath);
-        fc.setCurrentDirectory(folder);
-        fc.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
-        fc.setApproveButtonText("Select folder");
-        fc.setDialogTitle(description);
 
-        int returnValOpen = fc.showOpenDialog(this);
-        if (returnValOpen == JFileChooser.APPROVE_OPTION) {
-            File file = fc.getSelectedFile();
-            if (file.exists() && file.isDirectory()) {
-
-
-                return file.getPath();
-            }
-        }
-        return null;
+        FileChooserUtils.selectDirectory(
+                description,
+                folder,
+                selectedDirectory -> {
+                    if (selectedDirectory != null && selectedDirectory.isDirectory()) {
+                        onFolderSelected.accept(selectedDirectory.getPath());
+                    } else {
+                        onFolderSelected.accept(null);
+                    }
+                }
+        );
     }
 
 

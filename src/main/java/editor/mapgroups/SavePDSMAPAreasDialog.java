@@ -17,6 +17,7 @@ import javax.swing.JCheckBox;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 
+import utils.FileChooserUtils;
 import utils.Utils;
 import utils.swing.*;
 
@@ -251,21 +252,18 @@ public class SavePDSMAPAreasDialog extends JDialog {
     }//GEN-LAST:event_jbDeselectAllActionPerformed
 
     private void jbNsbBrowseActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jbNsbBrowseActionPerformed
-        final JFileChooser fc = new JFileChooser();
         File folder = new File(Utils.removeExtensionFromPath(handler.getMapMatrix().filePath)).getParentFile();
-        fc.setCurrentDirectory(folder);
-        fc.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
-        fc.setApproveButtonText("Select folder");
-        fc.setDialogTitle("Select the folder for exporting the IMD files");
 
-        final int returnValOpen = fc.showOpenDialog(this);
-        if (returnValOpen == JFileChooser.APPROVE_OPTION) {
-            File file = fc.getSelectedFile();
-            if (file.exists() && file.isDirectory()) {
-                areaFolderPath = file.getPath();
-                jtfAreaFolderPath.setText(areaFolderPath);
-            }
-        }
+        FileChooserUtils.selectDirectory(
+                "Select the folder for exporting the IMD files",
+                folder,
+                selectedDirectory -> {
+                    if (selectedDirectory != null && selectedDirectory.isDirectory()) {
+                        areaFolderPath = selectedDirectory.getPath();
+                        jtfAreaFolderPath.setText(areaFolderPath);
+                    }
+                }
+        );
     }//GEN-LAST:event_jbNsbBrowseActionPerformed
 
 

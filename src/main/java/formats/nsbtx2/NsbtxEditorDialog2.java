@@ -30,6 +30,7 @@ import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.TransformerException;
 import net.miginfocom.swing.*;
 
+import utils.FileChooserUtils;
 import utils.swing.ThumbnailFileChooser;
 import utils.Utils;
 import utils.Utils.MutableBoolean;
@@ -324,36 +325,40 @@ public class NsbtxEditorDialog2 extends JDialog {
     }
 
     private void openNsbtxWithDialog() {
-        final JFileChooser fc = new JFileChooser();
-        if (handler.getLastNsbtxDirectoryUsed() != null) {
-            fc.setCurrentDirectory(new File(handler.getLastNsbtxDirectoryUsed()));
-        }
-        fc.setFileFilter(new FileNameExtensionFilter("NSBTX (*.nsbtx)", "nsbtx"));
-        fc.setApproveButtonText("Open");
-        fc.setDialogTitle("Open NSBTX File");
-        final int returnVal = fc.showOpenDialog(this);
-        if (returnVal == JFileChooser.APPROVE_OPTION) {
-            handler.setLastNsbtxDirectoryUsed(fc.getSelectedFile().getParent());
-            try {
-                nsbtxHandler.loadNsbtx(fc.getSelectedFile().getPath());
+        File lastDir = handler.getLastNsbtxDirectoryUsed() != null
+                ? new File(handler.getLastNsbtxDirectoryUsed())
+                : null;
 
-                updateViewTextureNameList(0);
-                updateViewPaletteNameList(0);
+        FileChooserUtils.selectFile(
+                "Open NSBTX File",
+                lastDir,
+                "NSBTX (*.nsbtx)",
+                new String[]{"*.nsbtx"},
+                selectedFile -> {
+                    if (selectedFile != null) {
+                        handler.setLastNsbtxDirectoryUsed(selectedFile.getParent());
+                        try {
+                            nsbtxHandler.loadNsbtx(selectedFile.getPath());
 
-                textureListEnabled = false;
-                jlTextureNames.setSelectedIndex(0);
-                textureListEnabled = true;
-                paletteListEnabled = false;
-                jlPaletteNames.setSelectedIndex(0);
-                paletteListEnabled = true;
+                            updateViewTextureNameList(0);
+                            updateViewPaletteNameList(0);
 
-                updateView();
+                            textureListEnabled = false;
+                            jlTextureNames.setSelectedIndex(0);
+                            textureListEnabled = true;
+                            paletteListEnabled = false;
+                            jlPaletteNames.setSelectedIndex(0);
+                            paletteListEnabled = true;
 
-            } catch (IOException ex) {
-                JOptionPane.showMessageDialog(this, "Can't open file.",
-                        "Error opening NSBTX", JOptionPane.ERROR_MESSAGE);
-            }
-        }
+                            updateView();
+
+                        } catch (IOException ex) {
+                            JOptionPane.showMessageDialog(this, "Can't open file.",
+                                    "Error opening NSBTX", JOptionPane.ERROR_MESSAGE);
+                        }
+                    }
+                }
+        );
     }
 
     private void saveTextureWithDialog() {
@@ -729,39 +734,43 @@ public class NsbtxEditorDialog2 extends JDialog {
     }
 
     private void importTexturesAndPalettesWithDialog() {
-        final JFileChooser fc = new JFileChooser();
-        if (handler.getLastNsbtxDirectoryUsed() != null) {
-            fc.setCurrentDirectory(new File(handler.getLastNsbtxDirectoryUsed()));
-        }
-        fc.setFileFilter(new FileNameExtensionFilter("NSBTX (*.nsbtx)", "nsbtx"));
-        fc.setApproveButtonText("Open");
-        fc.setDialogTitle("Choose the NSBTX to import data from");
-        final int returnVal = fc.showOpenDialog(this);
-        if (returnVal == JFileChooser.APPROVE_OPTION) {
-            handler.setLastNsbtxDirectoryUsed(fc.getSelectedFile().getParent());
-            try {
+        File lastDir = handler.getLastNsbtxDirectoryUsed() != null
+                ? new File(handler.getLastNsbtxDirectoryUsed())
+                : null;
 
-                Nsbtx2 nsbtx = NsbtxLoader2.loadNsbtx(fc.getSelectedFile().getPath());
+        FileChooserUtils.selectFile(
+                "Choose the NSBTX to import data from",
+                lastDir,
+                "NSBTX (*.nsbtx)",
+                new String[]{"*.nsbtx"},
+                selectedFile -> {
+                    if (selectedFile != null) {
+                        handler.setLastNsbtxDirectoryUsed(selectedFile.getParent());
+                        try {
 
-                final NsbtxImportDialog dialog = new NsbtxImportDialog(handler.getMainFrame());
-                dialog.init(nsbtx);
-                dialog.setLocationRelativeTo(this);
-                dialog.setVisible(true);
+                            Nsbtx2 nsbtx = NsbtxLoader2.loadNsbtx(selectedFile.getPath());
 
-                if (dialog.getReturnValue() == NsbtxImportDialog.APPROVE_OPTION) {
+                            final NsbtxImportDialog dialog = new NsbtxImportDialog(handler.getMainFrame());
+                            dialog.init(nsbtx);
+                            dialog.setLocationRelativeTo(this);
+                            dialog.setVisible(true);
 
-                    nsbtxHandler.getNsbtx().addNsbtx(dialog.getNsbtx());
+                            if (dialog.getReturnValue() == NsbtxImportDialog.APPROVE_OPTION) {
 
-                    updateViewTextureNameList(nsbtxHandler.getNsbtx().getTextures().size() - 1);
-                    updateViewPaletteNameList(nsbtxHandler.getNsbtx().getPalettes().size() - 1);
+                                nsbtxHandler.getNsbtx().addNsbtx(dialog.getNsbtx());
 
-                    updateView();
+                                updateViewTextureNameList(nsbtxHandler.getNsbtx().getTextures().size() - 1);
+                                updateViewPaletteNameList(nsbtxHandler.getNsbtx().getPalettes().size() - 1);
+
+                                updateView();
+                            }
+                        } catch (IOException ex) {
+                            JOptionPane.showMessageDialog(this, "Can't open file.",
+                                    "Error opening NSBTX", JOptionPane.ERROR_MESSAGE);
+                        }
+                    }
                 }
-            } catch (IOException ex) {
-                JOptionPane.showMessageDialog(this, "Can't open file.",
-                        "Error opening NSBTX", JOptionPane.ERROR_MESSAGE);
-            }
-        }
+        );
     }
 
     private void changeTextureName() {
@@ -841,32 +850,36 @@ public class NsbtxEditorDialog2 extends JDialog {
     private void saveNsbtxWithDialog() {
         if (nsbtxHandler.getNsbtx().hasTextures() && nsbtxHandler.getNsbtx().hasPalettes()) {
             if (!hasRepeatedTextures()) {
-                final JFileChooser fc = new JFileChooser();
-                if (handler.getLastNsbtxDirectoryUsed() != null) {
-                    fc.setCurrentDirectory(new File(handler.getLastNsbtxDirectoryUsed()));
-                }
-                fc.setFileFilter(new FileNameExtensionFilter("NSBTX (*.nsbtx)", "nsbtx"));
-                fc.setApproveButtonText("Save");
-                fc.setDialogTitle("Save NSBTX");
-                final int returnVal = fc.showOpenDialog(this);
-                if (returnVal == JFileChooser.APPROVE_OPTION) {
-                    handler.setLastNsbtxDirectoryUsed(fc.getSelectedFile().getParent());
-                    try {
-                        String path = fc.getSelectedFile().getPath();
-                        path = Utils.removeExtensionFromPath(path);
-                        path = Utils.addExtensionToPath(path, "imd");
+                File lastDir = handler.getLastNsbtxDirectoryUsed() != null
+                        ? new File(handler.getLastNsbtxDirectoryUsed())
+                        : null;
 
-                        NsbtxImd imd = new NsbtxImd(nsbtxHandler.getNsbtx());
+                FileChooserUtils.saveFile(
+                        "Save NSBTX",
+                        lastDir,
+                        "NSBTX (*.nsbtx)",
+                        new String[]{"*.nsbtx"},
+                        selectedFile -> {
+                            if (selectedFile != null) {
+                                handler.setLastNsbtxDirectoryUsed(selectedFile.getParent());
+                                try {
+                                    String path = selectedFile.getPath();
+                                    path = Utils.removeExtensionFromPath(path);
+                                    path = Utils.addExtensionToPath(path, "imd");
 
-                        imd.saveToFile(path);
+                                    NsbtxImd imd = new NsbtxImd(nsbtxHandler.getNsbtx());
 
-                        saveImdToNsbmd(path);
+                                    imd.saveToFile(path);
 
-                    } catch (IOException | ParserConfigurationException | TransformerException ex) {
-                        JOptionPane.showMessageDialog(this, "There was an error saving the IMD",
-                                "Error saving IMD", JOptionPane.ERROR_MESSAGE);
-                    }
-                }
+                                    saveImdToNsbmd(path);
+
+                                } catch (IOException | ParserConfigurationException | TransformerException ex) {
+                                    JOptionPane.showMessageDialog(this, "There was an error saving the IMD",
+                                            "Error saving IMD", JOptionPane.ERROR_MESSAGE);
+                                }
+                            }
+                        }
+                );
             }
         } else {
             JOptionPane.showMessageDialog(this,
