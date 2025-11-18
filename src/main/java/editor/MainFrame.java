@@ -89,6 +89,7 @@ import java.awt.event.*;
 import java.awt.image.BufferedImage;
 import java.io.*;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.util.List;
@@ -107,6 +108,8 @@ public class MainFrame extends JFrame {
     public static MapEditorHandler handler;
 
     private String stringForTextThread = "";
+
+    private String principalTilesetToReset = "";
 
     public static Preferences prefs = Preferences.userNodeForPackage(MainFrame.class);
     private static final List<String> recentMaps = new ArrayList<>();
@@ -858,6 +861,76 @@ public class MainFrame extends JFrame {
         moveTilesLeft();
     }
 
+    private Map<String, String> getSeasonalTilesetPaths() {
+        Map<String, String> seasonalPaths = new HashMap<>();
+
+        File mapFile = new File(handler.getMapMatrix().filePath);
+        File parentDir = mapFile.getParentFile();
+
+        String mainTilesetName = Utils.removeExtensionFromPath(mapFile.getName()) + "." + Tileset.fileExtension;
+        principalTilesetToReset = parentDir + "/" + mainTilesetName;
+
+        File seasonalDir = new File(parentDir, "seasonsTilesets");
+
+        if (seasonalDir.exists() && seasonalDir.isDirectory()) {
+            String[] seasons = {"spring", "summer", "fall", "winter"};
+            boolean allSeasonsExist = true;
+
+            for (String season : seasons) {
+                File seasonDir = new File(seasonalDir, season);
+                File seasonTileset = new File(seasonDir, season + ".pdsts");
+
+                if (seasonTileset.exists()) {
+                    seasonalPaths.put(season, seasonTileset.getAbsolutePath());
+                } else {
+                    allSeasonsExist = false;
+                    break;
+                }
+            }
+
+            if (!allSeasonsExist) {
+                seasonalPaths.clear();
+            }
+        }
+
+        return seasonalPaths;
+    }
+
+    private void changeSeasonTileset(ActionEvent e) {
+        Map<String, String> seasonalPaths = getSeasonalTilesetPaths();
+        noTilesetSeaonFoundLabel.setText("");
+        if (!seasonalPaths.isEmpty()) {
+            String springPath = seasonalPaths.get("spring");
+            String summerPath = seasonalPaths.get("summer");
+            String fallPath = seasonalPaths.get("fall");
+            String winterPath = seasonalPaths.get("winter");
+
+            String selected = selectSeasonTilesetCbo.getSelectedItem().toString();
+            switch(selected.toLowerCase()) {
+                case "spring":
+                    openTileset(springPath);
+                    break;
+                case "summer":
+                    openTileset(summerPath);
+                    break;
+                case "fall":
+                    openTileset(fallPath);
+                    break;
+                case "winter":
+                    openTileset(winterPath);
+                    break;
+                case "default":
+                default:
+                    openTileset(principalTilesetToReset);
+                    break;
+            }
+
+        } else {
+            noTilesetSeaonFoundLabel.setText("No season tilesets found!");
+            System.out.println("No seasonal tilesets found");
+        }
+    }
+
     private void jbMoveMapRightActionPerformed(ActionEvent e) {
         moveTilesRight();
     }
@@ -925,6 +998,7 @@ public class MainFrame extends JFrame {
     }
 
     public void openMap(String path)  {
+        principalTilesetToReset = "";
         stringForTextThread = "Opening";
         Thread textThread = this.startProgressText(jlStatus,6, 75);
         Thread openMap = new Thread ( () -> {
@@ -1409,6 +1483,11 @@ public class MainFrame extends JFrame {
     }
 
     private void saveMap() {
+        if(!principalTilesetToReset.isEmpty()) {
+            noTilesetSeaonFoundLabel.setText("");
+            selectSeasonTilesetCbo.setSelectedIndex(0);
+            openTileset(principalTilesetToReset);
+        }
         stringForTextThread = "Saving map data";
         Thread textThread = this.startProgressText(jlStatus,6, 75);
         Thread t = new Thread ( () -> {
@@ -2227,6 +2306,11 @@ public class MainFrame extends JFrame {
             ExportNsbtxDialog.SeasonExport seasonExport = configDialog.getSeasonExportSettings();
             String nsbtxFolderPath = configDialog.getNsbtxFolderPath();
 
+            if(!principalTilesetToReset.isEmpty()) {
+                noTilesetSeaonFoundLabel.setText("");
+                selectSeasonTilesetCbo.setSelectedIndex(0);
+                openTileset(principalTilesetToReset);
+            }
 
             final NsbtxOutputInfoDialog outputDialog = new NsbtxOutputInfoDialog(this, true);
             outputDialog.init(handler, areaIndices, nsbtxFolderPath, seasonExport);
@@ -2780,6 +2864,9 @@ public class MainFrame extends JFrame {
         jPanelMatrixInfo = new JPanel();
         jspMatrix = new JSplitPane();
         jpAreaTools = new JPanel();
+        selectSeasonTilesetCbo = new  JComboBox<>();
+        seasonalTilesetLabel = new  JLabel();
+        noTilesetSeaonFoundLabel = new JLabel();
         jScrollPaneMapMatrix = new JScrollPane();
         mapMatrixDisplay = new MapMatrixDisplay();
         jpArea = new JPanel();
@@ -4199,6 +4286,7 @@ public class MainFrame extends JFrame {
                                         "[fill]" +
                                         "[fill]" +
                                         "[fill]" +
+                                        "[fill]" +
                                         "[fill]"));
 
                         //======== jpHeightMapAlpha ========
@@ -4341,6 +4429,27 @@ public class MainFrame extends JFrame {
                         jcbViewGridsBorders.setText("View Grids Borders");
                         jcbViewGridsBorders.addActionListener(e -> jcbViewGridsBordersActionPerformed(e));
                         jPanelMapTools.add(jcbViewGridsBorders, "cell 0 5");
+
+                        //----selectSeasonTilesetCbo ----
+                        seasonalTilesetLabel.setText("Select Season Tileset:");
+                        jPanelMapTools.add(seasonalTilesetLabel, "cell 0 6");
+
+                        selectSeasonTilesetCbo.setModel(new DefaultComboBoxModel<>(new String[] {
+                                "Default",
+                                "Spring",
+                                "Summer",
+                                "Fall",
+                                "Winter"
+                        }));
+                        selectSeasonTilesetCbo.addActionListener(e -> changeSeasonTileset(e));
+                        jPanelMapTools.add(selectSeasonTilesetCbo, "cell 0 7");
+                        noTilesetSeaonFoundLabel.setText("");
+                        noTilesetSeaonFoundLabel.setForeground(Color.RED);
+                        jPanelMapTools.add(noTilesetSeaonFoundLabel, "cell 0 8");
+
+
+
+
                     }
                     jtRightPanel.addTab("Map Tools", jPanelMapTools);
                 }
@@ -4579,6 +4688,9 @@ public class MainFrame extends JFrame {
     private JCheckBox jcbRealTimePolyGrouping;
     private JCheckBox jcbViewAreas;
     private JCheckBox jcbViewGridsBorders;
+    private JComboBox<String> selectSeasonTilesetCbo;
+    private JLabel noTilesetSeaonFoundLabel;
+    private JLabel seasonalTilesetLabel;
     private JPanel jpStatusBar;
     private JLabel jLabel4;
     private JLabel jLabel6;

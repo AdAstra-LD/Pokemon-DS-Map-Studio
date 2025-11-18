@@ -38,6 +38,7 @@ compileTestJava.options.encoding = 'UTF-8'
 
 jar {
     entryCompression = ZipEntryCompression.STORED
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE  // Ajoute cette ligne
 
     manifest {
         attributes "Main-Class": mainClassName
