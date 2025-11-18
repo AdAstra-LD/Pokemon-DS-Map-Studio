@@ -18,8 +18,10 @@ import javax.swing.JOptionPane;
 import javax.swing.filechooser.FileFilter;
 import net.miginfocom.swing.*;
 
+import utils.FileChooserUtils;
 import utils.Utils;
 import utils.swing.*;
+import static editor.mapmatrix.MapMatrix.ExportPath;
 
 /**
  * @author Trifindo
@@ -245,42 +247,25 @@ public class ExportNsbmdDialog extends javax.swing.JDialog {
     }// </editor-fold>//GEN-END:initComponents
 
     private void jbImdBrowseActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jbImdBrowseActionPerformed
-        final JFileChooser fc = new JFileChooser();
-        File folder = new File(Utils.removeExtensionFromPath(handler.getMapMatrix().filePath)).getParentFile();
-        fc.setCurrentDirectory(folder);
-        //fc.setSelectedFile(folder);
-        fc.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
-        fc.setFileFilter(new FileFilter() {
-            @Override
-            public boolean accept(File f) {
-                try {
-                    return f.isDirectory() || f.getName().endsWith(".imd");
-                } catch (Exception ex) {
-                    return false;
-                }
-            }
+        File folder = new File(ExportPath);
 
-            @Override
-            public String getDescription() {
-                return "Folder or IMD file (*.imd)";
-            }
-        });
-        fc.setApproveButtonText("Select folder");
-        fc.setDialogTitle("Select the folder that contains the IMD files");
-
-        final int returnValOpen = fc.showOpenDialog(this);
-        if (returnValOpen == JFileChooser.APPROVE_OPTION) {
-            File file = fc.getSelectedFile();
-            if (file.exists()) {
-                String folderPath;
-                if (file.isDirectory()) {
-                    folderPath = file.getPath();
-                } else {
-                    folderPath = file.getParent();
+        FileChooserUtils.selectFileOrDirectory(
+                "Select the folder that contains the IMD files",
+                folder,
+                "IMD file (*.imd)",
+                new String[]{"*.imd"},
+                selected -> {
+                    if (selected != null && selected.exists()) {
+                        String folderPath;
+                        if (selected.isDirectory()) {
+                            folderPath = selected.getPath();
+                        } else {
+                            folderPath = selected.getParent();
+                        }
+                        loadImdFilesFromFolder(folderPath);
+                    }
                 }
-                loadImdFilesFromFolder(folderPath);
-            }
-        }
+        );
     }//GEN-LAST:event_jbImdBrowseActionPerformed
 
     private void jbAcceptActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jbAcceptActionPerformed
@@ -336,21 +321,18 @@ public class ExportNsbmdDialog extends javax.swing.JDialog {
     }//GEN-LAST:event_jbDeselectAllActionPerformed
 
     private void jbNsbBrowseActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jbNsbBrowseActionPerformed
-        final JFileChooser fc = new JFileChooser();
-        File folder = new File(Utils.removeExtensionFromPath(handler.getMapMatrix().filePath)).getParentFile();
-        fc.setCurrentDirectory(folder);
-        fc.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
-        fc.setApproveButtonText("Select folder");
-        fc.setDialogTitle("Select the folder for exporting the IMD files");
+        File folder = new File(Utils.removeExtensionFromPath(ExportPath));
 
-        final int returnValOpen = fc.showOpenDialog(this);
-        if (returnValOpen == JFileChooser.APPROVE_OPTION) {
-            File file = fc.getSelectedFile();
-            if (file.exists() && file.isDirectory()) {
-                nsbFolderPath = file.getPath();
-                jtfNsbFolderPath.setText(nsbFolderPath);
-            }
-        }
+        FileChooserUtils.selectDirectory(
+                "Select the folder for exporting the IMD files",
+                folder,
+                selectedDirectory -> {
+                    if (selectedDirectory != null && selectedDirectory.isDirectory()) {
+                        nsbFolderPath = selectedDirectory.getPath();
+                        jtfNsbFolderPath.setText(nsbFolderPath);
+                    }
+                }
+        );
     }//GEN-LAST:event_jbNsbBrowseActionPerformed
 
 
@@ -376,10 +358,10 @@ public class ExportNsbmdDialog extends javax.swing.JDialog {
     public void init(MapEditorHandler handler) {
         this.handler = handler;
 
-        String imdFolderPath = new File(handler.getMapMatrix().filePath).getParent();
+        String imdFolderPath = new File(ExportPath).toString();
         loadImdFilesFromFolder(imdFolderPath);
 
-        String nsbFolderPath = new File(Utils.removeExtensionFromPath(handler.getMapMatrix().filePath)).getParent();
+        String nsbFolderPath = new File(ExportPath).toString();
         if (isFolderPathValid(nsbFolderPath)) {
             this.nsbFolderPath = nsbFolderPath;
             jtfNsbFolderPath.setText(nsbFolderPath);

@@ -130,6 +130,8 @@ public class MapEditorHandler {
         }
     }
 
+
+
     public void incrementHeightSelected(int delta) {
         int newHeightIndex = heightIndexSelected + delta;
         if ((newHeightIndex >= 0) && (newHeightIndex < numHeights)) {
@@ -288,6 +290,11 @@ public class MapEditorHandler {
         return getCurrentMap().getGrid().tileLayers[activeLayer];
     }
 
+    public int[][] getActiveLayerMinus(int subLayer) {
+        return getCurrentMap().getGrid().tileLayers[activeLayer-subLayer];
+    }
+
+
     public int[][] getActiveHeightLayer() {
         return getCurrentMap().getGrid().heightLayers[activeLayer];
     }
@@ -349,6 +356,10 @@ public class MapEditorHandler {
 
     public int getActiveLayerIndex() {
         return activeLayer;
+    }
+
+    public void setActiveLayerIndex(int index) {
+        activeLayer = index;
     }
 
     public SmartGrid getSmartGridSelected() {

@@ -390,6 +390,9 @@ public class MapDisplay extends GLJPanel implements GLEventListener, MouseListen
         viewMode.keyPressed(this, e);
 
         switch (e.getKeyCode()) {
+            case KeyEvent.VK_CONTROL:
+                CONTROL_PRESSED = true;
+                break;
             case KeyEvent.VK_ESCAPE:
                 setEditMode(EditMode.MODE_EDIT);
                 handler.getMainFrame().getJtbModeEdit().setSelected(true);
@@ -499,6 +502,8 @@ public class MapDisplay extends GLJPanel implements GLEventListener, MouseListen
             SHIFT_PRESSED = false;
             //disableCameraMove();
             repaint();
+        } else if(e.getKeyCode() == KeyEvent.VK_CONTROL) {
+            CONTROL_PRESSED = false;
         }
 
     }
@@ -1255,12 +1260,27 @@ public class MapDisplay extends GLJPanel implements GLEventListener, MouseListen
         }
     }
 
-    protected void floodFillClearTileInGrid(MouseEvent e) {
+    protected void floodFillClearTileInGrid(MouseEvent e, MapDisplay d) {
         if (handler.getTileset().size() > 0) {
             Point p = getCoordsInSelectedMap(e);
             if (isPointInsideGrid(p.x, p.y) && handler.getActiveTileLayer()[p.x][p.y] != -1) {
                 handler.getGrid().floodFillTileGrid(p.x, p.y, -1, 1, 1);
                 //updateMapThumbnail(e);
+                try {
+                    int tileInfo = handler.getTileIndexSelected();
+                    Tile tile = handler.getTileset().getTiles().get(tileInfo);
+                    if(tile.getIsTileableTree()) {
+                        int[][] tileGridm1 = handler.getActiveLayerMinus(1);
+                        int[][] tileGridm2 = handler.getActiveLayerMinus(2);
+
+                        tileGridm1[p.x][p.y] = -1;
+                        tileGridm2[p.x][p.y] = -1;
+                        d.updateMapLayersGL();
+                    }
+
+                } catch (Exception ex) {
+                    ex.printStackTrace();
+                }
             }
         }
     }
@@ -1296,16 +1316,31 @@ public class MapDisplay extends GLJPanel implements GLEventListener, MouseListen
         }
     }
 
-    protected void clearTileInGrid(MouseEvent e) {
+    protected void clearTileInGrid(MouseEvent e, MapDisplay d) {
         Point p = getCoordsInSelectedMap(e);
         int[][] tileGrid = handler.getActiveTileLayer();
         if (isPointInsideGrid(p.x, p.y) && tileGrid[p.x][p.y] != -1) {
             tileGrid[p.x][p.y] = -1;
             //updateMapThumbnail(e);
+            try {
+                int tileInfo = handler.getTileIndexSelected();
+                Tile tile = handler.getTileset().getTiles().get(tileInfo);
+                if(tile.getIsTileableTree()) {
+                    int[][] tileGridm1 = handler.getActiveLayerMinus(1);
+                    int[][] tileGridm2 = handler.getActiveLayerMinus(2);
+
+                    tileGridm1[p.x][p.y] = -1;
+                    tileGridm2[p.x][p.y] = -1;
+                    d.updateMapLayersGL();
+                }
+
+            } catch (Exception ex) {
+                ex.printStackTrace();
+            }
         }
     }
 
-    protected void setTileInGrid(MouseEvent e) {
+    protected void setTileInGrid(MouseEvent e, MapDisplay d) {
         if (handler.getTileset().size() > 0) {
             Point p = getCoordsInSelectedMap(e);
             int[][] tileGrid = handler.getActiveTileLayer();
@@ -1315,11 +1350,20 @@ public class MapDisplay extends GLJPanel implements GLEventListener, MouseListen
                 clearAreaUnderTile(tileGrid, p.x, p.y, tile.getWidth(), tile.getHeight());
                 tileGrid[p.x][p.y] = handler.getTileIndexSelected();
                 //updateMapThumbnail(e);
+                if(tile.getIsTileableTree()) {
+                    int[][] tileGridm1 = handler.getActiveLayerMinus(1);
+                    int[][] tileGridm2 = handler.getActiveLayerMinus(2);
+
+                    tileGridm1[p.x][p.y] = tile.getFrontTileId();
+                    tileGridm2[p.x][p.y] = tile.getSideTileId();
+                    d.updateMapLayersGL();
+
+                }
             }
         }
     }
 
-    protected void dragTileInGrid(MouseEvent e) {
+    protected void dragTileInGrid(MouseEvent e, MapDisplay d) {
         if (handler.getTileset().size() > 0) {
             Point p = getCoordsInSelectedMap(e);
             int[][] tileGrid = handler.getActiveTileLayer();
@@ -1330,6 +1374,16 @@ public class MapDisplay extends GLJPanel implements GLEventListener, MouseListen
             if (isPointInsideGrid(p.x, p.y) /*&& canUseDragging(p.x, p.y, tile.getWidth(), tile.getHeight())*/) {
                 clearAreaUnderTile(tileGrid, p.x, p.y, tile.getWidth(), tile.getHeight());
                 tileGrid[p.x][p.y] = handler.getTileIndexSelected();
+            }
+
+            if(tile.getIsTileableTree()) {
+                int[][] tileGridm1 = handler.getActiveLayerMinus(1);
+                int[][] tileGridm2 = handler.getActiveLayerMinus(2);
+
+                tileGridm1[p.x][p.y] = tile.getFrontTileId();
+                tileGridm2[p.x][p.y] = tile.getSideTileId();
+                d.updateMapLayersGL();
+
             }
         }
     }

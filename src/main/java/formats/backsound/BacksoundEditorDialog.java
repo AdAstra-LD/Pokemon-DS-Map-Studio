@@ -1,5 +1,6 @@
 package formats.backsound;
 
+import utils.FileChooserUtils;
 import utils.exceptions.WrongFormatException;
 import editor.handler.MapEditorHandler;
 import utils.sound.SoundPlayer;
@@ -193,53 +194,59 @@ public class BacksoundEditorDialog extends JDialog {
     }
 
     public void openBacksoundWithDialog() {
-        final JFileChooser fc = new JFileChooser();
-        if (handler.getLastBdhcDirectoryUsed() != null) {
-            fc.setCurrentDirectory(new File(handler.getLastBdhcDirectoryUsed()));
-        }
-        fc.setFileFilter(new FileNameExtensionFilter("Backsound File (*.bgs)", Backsound.fileExtension));
-        fc.setApproveButtonText("Open");
-        fc.setDialogTitle("Open Background Sound File");
-        final int returnVal = fc.showOpenDialog(this);
-        if (returnVal == JFileChooser.APPROVE_OPTION) {
-            try {
-                String path = fc.getSelectedFile().getPath();
-                handler.setLastBdhcDirectoryUsed(fc.getSelectedFile().getParent());
+        File lastDir = handler.getLastBdhcDirectoryUsed() != null
+                ? new File(handler.getLastBdhcDirectoryUsed())
+                : null;
 
-                handler.setBacksound(new Backsound(path));
+        FileChooserUtils.selectFile(
+                "Open Background Sound File",
+                lastDir,
+                "Backsound File (*.bgs)",
+                new String[]{"*." + Backsound.fileExtension},
+                selectedFile -> {
+                    if (selectedFile != null) {
+                        try {
+                            String path = selectedFile.getPath();
+                            handler.setLastBdhcDirectoryUsed(selectedFile.getParent());
 
-                backsoundHandler.setIndexSelected(0);
-                updateView();
-                backsoundDisplay.repaint();
+                            handler.setBacksound(new Backsound(path));
 
-            } catch (IOException | WrongFormatException ex) {
-                JOptionPane.showMessageDialog(this, "Can't open file", "Error opening Backsound file", JOptionPane.ERROR_MESSAGE);
-            }
+                            backsoundHandler.setIndexSelected(0);
+                            updateView();
+                            backsoundDisplay.repaint();
 
-        }
+                        } catch (IOException | WrongFormatException ex) {
+                            JOptionPane.showMessageDialog(this, "Can't open file", "Error opening Backsound file", JOptionPane.ERROR_MESSAGE);
+                        }
+                    }
+                }
+        );
     }
 
     public void saveBacksoundWithDialog() {
-        final JFileChooser fc = new JFileChooser();
-        if (handler.getLastBdhcDirectoryUsed() != null) {
-            fc.setCurrentDirectory(new File(handler.getLastBdhcDirectoryUsed()));
-        }
-        fc.setFileFilter(new FileNameExtensionFilter("Backsound File (*.bgs)", Backsound.fileExtension));
-        fc.setApproveButtonText("Save");
-        fc.setDialogTitle("Save Background Sound File");
-        final int returnVal = fc.showOpenDialog(this);
-        if (returnVal == JFileChooser.APPROVE_OPTION) {
-            try {
-                String path = fc.getSelectedFile().getPath();
-                handler.setLastBdhcDirectoryUsed(fc.getSelectedFile().getParent());
-                path = Utils.addExtensionToPath(path, Backsound.fileExtension);
+        File lastDir = handler.getLastBdhcDirectoryUsed() != null
+                ? new File(handler.getLastBdhcDirectoryUsed())
+                : null;
 
-                backsoundHandler.getBacksound().writeToFile(path);
-            } catch (IOException ex) {
-                JOptionPane.showMessageDialog(this, "Can't save file", "Error saving Backsound file", JOptionPane.ERROR_MESSAGE);
-            }
+        FileChooserUtils.saveFile(
+                "Save Background Sound File",
+                lastDir,
+                "Backsound File (*.bgs)",
+                new String[]{"*." + Backsound.fileExtension},
+                selectedFile -> {
+                    if (selectedFile != null) {
+                        try {
+                            String path = selectedFile.getPath();
+                            handler.setLastBdhcDirectoryUsed(selectedFile.getParent());
+                            path = Utils.addExtensionToPath(path, Backsound.fileExtension);
 
-        }
+                            backsoundHandler.getBacksound().writeToFile(path);
+                        } catch (IOException ex) {
+                            JOptionPane.showMessageDialog(this, "Can't save file", "Error saving Backsound file", JOptionPane.ERROR_MESSAGE);
+                        }
+                    }
+                }
+        );
     }
 
     private void initComponents() {

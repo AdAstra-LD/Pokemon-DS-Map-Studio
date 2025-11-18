@@ -8,6 +8,9 @@ import java.awt.event.*;
 import javax.swing.border.*;
 import javax.swing.event.*;
 
+import editor.MainFrame;
+import editor.cameraFileReader.CameraFileReader;
+import editor.game.Game;
 import formats.bdhcam.camplate.*;
 import editor.handler.MapEditorHandler;
 
@@ -17,12 +20,20 @@ import java.io.File;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import javax.swing.*;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import javax.swing.plaf.basic.BasicComboBoxRenderer;
 
 import net.miginfocom.swing.*;
+import utils.BinaryReader;
+import utils.FileChooserUtils;
+
+import static editor.mapmatrix.MapMatrix.ExportPath;
+
+import static editor.mapmatrix.MapMatrix.ExportPath;
 
 /**
  * @author Trifindo
@@ -30,6 +41,8 @@ import net.miginfocom.swing.*;
 public class BdhcamEditorDialog extends JDialog {
 
     private MapEditorHandler handler;
+
+    private String browsePathText = "";
     private BdhcamHandler bdhcamHandler;
 
     private boolean jlPlatesEnabled = true;
@@ -47,6 +60,19 @@ public class BdhcamEditorDialog extends JDialog {
     private boolean jsFirstValueEnabled = true;
     private boolean jsSecondValueEnabled = true;
 
+    private static long distance;
+    private static short verticalRotation;
+    private static short horizontalRotation;
+    private static short zRotation;
+    private static long ukn1;
+    private static byte[] ortho;
+    private static byte[] ukn2;
+    private static long fov;
+    private static long nearclip;
+    private static long farclip;
+    private static long xoffset;
+    private static long yoffset;
+    private static long zoffset;
     protected ImageIcon[] plateIcons = {
             new ImageIcon(getClass().getResource("/icons/clockIcon.png")),
             new ImageIcon(getClass().getResource("/icons/posDepXIcon.png")),
@@ -260,63 +286,113 @@ public class BdhcamEditorDialog extends JDialog {
 
 
     private void jbImportBdhcamActionPerformed(ActionEvent e) {
-        final JFileChooser fc = new JFileChooser();
-        if (handler.getLastBdhcDirectoryUsed() != null) {
-            fc.setCurrentDirectory(new File(handler.getLastBdhcDirectoryUsed()));
-        }
-        fc.setFileFilter(new FileNameExtensionFilter("Terrain File (*.bdhcam)", Bdhcam.fileExtension));
-        fc.setApproveButtonText("Open");
-        fc.setDialogTitle("Open BDHCAM");
-        final int returnVal = fc.showOpenDialog(this);
-        if (returnVal == JFileChooser.APPROVE_OPTION) {
-            try {
-                String path = fc.getSelectedFile().getPath();
-                handler.setLastBdhcDirectoryUsed(fc.getSelectedFile().getParent());
+        FileChooserUtils.selectFile(
+                "Open BDHCAM",
+                new File(ExportPath),
+                "Terrain File (*.bdhcam)",
+                new String[]{"*." + Bdhcam.fileExtension},
+                selectedFile -> {
+                    if (selectedFile != null) {
+                        try {
+                            String path = selectedFile.getPath();
+                            handler.setLastBdhcDirectoryUsed(selectedFile.getParent());
 
-                Bdhcam bdhcam = BdhcamLoader.loadBdhcam(path);
-                bdhcamHandler.setBdhcam(bdhcam);
+                            Bdhcam bdhcam = BdhcamLoader.loadBdhcam(path);
+                            bdhcamHandler.setBdhcam(bdhcam);
 
-                updateView();
-            } catch (Exception ex) {
-                JOptionPane.showMessageDialog(this, "Can't open file",
-                        "Error opening BDHCAM file", JOptionPane.ERROR_MESSAGE);
-            }
-
-        }
+                            updateView();
+                        } catch (Exception ex) {
+                            JOptionPane.showMessageDialog(this, "Can't open file",
+                                    "Error opening BDHCAM file", JOptionPane.ERROR_MESSAGE);
+                        }
+                    }
+                }
+        );
     }
 
     private void jbExportBdhcamActionPerformed(ActionEvent e) {
-        final JFileChooser fc = new JFileChooser();
-        if (handler.getLastBdhcDirectoryUsed() != null) {
-            fc.setCurrentDirectory(new File(handler.getLastBdhcDirectoryUsed()));
-        }
-        fc.setFileFilter(new FileNameExtensionFilter("Camera File (*.bdhcam)", Bdhcam.fileExtension));
-        fc.setApproveButtonText("Save");
-        fc.setDialogTitle("Save BDHCAM");
-        final int returnVal = fc.showOpenDialog(this);
-        if (returnVal == JFileChooser.APPROVE_OPTION) {
-            try {
-                String path = fc.getSelectedFile().getPath();
-                handler.setLastBdhcDirectoryUsed(fc.getSelectedFile().getParent());
+        FileChooserUtils.saveFile(
+                "Save BDHCAM",
+                new File(ExportPath),
+                "Camera File (*.bdhcam)",
+                new String[]{"*." + Bdhcam.fileExtension},
+                selectedFile -> {
+                    if (selectedFile != null) {
+                        try {
+                            String path = selectedFile.getPath();
+                            handler.setLastBdhcDirectoryUsed(selectedFile.getParent());
 
-                BdhcamWriter.writeBdhcamToFile(path, bdhcamHandler.getBdhcam(), handler.getBdhc(), handler.getGameIndex());
-                //BdhcamWriter.writeBdhcamToFile(path, bdhcamHandler.getBdhcam());
-            } catch (Exception ex) {
-                ex.printStackTrace();
-                JOptionPane.showMessageDialog(this, "Can't save file",
-                        "Error saving BDHCAM", JOptionPane.ERROR_MESSAGE);
-            }
+                            BdhcamWriter.writeBdhcamToFile(path, bdhcamHandler.getBdhcam(), handler.getBdhc(), handler.getGameIndex());
+                            //BdhcamWriter.writeBdhcamToFile(path, bdhcamHandler.getBdhcam());
+                        } catch (Exception ex) {
+                            ex.printStackTrace();
+                            JOptionPane.showMessageDialog(this, "Can't save file",
+                                    "Error saving BDHCAM", JOptionPane.ERROR_MESSAGE);
+                        }
+                    }
+                }
+        );
+    }
 
-        }
+    private void BrowseButton(ActionEvent e) {
+        File folder = new File(browsePathText);
+
+        FileChooserUtils.selectFile(
+                "Select the camera file",
+                folder,
+                selectedFile -> {
+                    if (selectedFile != null && selectedFile.isFile()) {
+                        browsePathText = selectedFile.getPath();
+                        cameraFilePathField.setText(browsePathText);
+                        readCamerBinFile(browsePathText);
+                    }
+                }
+        );
     }
 
 
+    private void readCamerBinFile(String path) {
+        System.out.println("Reading camera file: " + path);
+        try {
+            File file = new File(path);
 
+            if (file.exists()) {
+                byte[] data = Files.readAllBytes(Paths.get(path));
+                if(data.length == 36 || data.length == 24) {
+                    System.out.println("File length is correct");
+                    distance = BinaryReader.readUInt32(data, 0);
+                    verticalRotation = BinaryReader.readInt16(data, 4);
+                    System.out.println("Vertical Rotation: " + verticalRotation);
+                    horizontalRotation = BinaryReader.readInt16(data, 6);
+                    zRotation = BinaryReader.readInt16(data, 8);
+                    ukn1 = BinaryReader.readInt16(data, 10);
+                    ortho = BinaryReader.readBytes(data, 12, 1);
+                    ukn2 = BinaryReader.readBytes(data, 13, 1);
+                    fov = BinaryReader.readInt16(data, 14);
+                    nearclip = BinaryReader.readUInt32(data, 16);
+                    farclip = BinaryReader.readUInt32(data, 20);
+                    if (MainFrame.handler.getGame().gameSelected == Game.HEART_GOLD || MainFrame.handler.getGame().gameSelected == Game.SOUL_SILVER) {
+                        xoffset = BinaryReader.readInt32(data, 24);
+                        yoffset = BinaryReader.readInt32(data, 28);
+                        zoffset = BinaryReader.readInt32(data, 32);
+                    }
+                }else{
+                    JOptionPane.showMessageDialog(this, "File length is incorrect", "Error", JOptionPane.ERROR_MESSAGE);
+                }
+            }
+        } catch (Exception ex) {
+            JOptionPane.showMessageDialog(this, "Error reading the camera file.", "Error", JOptionPane.ERROR_MESSAGE);
+            ex.printStackTrace();
+        }
+    }
 
-
+    private void Browse(ActionEvent e) {
+        // TODO add your code here
+    }
 
     private void initComponents() {
         // JFormDesigner - Component initialization - DO NOT MODIFY  //GEN-BEGIN:initComponents
+        // Generated using JFormDesigner Educational license - Corentin Macé
         panel1 = new JPanel();
         jbImportBdhcam = new JButton();
         jbExportBdhcam = new JButton();
@@ -333,7 +409,6 @@ public class BdhcamEditorDialog extends JDialog {
         panel4 = new JPanel();
         jbAddPlate = new JButton();
         jbRemovePlate = new JButton();
-        jbDuplicatePlate = new JButton();
         bdhcamDisplay = new BdhcamCameraDisplay();
         panel3 = new JPanel();
         label3 = new JLabel();
@@ -366,7 +441,40 @@ public class BdhcamEditorDialog extends JDialog {
         jsFirstValue = new JSpinner();
         label10 = new JLabel();
         jsSecondValue = new JSpinner();
-		hSpacer2 = new JPanel(null);
+        panel9 = new JPanel();
+        label13 = new JLabel();
+        distanceSlider = new JSlider();
+        distanceSpinner = new JSpinner();
+        label14 = new JLabel();
+        vRotSlider = new JSlider();
+        vRotSpinner = new JSpinner();
+        label15 = new JLabel();
+        hRotSlider = new JSlider();
+        hRotSpinner = new JSpinner();
+        label16 = new JLabel();
+        zRotSlider = new JSlider();
+        zRotSpinner = new JSpinner();
+        label17 = new JLabel();
+        fovSlider = new JSlider();
+        fovSpinner = new JSpinner();
+        label18 = new JLabel();
+        ncSlider = new JSlider();
+        ncSpinner = new JSpinner();
+        label19 = new JLabel();
+        fcSlider = new JSlider();
+        fcSpinner = new JSpinner();
+        label20 = new JLabel();
+        xOffsetSlider = new JSlider();
+        xOffsetSpinner = new JSpinner();
+        label21 = new JLabel();
+        yOffsetSlider = new JSlider();
+        yOffsetSpinner = new JSpinner();
+        label22 = new JLabel();
+        zOffsetSlider = new JSlider();
+        zOffsetSpinner = new JSpinner();
+        isOrthoCheckbox = new JCheckBox();
+        cameraFilePathField = new JTextField();
+        BrowseButton = new JButton();
         panel6 = new JPanel();
         label12 = new JLabel();
         jlTutorial = new JLabel();
@@ -378,6 +486,28 @@ public class BdhcamEditorDialog extends JDialog {
         contentPane.setLayout(new MigLayout(
             "insets 0,hidemode 3,gap 5 5",
             // columns
+            "[fill]" +
+            "[fill]" +
+            "[fill]" +
+            "[fill]" +
+            "[fill]" +
+            "[fill]" +
+            "[fill]" +
+            "[fill]" +
+            "[fill]" +
+            "[fill]" +
+            "[fill]" +
+            "[fill]" +
+            "[fill]" +
+            "[fill]" +
+            "[fill]" +
+            "[fill]" +
+            "[fill]" +
+            "[fill]" +
+            "[fill]" +
+            "[fill]" +
+            "[fill]" +
+            "[fill]" +
             "[fill]",
             // rows
             "[fill]" +
@@ -413,7 +543,7 @@ public class BdhcamEditorDialog extends JDialog {
             label11.setIcon(new ImageIcon(getClass().getResource("/icons/informationIcon.png")));
             panel1.add(label11, "cell 3 0");
         }
-        contentPane.add(panel1, "cell 0 0,gapx 5 5,gapy 5 0");
+        contentPane.add(panel1, "cell 0 0 23 1,gapx 5 5,gapy 5 0");
 
         //======== splitPane1 ========
         {
@@ -494,12 +624,6 @@ public class BdhcamEditorDialog extends JDialog {
                             jbRemovePlate.setIcon(new ImageIcon(getClass().getResource("/icons/RemoveIcon.png")));
                             jbRemovePlate.addActionListener(e -> jbRemovePlateActionPerformed(e));
                             panel4.add(jbRemovePlate);
-                            
-                            //---- jbDuplicatePlate ----
-                            jbDuplicatePlate.setText("Duplicate");
-     						jbDuplicatePlate.setIcon(new ImageIcon(getClass().getResource("/icons/CopyIcon.png")));
-     						jbDuplicatePlate.addActionListener(e -> jbDuplicatePlateActionPerformed(e));
-     						panel4.add(this.jbDuplicatePlate);
                         }
                         panel2.add(panel4, new GridBagConstraints(0, 2, 1, 1, 0.0, 0.0,
                             GridBagConstraints.BASELINE, GridBagConstraints.HORIZONTAL,
@@ -770,6 +894,124 @@ public class BdhcamEditorDialog extends JDialog {
         }
         contentPane.add(splitPane1, "cell 0 1");
 
+        //======== panel9 ========
+        {
+            panel9.setLayout(new MigLayout(
+                "flowy,fill,hidemode 3,alignx center",
+                // columns
+                "[fill]" +
+                "[fill]" +
+                "[fill]" +
+                "[fill]" +
+                "[fill]" +
+                "[fill]" +
+                "[fill]" +
+                "[fill]" +
+                "[fill]" +
+                "[fill]" +
+                "[fill]",
+                // rows
+                "[]" +
+                "[]" +
+                "[]" +
+                "[]" +
+                "[]" +
+                "[]" +
+                "[]" +
+                "[]" +
+                "[]" +
+                "[]" +
+                "[]" +
+                "[]" +
+                "[]" +
+                "[]" +
+                "[]" +
+                "[]" +
+                "[]" +
+                "[]" +
+                "[]" +
+                "[]" +
+                "[]" +
+                "[]" +
+                "[]" +
+                "[]" +
+                "[]"));
+
+            //---- label13 ----
+            label13.setText("Distance");
+            panel9.add(label13, "cell 0 0");
+            panel9.add(distanceSlider, "cell 0 1 10 1");
+            panel9.add(distanceSpinner, "cell 10 1");
+
+            //---- label14 ----
+            label14.setText("Vertical Rotation");
+            panel9.add(label14, "cell 0 2 11 1");
+            panel9.add(vRotSlider, "cell 0 3 10 1");
+            panel9.add(vRotSpinner, "cell 10 3");
+
+            //---- label15 ----
+            label15.setText("Horizontal Rotation");
+            panel9.add(label15, "cell 0 4 11 1");
+            panel9.add(hRotSlider, "cell 0 5 10 1");
+            panel9.add(hRotSpinner, "cell 10 5");
+
+            //---- label16 ----
+            label16.setText("Z Rotation");
+            panel9.add(label16, "cell 0 6 11 1");
+            panel9.add(zRotSlider, "cell 0 7 10 1");
+            panel9.add(zRotSpinner, "cell 10 7");
+
+            //---- label17 ----
+            label17.setText("FOV");
+            panel9.add(label17, "cell 0 8 11 1");
+            panel9.add(fovSlider, "cell 0 9 10 1");
+            panel9.add(fovSpinner, "cell 10 9");
+
+            //---- label18 ----
+            label18.setText("Near Clip Distance");
+            panel9.add(label18, "cell 0 10 11 1");
+            panel9.add(ncSlider, "cell 0 11 10 1");
+            panel9.add(ncSpinner, "cell 10 11");
+
+            //---- label19 ----
+            label19.setText("Far Clip Distance");
+            panel9.add(label19, "cell 0 13 11 1");
+            panel9.add(fcSlider, "cell 0 14 10 1");
+            panel9.add(fcSpinner, "cell 10 14");
+
+            //---- label20 ----
+            label20.setText("X Displacement");
+            panel9.add(label20, "cell 0 15 11 1");
+            panel9.add(xOffsetSlider, "cell 0 16 10 1");
+            panel9.add(xOffsetSpinner, "cell 10 16");
+
+            //---- label21 ----
+            label21.setText("Y Displacement");
+            panel9.add(label21, "cell 0 17 11 1");
+            panel9.add(yOffsetSlider, "cell 0 18 10 1");
+            panel9.add(yOffsetSpinner, "cell 10 18");
+
+            //---- label22 ----
+            label22.setText("Z Displacement");
+            panel9.add(label22, "cell 0 19 11 1");
+            panel9.add(zOffsetSlider, "cell 0 20 10 1");
+            panel9.add(zOffsetSpinner, "cell 10 20");
+
+            //---- isOrthoCheckbox ----
+            isOrthoCheckbox.setText("Orthographic");
+            panel9.add(isOrthoCheckbox, "cell 0 21 11 1");
+            panel9.add(cameraFilePathField, "cell 0 23 10 1");
+
+            //---- BrowseButton ----
+            BrowseButton.setText("Browse...");
+            BrowseButton.addActionListener(e -> {
+			Browse(e);
+			BrowseButton(e);
+		});
+            panel9.add(BrowseButton, "cell 10 23");
+        }
+        contentPane.add(panel9, "cell 1 1 22 1,dock center");
+
         //======== panel6 ========
         {
             panel6.setLayout(new MigLayout(
@@ -797,7 +1039,7 @@ public class BdhcamEditorDialog extends JDialog {
             panel6.add(jlTutorial, "cell 1 0");
         }
         contentPane.add(panel6, "cell 0 2");
-        setSize(1100, 635);
+        setSize(1750, 945);
         setLocationRelativeTo(getOwner());
         // JFormDesigner - End of component initialization  //GEN-END:initComponents
     }
@@ -1072,11 +1314,11 @@ public class BdhcamEditorDialog extends JDialog {
     }
 
     // JFormDesigner - Variables declaration - DO NOT MODIFY  //GEN-BEGIN:variables
+    // Generated using JFormDesigner Educational license - Corentin Macé
     private JPanel panel1;
     private JButton jbImportBdhcam;
     private JButton jbExportBdhcam;
     private JLabel label11;
-    private JPanel hSpacer1;
     private JSplitPane splitPane1;
     private JPanel displayContainer;
     private BdhcamPlatesDisplay platesDisplay;
@@ -1089,7 +1331,6 @@ public class BdhcamEditorDialog extends JDialog {
     private JPanel panel4;
     private JButton jbAddPlate;
     private JButton jbRemovePlate;
-	private JButton jbDuplicatePlate;
     private BdhcamCameraDisplay bdhcamDisplay;
     private JPanel panel3;
     private JLabel label3;
@@ -1122,7 +1363,40 @@ public class BdhcamEditorDialog extends JDialog {
     private JSpinner jsFirstValue;
     private JLabel label10;
     private JSpinner jsSecondValue;
-    private JPanel hSpacer2;
+    private JPanel panel9;
+    private JLabel label13;
+    private JSlider distanceSlider;
+    private JSpinner distanceSpinner;
+    private JLabel label14;
+    private JSlider vRotSlider;
+    private JSpinner vRotSpinner;
+    private JLabel label15;
+    private JSlider hRotSlider;
+    private JSpinner hRotSpinner;
+    private JLabel label16;
+    private JSlider zRotSlider;
+    private JSpinner zRotSpinner;
+    private JLabel label17;
+    private JSlider fovSlider;
+    private JSpinner fovSpinner;
+    private JLabel label18;
+    private JSlider ncSlider;
+    private JSpinner ncSpinner;
+    private JLabel label19;
+    private JSlider fcSlider;
+    private JSpinner fcSpinner;
+    private JLabel label20;
+    private JSlider xOffsetSlider;
+    private JSpinner xOffsetSpinner;
+    private JLabel label21;
+    private JSlider yOffsetSlider;
+    private JSpinner yOffsetSpinner;
+    private JLabel label22;
+    private JSlider zOffsetSlider;
+    private JSpinner zOffsetSpinner;
+    private JCheckBox isOrthoCheckbox;
+    private JTextField cameraFilePathField;
+    private JButton BrowseButton;
     private JPanel panel6;
     private JLabel label12;
     private JLabel jlTutorial;

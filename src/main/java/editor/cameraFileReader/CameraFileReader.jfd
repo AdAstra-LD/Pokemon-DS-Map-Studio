@@ -1,0 +1,68 @@
+JFDML JFormDesigner: "8.0.5.0.268" Java: "17.0.6" encoding: "UTF-8"
+
+new FormModel {
+	contentType: "form/swing"
+	root: new FormRoot {
+		add( new FormWindow( "javax.swing.JDialog", new FormLayoutManager( class java.awt.BorderLayout ) ) {
+			name: "this"
+			"title": "Camera File Reader"
+			"preferredSize": new java.awt.Dimension( 1100, 200 )
+			add( new FormContainer( "javax.swing.JPanel", new FormLayoutManager( class java.awt.BorderLayout ) ) {
+				name: "dialogPane"
+				add( new FormContainer( "javax.swing.JPanel", new FormLayoutManager( class net.miginfocom.swing.MigLayout ) {
+					"$layoutConstraints": "fillx,insets dialog"
+					"$columnConstraints": "[fill][fill][fill][fill][fill][fill][fill][fill][fill][fill][fill][fill][fill][fill][fill][fill][fill][fill][fill][fill][fill][button,fill][button,fill]"
+					"$rowSpecs": "[fill]"
+					"$rowConstraints": "[][]"
+				} ) {
+					name: "buttonBar"
+					add( new FormComponent( "javax.swing.JTextArea" ) {
+						name: "browsePath"
+					}, new FormLayoutConstraints( class net.miginfocom.layout.CC ) {
+						"value": "cell 0 1 8 1"
+					} )
+					add( new FormComponent( "javax.swing.JButton" ) {
+						name: "browseButton"
+						"text": "Browse.."
+						addEvent( new FormEvent( "java.awt.event.ActionListener", "actionPerformed", "browseButton", true ) )
+					}, new FormLayoutConstraints( class net.miginfocom.layout.CC ) {
+						"value": "cell 8 1"
+					} )
+					add( new FormComponent( "javax.swing.JButton" ) {
+						name: "okButton"
+						"text": "OK"
+						"background": new com.jformdesigner.model.SwingColor( "Actions.Blue" )
+						addEvent( new FormEvent( "java.awt.event.ActionListener", "actionPerformed", "ok", true ) )
+					}, new FormLayoutConstraints( class net.miginfocom.layout.CC ) {
+						"value": "tag ok,cell 21 1"
+					} )
+					add( new FormComponent( "javax.swing.JButton" ) {
+						name: "cancelButton"
+						"text": "Cancel"
+						"background": &SwingColor0 new com.jformdesigner.model.SwingColor( "Button.disabledBackground" )
+						addEvent( new FormEvent( "java.awt.event.ActionListener", "actionPerformed", "cancel", true ) )
+					}, new FormLayoutConstraints( class net.miginfocom.layout.CC ) {
+						"value": "tag cancel,cell 22 1"
+					} )
+				}, new FormLayoutConstraints( class java.lang.String ) {
+					"value": "South"
+				} )
+				add( new FormContainer( "javax.swing.JScrollPane", new FormLayoutManager( class javax.swing.JScrollPane ) ) {
+					name: "scrollPane1"
+					add( new FormComponent( "javax.swing.JTable" ) {
+						name: "cameraValues"
+						"background": #SwingColor0
+						"enabled": false
+					} )
+				}, new FormLayoutConstraints( class java.lang.String ) {
+					"value": "North"
+				} )
+			}, new FormLayoutConstraints( class java.lang.String ) {
+				"value": "Center"
+			} )
+		}, new FormLayoutConstraints( null ) {
+			"location": new java.awt.Point( 0, 0 )
+			"size": new java.awt.Dimension( 665, 205 )
+		} )
+	}
+}

@@ -64,8 +64,12 @@ public class BinaryReader {
         return fullData[offset];
     }
 
-    public static long readInt16(byte[] fullData, int offset) throws Exception {
-        return (fullData[offset + 1] << 8) | fullData[offset];
+    public static short readInt16(byte[] fullData, int offset) throws Exception {
+        // JVM IS BIG ENDIAN
+        short bigPart = (short) ((short) (0x00ff & fullData[offset]));
+        short littlePart = (short) (0x00ff & fullData[offset + 1]);
+        short result = (short) (bigPart | littlePart << 8);
+        return result;
     }
 
     public static long readInt32(byte[] fullData, int offset) throws Exception {
