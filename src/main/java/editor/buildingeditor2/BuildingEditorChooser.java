@@ -61,17 +61,17 @@ public class BuildingEditorChooser {
     }
 
     private static boolean isDPPtFolder(String folderPath) {
-        File folder = new File(folderPath + File.separator + "data" + File.separator + "resource");
+        File folder = new File(folderPath + File.separator + "files" + File.separator + "resource");
         return folder.exists();
     }
 
     private static boolean isHGSSFolder(String folderPath) {
-        File folder = new File(folderPath + File.separator + "data" + File.separator + "pbr");
+        File folder = new File(folderPath + File.separator + "files" + File.separator + "pbr");
         return folder.exists();
     }
 
     private static boolean isBWFolder(String folderPath) {
-        File folder = new File(folderPath + File.separator + "data" + File.separator + "dl_rom");
+        File folder = new File(folderPath + File.separator + "files" + File.separator + "dl_rom");
         return folder.exists();
     }
 
