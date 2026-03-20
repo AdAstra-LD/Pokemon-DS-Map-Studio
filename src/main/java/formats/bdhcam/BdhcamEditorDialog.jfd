@@ -1,11 +1,11 @@
-JFDML JFormDesigner: "7.0.2.6.321" Java: "11.0.8" encoding: "UTF-8"
+JFDML JFormDesigner: "8.0.5.0.268" Java: "17.0.6" encoding: "UTF-8"
 
 new FormModel {
 	contentType: "form/swing"
 	root: new FormRoot {
 		add( new FormWindow( "javax.swing.JDialog", new FormLayoutManager( class net.miginfocom.swing.MigLayout ) {
 			"$layoutConstraints": "insets 0,hidemode 3,gap 5 5"
-			"$columnConstraints": "[fill]"
+			"$columnConstraints": "[fill][fill][fill][fill][fill][fill][fill][fill][fill][fill][fill][fill][fill][fill][fill][fill][fill][fill][fill][fill][fill][fill][fill]"
 			"$rowConstraints": "[fill][grow,fill][]"
 		} ) {
 			name: "this"
@@ -42,7 +42,7 @@ new FormModel {
 					"value": "cell 3 0"
 				} )
 			}, new FormLayoutConstraints( class net.miginfocom.layout.CC ) {
-				"value": "cell 0 0,gapx 5 5,gapy 5 0"
+				"value": "cell 0 0 23 1,gapx 5 5,gapy 5 0"
 			} )
 			add( new FormContainer( "javax.swing.JSplitPane", new FormLayoutManager( class javax.swing.JSplitPane ) ) {
 				name: "splitPane1"
@@ -421,6 +421,194 @@ new FormModel {
 				"value": "cell 0 1"
 			} )
 			add( new FormContainer( "javax.swing.JPanel", new FormLayoutManager( class net.miginfocom.swing.MigLayout ) {
+				"$layoutConstraints": "flowy,fill,hidemode 3,alignx center"
+				"$columnConstraints": "[fill][fill][fill][fill][fill][fill][fill][fill][fill][fill][fill]"
+				"$rowConstraints": "[][][][][][][][][][][][][][][][][][][][][][][][][]"
+			} ) {
+				name: "panel9"
+				add( new FormComponent( "javax.swing.JLabel" ) {
+					name: "label13"
+					"text": "Distance"
+				}, new FormLayoutConstraints( class net.miginfocom.layout.CC ) {
+					"value": "cell 0 0"
+				} )
+				add( new FormComponent( "javax.swing.JSlider" ) {
+					name: "distanceSlider"
+				}, new FormLayoutConstraints( class net.miginfocom.layout.CC ) {
+					"value": "cell 0 1 10 1"
+				} )
+				add( new FormComponent( "javax.swing.JSpinner" ) {
+					name: "distanceSpinner"
+				}, new FormLayoutConstraints( class net.miginfocom.layout.CC ) {
+					"value": "cell 10 1"
+				} )
+				add( new FormComponent( "javax.swing.JLabel" ) {
+					name: "label14"
+					"text": "Vertical Rotation"
+				}, new FormLayoutConstraints( class net.miginfocom.layout.CC ) {
+					"value": "cell 0 2 11 1"
+				} )
+				add( new FormComponent( "javax.swing.JSlider" ) {
+					name: "vRotSlider"
+				}, new FormLayoutConstraints( class net.miginfocom.layout.CC ) {
+					"value": "cell 0 3 10 1"
+				} )
+				add( new FormComponent( "javax.swing.JSpinner" ) {
+					name: "vRotSpinner"
+				}, new FormLayoutConstraints( class net.miginfocom.layout.CC ) {
+					"value": "cell 10 3"
+				} )
+				add( new FormComponent( "javax.swing.JLabel" ) {
+					name: "label15"
+					"text": "Horizontal Rotation"
+				}, new FormLayoutConstraints( class net.miginfocom.layout.CC ) {
+					"value": "cell 0 4 11 1"
+				} )
+				add( new FormComponent( "javax.swing.JSlider" ) {
+					name: "hRotSlider"
+				}, new FormLayoutConstraints( class net.miginfocom.layout.CC ) {
+					"value": "cell 0 5 10 1"
+				} )
+				add( new FormComponent( "javax.swing.JSpinner" ) {
+					name: "hRotSpinner"
+				}, new FormLayoutConstraints( class net.miginfocom.layout.CC ) {
+					"value": "cell 10 5"
+				} )
+				add( new FormComponent( "javax.swing.JLabel" ) {
+					name: "label16"
+					"text": "Z Rotation"
+				}, new FormLayoutConstraints( class net.miginfocom.layout.CC ) {
+					"value": "cell 0 6 11 1"
+				} )
+				add( new FormComponent( "javax.swing.JSlider" ) {
+					name: "zRotSlider"
+				}, new FormLayoutConstraints( class net.miginfocom.layout.CC ) {
+					"value": "cell 0 7 10 1"
+				} )
+				add( new FormComponent( "javax.swing.JSpinner" ) {
+					name: "zRotSpinner"
+				}, new FormLayoutConstraints( class net.miginfocom.layout.CC ) {
+					"value": "cell 10 7"
+				} )
+				add( new FormComponent( "javax.swing.JLabel" ) {
+					name: "label17"
+					"text": "FOV"
+				}, new FormLayoutConstraints( class net.miginfocom.layout.CC ) {
+					"value": "cell 0 8 11 1"
+				} )
+				add( new FormComponent( "javax.swing.JSlider" ) {
+					name: "fovSlider"
+				}, new FormLayoutConstraints( class net.miginfocom.layout.CC ) {
+					"value": "cell 0 9 10 1"
+				} )
+				add( new FormComponent( "javax.swing.JSpinner" ) {
+					name: "fovSpinner"
+				}, new FormLayoutConstraints( class net.miginfocom.layout.CC ) {
+					"value": "cell 10 9"
+				} )
+				add( new FormComponent( "javax.swing.JLabel" ) {
+					name: "label18"
+					"text": "Near Clip Distance"
+				}, new FormLayoutConstraints( class net.miginfocom.layout.CC ) {
+					"value": "cell 0 10 11 1"
+				} )
+				add( new FormComponent( "javax.swing.JSlider" ) {
+					name: "ncSlider"
+				}, new FormLayoutConstraints( class net.miginfocom.layout.CC ) {
+					"value": "cell 0 11 10 1"
+				} )
+				add( new FormComponent( "javax.swing.JSpinner" ) {
+					name: "ncSpinner"
+				}, new FormLayoutConstraints( class net.miginfocom.layout.CC ) {
+					"value": "cell 10 11"
+				} )
+				add( new FormComponent( "javax.swing.JLabel" ) {
+					name: "label19"
+					"text": "Far Clip Distance"
+				}, new FormLayoutConstraints( class net.miginfocom.layout.CC ) {
+					"value": "cell 0 13 11 1"
+				} )
+				add( new FormComponent( "javax.swing.JSlider" ) {
+					name: "fcSlider"
+				}, new FormLayoutConstraints( class net.miginfocom.layout.CC ) {
+					"value": "cell 0 14 10 1"
+				} )
+				add( new FormComponent( "javax.swing.JSpinner" ) {
+					name: "fcSpinner"
+				}, new FormLayoutConstraints( class net.miginfocom.layout.CC ) {
+					"value": "cell 10 14"
+				} )
+				add( new FormComponent( "javax.swing.JLabel" ) {
+					name: "label20"
+					"text": "X Displacement"
+				}, new FormLayoutConstraints( class net.miginfocom.layout.CC ) {
+					"value": "cell 0 15 11 1"
+				} )
+				add( new FormComponent( "javax.swing.JSlider" ) {
+					name: "xOffsetSlider"
+				}, new FormLayoutConstraints( class net.miginfocom.layout.CC ) {
+					"value": "cell 0 16 10 1"
+				} )
+				add( new FormComponent( "javax.swing.JSpinner" ) {
+					name: "xOffsetSpinner"
+				}, new FormLayoutConstraints( class net.miginfocom.layout.CC ) {
+					"value": "cell 10 16"
+				} )
+				add( new FormComponent( "javax.swing.JLabel" ) {
+					name: "label21"
+					"text": "Y Displacement"
+				}, new FormLayoutConstraints( class net.miginfocom.layout.CC ) {
+					"value": "cell 0 17 11 1"
+				} )
+				add( new FormComponent( "javax.swing.JSlider" ) {
+					name: "yOffsetSlider"
+				}, new FormLayoutConstraints( class net.miginfocom.layout.CC ) {
+					"value": "cell 0 18 10 1"
+				} )
+				add( new FormComponent( "javax.swing.JSpinner" ) {
+					name: "yOffsetSpinner"
+				}, new FormLayoutConstraints( class net.miginfocom.layout.CC ) {
+					"value": "cell 10 18"
+				} )
+				add( new FormComponent( "javax.swing.JLabel" ) {
+					name: "label22"
+					"text": "Z Displacement"
+				}, new FormLayoutConstraints( class net.miginfocom.layout.CC ) {
+					"value": "cell 0 19 11 1"
+				} )
+				add( new FormComponent( "javax.swing.JSlider" ) {
+					name: "zOffsetSlider"
+				}, new FormLayoutConstraints( class net.miginfocom.layout.CC ) {
+					"value": "cell 0 20 10 1"
+				} )
+				add( new FormComponent( "javax.swing.JSpinner" ) {
+					name: "zOffsetSpinner"
+				}, new FormLayoutConstraints( class net.miginfocom.layout.CC ) {
+					"value": "cell 10 20"
+				} )
+				add( new FormComponent( "javax.swing.JCheckBox" ) {
+					name: "isOrthoCheckbox"
+					"text": "Orthographic"
+				}, new FormLayoutConstraints( class net.miginfocom.layout.CC ) {
+					"value": "cell 0 21 11 1"
+				} )
+				add( new FormComponent( "javax.swing.JTextField" ) {
+					name: "cameraFilePathField"
+				}, new FormLayoutConstraints( class net.miginfocom.layout.CC ) {
+					"value": "cell 0 23 10 1"
+				} )
+				add( new FormComponent( "javax.swing.JButton" ) {
+					name: "BrowseButton"
+					"text": "Browse..."
+					addEvent( new FormEvent( "java.awt.event.ActionListener", "actionPerformed", "Browse", true ) )
+					addEvent( new FormEvent( "java.awt.event.ActionListener", "actionPerformed", "BrowseButton", true ) )
+				}, new FormLayoutConstraints( class net.miginfocom.layout.CC ) {
+					"value": "cell 10 23"
+				} )
+			}, new FormLayoutConstraints( class net.miginfocom.layout.CC ) {
+				"value": "cell 1 1 22 1,dock center"
+			} )
+			add( new FormContainer( "javax.swing.JPanel", new FormLayoutManager( class net.miginfocom.swing.MigLayout ) {
 				"$layoutConstraints": "hidemode 3"
 				"$columnConstraints": "[fill][fill]"
 				"$rowConstraints": "[]"
@@ -445,8 +633,8 @@ new FormModel {
 				"value": "cell 0 2"
 			} )
 		}, new FormLayoutConstraints( null ) {
-			"location": new java.awt.Point( 0, 0 )
-			"size": new java.awt.Dimension( 1100, 635 )
+			"location": new java.awt.Point( 65, 35 )
+			"size": new java.awt.Dimension( 1750, 945 )
 		} )
 	}
 }

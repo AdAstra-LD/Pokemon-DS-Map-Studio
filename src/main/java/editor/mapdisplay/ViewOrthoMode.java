@@ -2,6 +2,7 @@
 package editor.mapdisplay;
 
 import com.jogamp.opengl.GL2;
+import editor.grid.MapGrid;
 import editor.state.MapLayerState;
 import math.vec.Vec3f;
 
@@ -37,7 +38,7 @@ public class ViewOrthoMode extends ViewMode {
                         if (SwingUtilities.isLeftMouseButton(e)) {
                             d.dragStart = d.getCoordsInSelectedMap(e);
                             d.handler.addMapState(new MapLayerState("Draw Tile", d.handler));
-                            d.setTileInGrid(e);
+                            d.setTileInGrid(e, d);
                             d.updateActiveMapLayerGL();
                             d.repaint();
                         } else if (SwingUtilities.isMiddleMouseButton(e)) {
@@ -62,12 +63,12 @@ public class ViewOrthoMode extends ViewMode {
                         d.handler.setLayerChanged(false);
                         if (SwingUtilities.isLeftMouseButton(e)) {
                             d.handler.addMapState(new MapLayerState("Clear Tile", d.handler));
-                            d.clearTileInGrid(e);
+                            d.clearTileInGrid(e, d);
                             d.updateActiveMapLayerGL();
                             d.repaint();
                         } else if (SwingUtilities.isMiddleMouseButton(e)) {
                             d.handler.addMapState(new MapLayerState("Flood Fill Clear Tile", d.handler));
-                            d.floodFillClearTileInGrid(e);
+                            d.floodFillClearTileInGrid(e, d);
                             d.updateActiveMapLayerGL();
                             d.repaint();
                         }
@@ -168,7 +169,7 @@ public class ViewOrthoMode extends ViewMode {
                         if (SwingUtilities.isLeftMouseButton(e)) {
                             //d.updateLastMapState();
                             d.editedMapCoords.add(d.getMapCoords(e));
-                            d.dragTileInGrid(e);
+                            d.dragTileInGrid(e, d);
                             d.updateActiveMapLayerGL();
                             d.repaint();
                         }
@@ -181,7 +182,7 @@ public class ViewOrthoMode extends ViewMode {
                         if (SwingUtilities.isLeftMouseButton(e)) {
                             //d.updateLastMapState();
                             d.editedMapCoords.add(d.getMapCoords(e));
-                            d.clearTileInGrid(e);
+                            d.clearTileInGrid(e, d);
                             d.updateActiveMapLayerGL();
                             d.repaint();
                         }
@@ -256,11 +257,26 @@ public class ViewOrthoMode extends ViewMode {
             switch (d.editMode) {
                 case MODE_EDIT:
                     int delta = e.getWheelRotation() > 0 ? 1 : -1;
-                    d.handler.incrementTileSelected(delta);
-                    d.handler.getMainFrame().updateTileSelectedID();
-                    d.handler.getMainFrame().repaintTileSelector();
-                    d.handler.getMainFrame().repaintTileDisplay();
-                    d.repaint();
+                    if(d.CONTROL_PRESSED) {
+                        int curIndex = d.handler.getActiveLayerIndex();
+                        int indexUp = curIndex + delta;
+
+                        if (indexUp < 0) {
+                            indexUp += MapGrid.numLayers;
+                        }
+                        if(indexUp > MapGrid.numLayers) {
+                            indexUp -= MapGrid.numLayers;
+                        }
+
+                        d.handler.setActiveLayerIndex(indexUp);
+                        d.handler.getMainFrame().repaintThumbnailLayerSelector();
+                    } else {
+                        d.handler.incrementTileSelected(delta);
+                        d.handler.getMainFrame().updateTileSelectedID();
+                        d.handler.getMainFrame().repaintTileSelector();
+                        d.handler.getMainFrame().repaintTileDisplay();
+                        d.repaint();
+                    }
                     break;
                 case MODE_MOVE:
                     d.zoomCameraOrtho(e);

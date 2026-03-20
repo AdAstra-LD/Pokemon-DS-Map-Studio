@@ -15,6 +15,7 @@ import javax.swing.filechooser.FileNameExtensionFilter;
 
 import editor.handler.MapEditorHandler;
 import net.miginfocom.swing.*;
+import utils.FileChooserUtils;
 
 /**
  * @author Truck
@@ -173,51 +174,57 @@ public class CollisionsEditorDialogBW extends JDialog {
     }
 
     private void saveCollisionsWithDialog() {
-        final JFileChooser fc = new JFileChooser();
-        if (handler.getLastCollisionsDirectoryUsed() != null) {
-            fc.setCurrentDirectory(new File(handler.getLastCollisionsDirectoryUsed()));
-        }
-        fc.setFileFilter(new FileNameExtensionFilter("Terrain File (*.per)", CollisionsBW3D.fileExtension));
-        fc.setApproveButtonText("Save");
-        fc.setDialogTitle("Save Permissions File");
-        final int returnVal = fc.showOpenDialog(this);
-        if (returnVal == JFileChooser.APPROVE_OPTION) {
-            try {
-                String path = fc.getSelectedFile().getPath();
-                handler.setLastCollisionsDirectoryUsed(fc.getSelectedFile().getParent());
+        File lastDir = handler.getLastCollisionsDirectoryUsed() != null
+                ? new File(handler.getLastCollisionsDirectoryUsed())
+                : null;
 
-                cHandler.getCollisionsBW3D().saveToFile(path);
-            } catch (Exception ex) {
-                JOptionPane.showMessageDialog(this, "There was a problem saving the PER file",
-                        "Error saving PER", JOptionPane.ERROR_MESSAGE);
-            }
+        FileChooserUtils.saveFile(
+                "Save Permissions File",
+                lastDir,
+                "Terrain File (*.per)",
+                new String[]{"*." + CollisionsBW3D.fileExtension},
+                selectedFile -> {
+                    if (selectedFile != null) {
+                        try {
+                            String path = selectedFile.getPath();
+                            handler.setLastCollisionsDirectoryUsed(selectedFile.getParent());
 
-        }
+                            cHandler.getCollisionsBW3D().saveToFile(path);
+                        } catch (Exception ex) {
+                            JOptionPane.showMessageDialog(this, "There was a problem saving the PER file",
+                                    "Error saving PER", JOptionPane.ERROR_MESSAGE);
+                        }
+                    }
+                }
+        );
     }
 
     private void openCollisionsWithDialog(){
-        final JFileChooser fc = new JFileChooser();
-        if (handler.getLastCollisionsDirectoryUsed() != null) {
-            fc.setCurrentDirectory(new File(handler.getLastCollisionsDirectoryUsed()));
-        }
-        fc.setFileFilter(new FileNameExtensionFilter("Terrain File (*.per)", CollisionsBW3D.fileExtension));
-        fc.setApproveButtonText("Open");
-        fc.setDialogTitle("Open Permissions File");
-        final int returnVal = fc.showOpenDialog(this);
-        if (returnVal == JFileChooser.APPROVE_OPTION) {
-            try {
-                String path = fc.getSelectedFile().getPath();
-                handler.setLastCollisionsDirectoryUsed(fc.getSelectedFile().getParent());
+        File lastDir = handler.getLastCollisionsDirectoryUsed() != null
+                ? new File(handler.getLastCollisionsDirectoryUsed())
+                : null;
 
-                cHandler.setCollisionsBW3D(new CollisionsBW3D(path, handler.getGameIndex()));
+        FileChooserUtils.selectFile(
+                "Open Permissions File",
+                lastDir,
+                "Terrain File (*.per)",
+                new String[]{"*." + CollisionsBW3D.fileExtension},
+                selectedFile -> {
+                    if (selectedFile != null) {
+                        try {
+                            String path = selectedFile.getPath();
+                            handler.setLastCollisionsDirectoryUsed(selectedFile.getParent());
 
-                updateView();
-            } catch (Exception ex) {
-                JOptionPane.showMessageDialog(this, "There was a problem opening the file",
-                        "Error opening PER file", JOptionPane.ERROR_MESSAGE);
-            }
+                            cHandler.setCollisionsBW3D(new CollisionsBW3D(path, handler.getGameIndex()));
 
-        }
+                            updateView();
+                        } catch (Exception ex) {
+                            JOptionPane.showMessageDialog(this, "There was a problem opening the file",
+                                    "Error opening PER file", JOptionPane.ERROR_MESSAGE);
+                        }
+                    }
+                }
+        );
     }
 
     public JLabel getJlInfo() {

@@ -1,4 +1,4 @@
-JFDML JFormDesigner: "7.0.2.6.321" Java: "11.0.8" encoding: "UTF-8"
+JFDML JFormDesigner: "8.2.4.0.393" Java: "21.0.7" encoding: "UTF-8"
 
 new FormModel {
 	contentType: "form/swing"
@@ -32,8 +32,38 @@ new FormModel {
 							selectedItem: "Native"
 							addElement( "Native" )
 							addElement( "FlatLaf" )
-							addElement( "FlatLaf Dark" )
+							addElement( "FlatLaf Intellij" )
+							addElement( "FlatLaf Darcula" )
+							addElement( "FlatMac Light" )
+							addElement( "FlatMac Dark" )
+							addElement( "IntelliJ" )
+							addElement( "Motif" )
+							addElement( "Windows Classic" )
+							addElement( "Windows" )
+							addElement( "Metal" )
+							addElement( "Arc" )
+							addElement( "Arc - Orange" )
+							addElement( "Arc Dark" )
+							addElement( "Arc Dark - Orange" )
+							addElement( "Carbon" )
+							addElement( "Cobalt 2" )
+							addElement( "Cyan light" )
+							addElement( "Dark Flat" )
+							addElement( "Dark purple" )
+							addElement( "Dracula" )
+							addElement( "Gradianto Dark Fuchsia" )
+							addElement( "Gradianto Deep Ocean" )
+							addElement( "Gradianto Midnight Blue" )
+							addElement( "Gradianto Nature Green" )
+							addElement( "Gray" )
+							addElement( "Gruvbox Dark Hard" )
+							addElement( "Gruvbox Dark Medium" )
+							addElement( "Gruvbox Dark Soft" )
+							addElement( "Hiberbee Dark" )
+							addElement( "High contrast" )
+							addElement( "Light Flat" )
 						}
+						addEvent( new FormEvent( "java.awt.event.ActionListener", "actionPerformed", "jcmbTheme", true ) )
 					}, new FormLayoutConstraints( class net.miginfocom.layout.CC ) {
 						"value": "cell 1 0"
 					} )

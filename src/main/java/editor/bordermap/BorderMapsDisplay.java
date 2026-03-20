@@ -4,6 +4,7 @@ import editor.handler.MapEditorHandler;
 import tileset.NormalsNotFoundException;
 import tileset.TextureNotFoundException;
 import tileset.Tile;
+import utils.FileChooserUtils;
 
 import java.awt.*;
 import java.awt.event.*;
@@ -46,48 +47,51 @@ public class BorderMapsDisplay extends JPanel {
 
         if (new Rectangle(BorderMapsGrid.cols, BorderMapsGrid.rows).contains(x, y) && !(x == 1 && y == 1)) {
             if (SwingUtilities.isLeftMouseButton(evt)) {
-                final JFileChooser fc = new JFileChooser();
-                if (handler.getLastTilesetDirectoryUsed() != null) {
-                    fc.setCurrentDirectory(new File(handler.getLastTilesetDirectoryUsed()));
-                }
-                fc.setFileFilter(new FileNameExtensionFilter("OBJ (*.obj)", "obj"));
-                fc.setApproveButtonText("Open");
-                fc.setDialogTitle("Open");
-                final int returnVal = fc.showOpenDialog(handler.getMainFrame());
-                if (returnVal == JFileChooser.APPROVE_OPTION) {
-                    try {
-                        handler.setLastTilesetDirectoryUsed(fc.getSelectedFile().getParent());
-                        File file = fc.getSelectedFile();
+                File lastDir = handler.getLastTilesetDirectoryUsed() != null
+                        ? new File(handler.getLastTilesetDirectoryUsed())
+                        : null;
 
-                        handler.getBorderMapsGrid().grid[x][y] = handler.getBorderMapsTileset().getTiles().size();
-                        for (int i = 0; i < handler.getBorderMapsTileset().size(); i++) {
-                            if (!handler.getBorderMapsGrid().isTileInGrid(i)) {
-                                handler.getBorderMapsTileset().removeTile(i);
-                                handler.getBorderMapsGrid().decreaseFromIndex(i);
-                                i--;
+                FileChooserUtils.selectFile(
+                        "Open",
+                        lastDir,
+                        "OBJ (*.obj)",
+                        new String[]{"*.obj"},
+                        selectedFile -> {
+                            if (selectedFile != null) {
+                                try {
+                                    handler.setLastTilesetDirectoryUsed(selectedFile.getParent());
+
+                                    handler.getBorderMapsGrid().grid[x][y] = handler.getBorderMapsTileset().getTiles().size();
+                                    for (int i = 0; i < handler.getBorderMapsTileset().size(); i++) {
+                                        if (!handler.getBorderMapsGrid().isTileInGrid(i)) {
+                                            handler.getBorderMapsTileset().removeTile(i);
+                                            handler.getBorderMapsGrid().decreaseFromIndex(i);
+                                            i--;
+                                        }
+                                    }
+                                    handler.getBorderMapsGrid().grid[x][y] = handler.getBorderMapsTileset().getTiles().size();
+                                    Tile tile = new Tile(handler.getBorderMapsTileset(), selectedFile.getAbsolutePath());
+                                    handler.getBorderMapsTileset().getTiles().add(tile);
+
+                                    System.out.println("Size border tileset: " + handler.getBorderMapsTileset().size());
+
+                                    //New code
+                                    handler.getBorderMapsTileset().removeUnusedTextures();
+                                    //handler.getMainFrame().getMapDisplay().requestBorderMapsUpdate();//REMOVED
+                                    handler.getMainFrame().getMapDisplay().repaint();
+                                    handler.getMainFrame().getTileDisplay().requestUpdate();
+                                    handler.getMainFrame().getTileDisplay().repaint();
+
+                                    repaint();
+
+                                    System.out.println("border map loaded");
+
+                                } catch (TextureNotFoundException | NormalsNotFoundException | IOException ex) {
+                                    ex.printStackTrace();
+                                }
                             }
                         }
-                        handler.getBorderMapsGrid().grid[x][y] = handler.getBorderMapsTileset().getTiles().size();
-                        Tile tile = new Tile(handler.getBorderMapsTileset(), file.getAbsolutePath());
-                        handler.getBorderMapsTileset().getTiles().add(tile);
-
-                        System.out.println("Size border tileset: " + handler.getBorderMapsTileset().size());
-
-                        //New code
-                        handler.getBorderMapsTileset().removeUnusedTextures();
-                        //handler.getMainFrame().getMapDisplay().requestBorderMapsUpdate();//REMOVED
-                        handler.getMainFrame().getMapDisplay().repaint();
-                        handler.getMainFrame().getTileDisplay().requestUpdate();
-                        handler.getMainFrame().getTileDisplay().repaint();
-
-                        repaint();
-
-                        System.out.println("border map loaded");
-
-                    } catch (TextureNotFoundException | NormalsNotFoundException | IOException ex) {
-                        ex.printStackTrace();
-                    }
-                }
+                );
             } else if (SwingUtilities.isRightMouseButton(evt)) {
                 handler.getBorderMapsGrid().grid[x][y] = -1;
 

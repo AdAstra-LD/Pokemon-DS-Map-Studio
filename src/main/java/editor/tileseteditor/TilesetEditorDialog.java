@@ -10,6 +10,8 @@ import javax.swing.event.*;
 import editor.smartdrawing.*;
 import editor.tileselector.*;
 import com.jogamp.opengl.GLContext;
+import org.jdesktop.beansbinding.*;
+import org.jdesktop.beansbinding.AutoBinding.UpdateStrategy;
 import tileset.TilesetRenderer;
 import editor.handler.MapEditorHandler;
 import formats.obj.ObjWriter;
@@ -25,6 +27,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Objects;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.DefaultListCellRenderer;
 import javax.swing.DefaultListModel;
@@ -42,6 +45,7 @@ import javax.swing.filechooser.FileNameExtensionFilter;
 import net.miginfocom.swing.*;
 
 import tileset.*;
+import utils.FileChooserUtils;
 import utils.swing.ThumbnailFileChooser;
 import utils.Utils;
 
@@ -76,6 +80,8 @@ public class TilesetEditorDialog extends JDialog {
 
     private ArrayList<ImageIcon> materialIcons = new ArrayList<>();
     private ArrayList<ImageIcon> tileMaterialIcons = new ArrayList<>();
+
+    private String oldSearchValue = "";
 
     public TilesetEditorDialog(Window owner) {
         super(owner);
@@ -241,77 +247,80 @@ public class TilesetEditorDialog extends JDialog {
             float scale = addTileDialog.getScale();
             boolean flip = addTileDialog.flip();
 
-            final JFileChooser fc = new JFileChooser();
-            if (handler.getLastTilesetDirectoryUsed() != null) {
-                fc.setCurrentDirectory(new File(handler.getLastTilesetDirectoryUsed()));
-            }
-            fc.setFileFilter(new FileNameExtensionFilter("OBJ (*.obj)", "obj"));
-            fc.setMultiSelectionEnabled(true);
-            fc.setApproveButtonText("Open");
-            fc.setDialogTitle("Open");
-            final int returnVal = fc.showOpenDialog(this);
-            if (returnVal == JFileChooser.APPROVE_OPTION) {
-                try {
-                    handler.setLastTilesetDirectoryUsed(fc.getSelectedFile().getParent());
-                    File[] files = fc.getSelectedFiles();
-                    ArrayList<Tile> newTiles = new ArrayList<>();
-                    boolean exceptionFound = false;
-                    for (int i = 0; i < files.length; i++) {
-                        File file = files[i];
-                        try {
-                            Tile tile = new Tile(handler.getTileset(), file.getAbsolutePath());
+            File lastDir = handler.getLastTilesetDirectoryUsed() != null
+                    ? new File(handler.getLastTilesetDirectoryUsed())
+                    : null;
 
-                            if (scale != 1.0f) {
-                                tile.scaleModel(scale);
+            FileChooserUtils.selectMultipleFiles(
+                    "Open",
+                    lastDir,
+                    "OBJ (*.obj)",
+                    new String[]{"*.obj"},
+                    selectedFiles -> {
+                        if (selectedFiles != null && !selectedFiles.isEmpty()) {
+                            try {
+                                handler.setLastTilesetDirectoryUsed(selectedFiles.get(0).getParent());
+
+                                ArrayList<Tile> newTiles = new ArrayList<>();
+                                boolean exceptionFound = false;
+
+                                for (File file : selectedFiles) {
+                                    try {
+                                        Tile tile = new Tile(handler.getTileset(), file.getAbsolutePath());
+
+                                        if (scale != 1.0f) {
+                                            tile.scaleModel(scale);
+                                        }
+
+                                        if (flip) {
+                                            tile.flipModelYZ();
+                                        }
+
+                                        newTiles.add(tile);
+                                    } catch (TextureNotFoundException ex) {
+                                        exceptionFound = true;
+                                        JOptionPane.showMessageDialog(this, ex.getMessage(),
+                                                "Error reading texture",
+                                                JOptionPane.ERROR_MESSAGE);
+                                    } catch (NormalsNotFoundException ex) {
+                                        exceptionFound = true;
+                                        JOptionPane.showMessageDialog(this, ex.getMessage(),
+                                                "Error reading normals",
+                                                JOptionPane.ERROR_MESSAGE);
+                                    }
+                                }
+
+                                if (exceptionFound) {
+                                    BufferedImage image = Utils.loadTexImageAsResource("/imgs/BlenderExportObjSettings.png");
+                                    JLabel picLabel = new JLabel(new ImageIcon(image));
+                                    JOptionPane.showMessageDialog(null, picLabel,
+                                            "Use the following Blender export settings",
+                                            JOptionPane.PLAIN_MESSAGE, null);
+                                }
+
+                                int start = handler.getTileset().getTiles().size();
+                                handler.getTileset().getTiles().addAll(newTiles);
+
+                                //New code
+                                handler.getTileset().removeUnusedTextures();
+
+                                updateTileThumbnails(start, handler.getTileset().size());
+
+                                tileSelector.updateLayout();
+                                tileDisplay.requestUpdate();
+
+                                tileDisplay.repaint();
+
+                                updateJComboBox();
+                                updateView();
+                                repaint();
+
+                            } catch (IOException ex) {
+                                JOptionPane.showMessageDialog(this, "Can't open file", "Error opening some files", JOptionPane.INFORMATION_MESSAGE);
                             }
-
-                            if (flip) {
-                                tile.flipModelYZ();
-                            }
-
-                            newTiles.add(tile);
-                        } catch (TextureNotFoundException ex) {
-                            exceptionFound = true;
-                            JOptionPane.showMessageDialog(this, ex.getMessage(),
-                                    "Error reading texture",
-                                    JOptionPane.ERROR_MESSAGE);
-                        } catch (NormalsNotFoundException ex) {
-                            exceptionFound = true;
-                            JOptionPane.showMessageDialog(this, ex.getMessage(),
-                                    "Error reading normals",
-                                    JOptionPane.ERROR_MESSAGE);
                         }
                     }
-
-                    if (exceptionFound) {
-                        BufferedImage image = Utils.loadTexImageAsResource("/imgs/BlenderExportObjSettings.png");
-                        JLabel picLabel = new JLabel(new ImageIcon(image));
-                        JOptionPane.showMessageDialog(null, picLabel,
-                                "Use the following Blender export settings",
-                                JOptionPane.PLAIN_MESSAGE, null);
-                    }
-
-                    int start = handler.getTileset().getTiles().size();
-                    handler.getTileset().getTiles().addAll(newTiles);
-
-                    //New code
-                    handler.getTileset().removeUnusedTextures();
-
-                    updateTileThumbnails(start, handler.getTileset().size());
-
-                    tileSelector.updateLayout();
-                    tileDisplay.requestUpdate();
-
-                    tileDisplay.repaint();
-
-                    updateJComboBox();
-                    updateView();
-                    repaint();
-
-                } catch (IOException ex) {
-                    JOptionPane.showMessageDialog(this, "Can't open file", "Error opening some files", JOptionPane.INFORMATION_MESSAGE);
-                }
-            }
+            );
         }
     }
 
@@ -402,9 +411,10 @@ public class TilesetEditorDialog extends JDialog {
 
     private void jlistINamesValueChanged(ListSelectionEvent evt) {
         if (handler.getTileset().size() > 0) {
-            int index = jlistINames.getSelectedIndex();
-            if (index != -1) {
-                tileHandler.setMaterialIndexSelected(jlistINames.getSelectedIndex());
+            int selectedIndex = jlistINames.getSelectedIndex();
+            if (selectedIndex != -1 && selectedIndex < filteredMaterialIndices.size()) {
+                int realIndex = filteredMaterialIndices.get(selectedIndex);
+                tileHandler.setMaterialIndexSelected(realIndex);
             }
 
             updateViewMaterialProperties();
@@ -432,6 +442,28 @@ public class TilesetEditorDialog extends JDialog {
             jbGlobalTexScale.setEnabled(selected);
             jtfGlobalTexScale.setBackground(selected ? defaultTextPaneBackground : defaultInactiveTextPaneColor);
             jtfGlobalTexScale.setForeground(defaultTextPaneForeground);
+        }
+    }
+
+    private void isTileableTreeCheckboxEventClick(ActionEvent evt) {
+        if (handler.getTileset().size() > 0) {
+            boolean selected = isTileableTreeCheckbox.isSelected();
+            handler.getTileSelected().setIsTileableTree(selected);
+            tileableTreeFSpiner.setEnabled(selected);
+            tileableTreeSSpiner.setEnabled(selected);
+        }
+    }
+
+    private void tileableTreeFSpinerStateChanged(ChangeEvent evt) {
+        if (handler.getTileset().size() > 0) {
+            handler.getTileSelected().setTileableTreeFrontId((Integer)tileableTreeFSpiner.getValue());
+        }
+    }
+
+
+    private void tileableTreeSSpinerStateChanged(ChangeEvent evt) {
+        if (handler.getTileset().size() > 0) {
+            handler.getTileSelected().setTileableTreeSideId((Integer)tileableTreeSSpiner.getValue());
         }
     }
 
@@ -733,30 +765,35 @@ public class TilesetEditorDialog extends JDialog {
                 boolean flip = exportTileDialog.flip();
                 boolean includeVertexColors = exportTileDialog.includeVertexColors();
 
-                final JFileChooser fc = new JFileChooser();
-                if (handler.getLastTileObjDirectoryUsed() != null) {
-                    fc.setCurrentDirectory(new File(handler.getLastTileObjDirectoryUsed()));
-                }
-                fc.setFileFilter(new FileNameExtensionFilter("OBJ (*.obj)", "obj"));
-                fc.setApproveButtonText("Save");
-                fc.setDialogTitle("Save tile as OBJ");
-                fc.setSelectedFile(new File(handler.getTileSelected().getObjFilename()));
-                final int returnVal = fc.showOpenDialog(this);
-                if (returnVal == JFileChooser.APPROVE_OPTION) {
-                    String path = fc.getSelectedFile().getPath();
-                    handler.setLastTileObjDirectoryUsed(fc.getSelectedFile().getParent());
+                File lastDir = handler.getLastTileObjDirectoryUsed() != null
+                        ? new File(handler.getLastTileObjDirectoryUsed())
+                        : null;
 
-                    ObjWriter objWriter = new ObjWriter(handler.getTileset(),
-                            handler.getGrid(), path, handler.getGameIndex(), true, includeVertexColors, 1.0f);
-                    try {
-                        objWriter.writeTileObj(handler.getTileIndexSelected(), scale, flip);
-                        JOptionPane.showMessageDialog(this, "Tile succesfully exported as OBJ",
-                                "Tile saved", JOptionPane.INFORMATION_MESSAGE);
-                    } catch (FileNotFoundException ex) {
-                        JOptionPane.showMessageDialog(this, "There was a problem saving the tile as OBJ",
-                                "Can't save tile", JOptionPane.ERROR_MESSAGE);
-                    }
-                }
+                File initialFile = new File(handler.getTileSelected().getObjFilename());
+
+                FileChooserUtils.saveFile(
+                        "Save tile as OBJ",
+                        lastDir != null ? lastDir : initialFile.getParentFile(),
+                        "OBJ (*.obj)",
+                        new String[]{"*.obj"},
+                        selectedFile -> {
+                            if (selectedFile != null) {
+                                String path = selectedFile.getPath();
+                                handler.setLastTileObjDirectoryUsed(selectedFile.getParent());
+
+                                ObjWriter objWriter = new ObjWriter(handler.getTileset(),
+                                        handler.getGrid(), path, handler.getGameIndex(), true, includeVertexColors, 1.0f);
+                                try {
+                                    objWriter.writeTileObj(handler.getTileIndexSelected(), scale, flip);
+                                    JOptionPane.showMessageDialog(this, "Tile succesfully exported as OBJ",
+                                            "Tile saved", JOptionPane.INFORMATION_MESSAGE);
+                                } catch (FileNotFoundException ex) {
+                                    JOptionPane.showMessageDialog(this, "There was a problem saving the tile as OBJ",
+                                            "Can't save tile", JOptionPane.ERROR_MESSAGE);
+                                }
+                            }
+                        }
+                );
             }
         }
     }
@@ -776,70 +813,73 @@ public class TilesetEditorDialog extends JDialog {
                 float scale = addTileDialog.getScale();
                 boolean flip = addTileDialog.flip();
 
-                final JFileChooser fc = new JFileChooser();
-                if (handler.getLastTilesetDirectoryUsed() != null) {
-                    fc.setCurrentDirectory(new File(handler.getLastTilesetDirectoryUsed()));
-                }
-                fc.setFileFilter(new FileNameExtensionFilter("OBJ (*.obj)", "obj"));
-                fc.setApproveButtonText("Open");
-                fc.setDialogTitle("Open OBJ");
-                final int returnVal = fc.showOpenDialog(this);
-                if (returnVal == JFileChooser.APPROVE_OPTION) {
-                    try {
-                        handler.setLastTilesetDirectoryUsed(fc.getSelectedFile().getParent());
-                        File file = fc.getSelectedFile();
-                        boolean exceptionFound = false;
-                        try {
-                            Tile tile = new Tile(handler.getTileset(),
-                                    file.getAbsolutePath(),
-                                    handler.getTileSelected());
+                File lastDir = handler.getLastTilesetDirectoryUsed() != null
+                        ? new File(handler.getLastTilesetDirectoryUsed())
+                        : null;
 
-                            if (scale != 1.0f) {
-                                tile.scaleModel(scale);
+                FileChooserUtils.selectFile(
+                        "Open OBJ",
+                        lastDir,
+                        "OBJ (*.obj)",
+                        new String[]{"*.obj"},
+                        selectedFile -> {
+                            if (selectedFile != null) {
+                                try {
+                                    handler.setLastTilesetDirectoryUsed(selectedFile.getParent());
+                                    boolean exceptionFound = false;
+                                    try {
+                                        Tile tile = new Tile(handler.getTileset(),
+                                                selectedFile.getAbsolutePath(),
+                                                handler.getTileSelected());
+
+                                        if (scale != 1.0f) {
+                                            tile.scaleModel(scale);
+                                        }
+
+                                        if (flip) {
+                                            tile.flipModelYZ();
+                                        }
+
+                                        handler.getTileset().getTiles().set(handler.getTileIndexSelected(), tile);
+
+                                        //Remove unused textures
+                                        handler.getTileset().removeUnusedTextures();
+
+                                        updateSelectedTileThumbnail();
+
+                                        tileSelector.updateLayout();
+                                        tileDisplay.requestUpdate();
+
+                                        tileDisplay.repaint();
+
+                                        updateJComboBox();
+                                        updateView();
+                                        repaint();
+
+                                    } catch (TextureNotFoundException ex) {
+                                        exceptionFound = true;
+                                        JOptionPane.showMessageDialog(this, ex.getMessage(),
+                                                "Error reading texture",
+                                                JOptionPane.ERROR_MESSAGE);
+                                    } catch (NormalsNotFoundException ex) {
+                                        exceptionFound = true;
+                                        JOptionPane.showMessageDialog(this, ex.getMessage(),
+                                                "Error reading normals",
+                                                JOptionPane.ERROR_MESSAGE);
+                                    }
+                                    if (exceptionFound) {
+                                        BufferedImage image = Utils.loadTexImageAsResource("/imgs/BlenderExportObjSettings.png");
+                                        JLabel picLabel = new JLabel(new ImageIcon(image));
+                                        JOptionPane.showMessageDialog(null, picLabel,
+                                                "Use the following Blender export settings",
+                                                JOptionPane.PLAIN_MESSAGE, null);
+                                    }
+                                } catch (IOException ex) {
+                                    JOptionPane.showMessageDialog(this, "Can't open file", "Error opening some files", JOptionPane.INFORMATION_MESSAGE);
+                                }
                             }
-
-                            if (flip) {
-                                tile.flipModelYZ();
-                            }
-
-                            handler.getTileset().getTiles().set(handler.getTileIndexSelected(), tile);
-
-                            //Remove unused textures
-                            handler.getTileset().removeUnusedTextures();
-
-                            updateSelectedTileThumbnail();
-
-                            tileSelector.updateLayout();
-                            tileDisplay.requestUpdate();
-
-                            tileDisplay.repaint();
-
-                            updateJComboBox();
-                            updateView();
-                            repaint();
-
-                        } catch (TextureNotFoundException ex) {
-                            exceptionFound = true;
-                            JOptionPane.showMessageDialog(this, ex.getMessage(),
-                                    "Error reading texture",
-                                    JOptionPane.ERROR_MESSAGE);
-                        } catch (NormalsNotFoundException ex) {
-                            exceptionFound = true;
-                            JOptionPane.showMessageDialog(this, ex.getMessage(),
-                                    "Error reading normals",
-                                    JOptionPane.ERROR_MESSAGE);
                         }
-                        if (exceptionFound) {
-                            BufferedImage image = Utils.loadTexImageAsResource("/imgs/BlenderExportObjSettings.png");
-                            JLabel picLabel = new JLabel(new ImageIcon(image));
-                            JOptionPane.showMessageDialog(null, picLabel,
-                                    "Use the following Blender export settings",
-                                    JOptionPane.PLAIN_MESSAGE, null);
-                        }
-                    } catch (IOException ex) {
-                        JOptionPane.showMessageDialog(this, "Can't open file", "Error opening some files", JOptionPane.INFORMATION_MESSAGE);
-                    }
-                }
+                );
             }
         }
     }
@@ -851,47 +891,59 @@ public class TilesetEditorDialog extends JDialog {
     }
 
     private void jbImportTilesActionPerformed(ActionEvent evt) {
-        final JFileChooser fc = new JFileChooser();
-        if (handler.getLastTilesetDirectoryUsed() != null) {
-            fc.setCurrentDirectory(new File(handler.getLastTilesetDirectoryUsed()));
-        }
-        fc.setFileFilter(new FileNameExtensionFilter("Pokemon DS Tileset (*.pdsts)", Tileset.fileExtension));
-        fc.setApproveButtonText("Open");
-        fc.setDialogTitle("Select a Pokemon DS Map Studio Tileset");
-        final int returnVal = fc.showOpenDialog(this);
-        if (returnVal == JFileChooser.APPROVE_OPTION) {
-            try {
-                handler.setLastTilesetDirectoryUsed(fc.getSelectedFile().getParent());
-                String path = fc.getSelectedFile().getPath();
-                Tileset tileset = TilesetIO.readTilesetFromFile(path);
-                int start = handler.getTileset().size();
+        File lastDir = handler.getLastTilesetDirectoryUsed() != null
+                ? new File(handler.getLastTilesetDirectoryUsed())
+                : null;
 
-                final ImportTilesDialog dialog = new ImportTilesDialog(handler.getMainFrame());
-                dialog.init(tileset);
-                dialog.setLocationRelativeTo(this);
-                dialog.setVisible(true);
+        FileChooserUtils.selectFile(
+                "Select a Pokemon DS Map Studio Tileset",
+                lastDir,
+                "Pokemon DS Tileset (*.pdsts)",
+                new String[]{"*." + Tileset.fileExtension},
+                selectedFile -> {
+                    if (selectedFile != null) {
+                        try {
+                            handler.setLastTilesetDirectoryUsed(selectedFile.getParent());
+                            String path = selectedFile.getPath();
+                            Tileset tileset = TilesetIO.readTilesetFromFile(path);
+                            int start = handler.getTileset().size();
 
-                if (dialog.getReturnValue() == ImportTilesDialog.APPROVE_OPTION) {
-                    ArrayList<Tile> tiles = dialog.getTilesSelected();
+                            final ImportTilesDialog dialog = new ImportTilesDialog(handler.getMainFrame());
+                            dialog.init(tileset);
+                            dialog.setLocationRelativeTo(this);
+                            dialog.setVisible(true);
 
-                    handler.getTileset().importTiles(tiles);
+                            if (dialog.getReturnValue() == ImportTilesDialog.APPROVE_OPTION) {
+                                ArrayList<Tile> tiles = dialog.getTilesSelected();
+                                tiles.forEach(tile -> {
+                                    if(tile.getIsTileableTree()) {
+                                        int newSideIxd = tile.getSideTileId() + tileset.size();
+                                        int newFaceIxd = tile.getFrontTileId() + tileset.size();
+                                        tile.setTileableTreeFrontId(newFaceIxd);
+                                        tile.setTileableTreeSideId(newSideIxd);
+                                    }
+                                });
 
-                    handler.getTileset().removeUnusedTextures();
+                                handler.getTileset().importTiles(tiles);
 
-                    updateTileThumbnails(start, handler.getTileset().size());
+                                handler.getTileset().removeUnusedTextures();
 
-                    tileSelector.updateLayout();
-                    tileDisplay.requestUpdate();
-                    tileDisplay.repaint();
-                    updateJComboBox();
-                    updateView();
-                    repaint();
+                                updateTileThumbnails(start, handler.getTileset().size());
+
+                                tileSelector.updateLayout();
+                                tileDisplay.requestUpdate();
+                                tileDisplay.repaint();
+                                updateJComboBox();
+                                updateView();
+                                repaint();
+                            }
+                        } catch (NullPointerException | TextureNotFoundException | IOException ex) {
+                            JOptionPane.showMessageDialog(this, "There was a problem opening the tileset",
+                                    "Error opening tileset", JOptionPane.ERROR_MESSAGE);
+                        }
+                    }
                 }
-            } catch (NullPointerException | TextureNotFoundException | IOException ex) {
-                JOptionPane.showMessageDialog(this, "There was a problem opening the tileset",
-                        "Error opening tileset", JOptionPane.ERROR_MESSAGE);
-            }
-        }
+        );
 
     }
 
@@ -1014,6 +1066,10 @@ public class TilesetEditorDialog extends JDialog {
         updateJComboBox();
 
         updateView();
+        filteredMaterialIndices = new ArrayList<>();
+        for (int i = 0; i < handler.getTileset().getMaterials().size(); i++) {
+            filteredMaterialIndices.add(i);
+        }
     }
 
     private void updateJComboBox() {
@@ -1063,6 +1119,10 @@ public class TilesetEditorDialog extends JDialog {
             updateViewYOffset(tile);
             updateViewZOffset(tile);
             updateViewGlobalTexScale(tile);
+
+            updateIsTilableTree(tile);
+            updateFrontTileId(tile);
+            updateSideTileId(tile);
 
             jtfObjName.setText(tile.getObjFilename());
 
@@ -1172,6 +1232,22 @@ public class TilesetEditorDialog extends JDialog {
         jbGlobalTexScale.setEnabled(enabled);
     }
 
+    private void updateIsTilableTree(Tile tile) {
+        boolean enabled = tile.getIsTileableTree();
+
+        isTileableTreeCheckbox.setSelected(enabled);
+        tileableTreeFSpiner.setEnabled(enabled);
+        tileableTreeSSpiner.setEnabled(enabled);
+    }
+
+    private void updateFrontTileId(Tile tile) {
+        tileableTreeFSpiner.setValue(tile.getFrontTileId());
+    }
+
+    private void updateSideTileId(Tile tile) {
+        tileableTreeSSpiner.setValue(tile.getSideTileId());
+    }
+
     private void updateViewTexGenMode() {
         jcbTexGenModeListenerActive = false;
         jcbTexGenMode.setSelectedIndex(tileHandler.getMaterialSelected().getTexGenMode());
@@ -1248,7 +1324,11 @@ public class TilesetEditorDialog extends JDialog {
         }
         jlistINames.setSelectedIndex(0);
         jlistINames.setModel(demoList);
-        jlistINames.setSelectedIndex(0);
+
+        filteredMaterialIndices.clear();
+        for (int i = 0; i < handler.getTileset().getMaterials().size(); i++) {
+            filteredMaterialIndices.add(i);
+        }
 
         materialIcons = new ArrayList<>(handler.getTileset().getMaterials().size());
         for (int i = 0; i < handler.getTileset().getMaterials().size(); i++) {
@@ -1259,18 +1339,22 @@ public class TilesetEditorDialog extends JDialog {
             @Override
             public Component getListCellRendererComponent(JList list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
                 JLabel label = (JLabel) super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
-                if (index < materialIcons.size() && index >= 0) {
-                    label.setIcon(materialIcons.get(index));
+                if (index >= 0 && index < filteredMaterialIndices.size()) {
+                    int realIndex = filteredMaterialIndices.get(index);
+                    if (realIndex < materialIcons.size()) {
+                        label.setIcon(materialIcons.get(realIndex));
+                    }
                 }
                 return label;
             }
         });
 
+        jlistINames.setSelectedIndex(0);
     }
-
     public void updateViewMaterialName() {
-        if (jlistINames.getSelectedIndex() != -1) {
-            String mName = handler.getTileset().getMaterialName(jlistINames.getSelectedIndex());
+        int realIndex = tileHandler.getMaterialIndexSelected();
+        if (realIndex != -1 && realIndex < handler.getTileset().getMaterials().size()) {
+            String mName = handler.getTileset().getMaterialName(realIndex);
             jtfMaterialNameActive.value = false;
             jtfMaterialName.setText(mName);
             jtfMaterialName.setBackground(defaultTextPaneBackground);
@@ -1280,8 +1364,9 @@ public class TilesetEditorDialog extends JDialog {
     }
 
     private void updateViewPaletteNameImd() {
-        if (jlistINames.getSelectedIndex() != -1) {
-            String pName = handler.getTileset().getPaletteNameImd(jlistINames.getSelectedIndex());
+        int realIndex = tileHandler.getMaterialIndexSelected();
+        if (realIndex != -1 && realIndex < handler.getTileset().getMaterials().size()) {
+            String pName = handler.getTileset().getPaletteNameImd(realIndex);
             jtfPaletteNameActive.value = false;
             jtfPaletteName.setText(pName);
             jtfPaletteName.setBackground(defaultTextPaneBackground);
@@ -1291,8 +1376,9 @@ public class TilesetEditorDialog extends JDialog {
     }
 
     private void updateViewTextureNameImd() {
-        if (jlistINames.getSelectedIndex() != -1) {
-            String tName = handler.getTileset().getTextureNameImd(jlistINames.getSelectedIndex());
+        int realIndex = tileHandler.getMaterialIndexSelected();
+        if (realIndex != -1 && realIndex < handler.getTileset().getMaterials().size()) {
+            String tName = handler.getTileset().getTextureNameImd(realIndex);
             jtfTextureNameActive.value = false;
             jtfTextureName.setText(tName);
             jtfTextureName.setBackground(defaultTextPaneBackground);
@@ -1604,6 +1690,43 @@ public class TilesetEditorDialog extends JDialog {
             }
         });
     }
+    private ArrayList<Integer> filteredMaterialIndices = new ArrayList<>();
+
+    private void materialSearchBoxCaretUpdate(CaretEvent e) {
+        if(Objects.equals(oldSearchValue, materialSearchBox.getText())) return;
+        oldSearchValue = materialSearchBox.getText();
+
+        String searchText = materialSearchBox.getText().toLowerCase().trim();
+
+        DefaultListModel<String> filteredModel = new DefaultListModel<>();
+        filteredMaterialIndices.clear();
+
+        if (searchText.isEmpty()) {
+            for (int i = 0; i < handler.getTileset().getMaterials().size(); i++) {
+                filteredModel.addElement(handler.getTileset().getMaterials().get(i).getImageName());
+                filteredMaterialIndices.add(i);
+            }
+        } else {
+            for (int i = 0; i < handler.getTileset().getMaterials().size(); i++) {
+                String materialName = handler.getTileset().getMaterials().get(i).getImageName();
+                if (materialName.toLowerCase().contains(searchText)) {
+                    filteredModel.addElement(materialName);
+                    filteredMaterialIndices.add(i);
+                }
+            }
+        }
+
+        jlistINames.setModel(filteredModel);
+
+        if (filteredModel.getSize() > 0) {
+            jlistINames.setSelectedIndex(0);
+
+            int realIndex = filteredMaterialIndices.get(0);
+            tileHandler.setMaterialIndexSelected(realIndex);
+            updateViewMaterialProperties();
+            textureDisplayMaterial.repaint();
+        }
+    }
 
 
 
@@ -1619,6 +1742,7 @@ public class TilesetEditorDialog extends JDialog {
 
     private void initComponents() {
         // JFormDesigner - Component initialization - DO NOT MODIFY  //GEN-BEGIN:initComponents
+        // Generated using JFormDesigner Educational license - Corentin Macé
         panel18 = new JPanel();
         tileDisplay = new TileDisplay();
         jTabbedPane2 = new JTabbedPane();
@@ -1679,9 +1803,11 @@ public class TilesetEditorDialog extends JDialog {
         jcbTileableY = new JCheckBox();
         jcbVtileable = new JCheckBox();
         panel3 = new JPanel();
+        jLabel14 = new JLabel();
         jlXOffset = new JLabel();
         jtfXOffset = new JTextField();
         jbXOffset = new JButton();
+        jLabel15 = new JLabel();
         jlYOffset = new JLabel();
         jtfYOffset = new JTextField();
         jbYOffset = new JButton();
@@ -1703,14 +1829,24 @@ public class TilesetEditorDialog extends JDialog {
         jPanel7 = new JPanel();
         panel6 = new JPanel();
         jLabel22 = new JLabel();
+        Jlabel3 = new JLabel();
         label2 = new JLabel();
         jbAddTexture = new JButton();
         jcbMaterial = new JComboBox<>();
         scrollPane1 = new JScrollPane();
         jlTileMaterials = new JList();
+        panel15 = new JPanel();
+        isTileableTreeCheckbox = new JCheckBox();
+        panel16 = new JPanel();
+        label4 = new JLabel();
+        tileableTreeFSpiner = new JSpinner();
+        panel19 = new JPanel();
+        label5 = new JLabel();
+        tileableTreeSSpiner = new JSpinner();
         textureDisplay = new TextureDisplay();
         jPanel3 = new JPanel();
         panel13 = new JPanel();
+        materialSearchBox = new JTextField();
         jLabel21 = new JLabel();
         jScrollPane1 = new JScrollPane();
         jlistINames = new JList<>();
@@ -1753,7 +1889,6 @@ public class TilesetEditorDialog extends JDialog {
         jcbL1 = new JCheckBox();
         jcbL2 = new JCheckBox();
         jcbL3 = new JCheckBox();
-
         jLabelR = new JLabel();
         jSpinnerDR = new JSpinner();
         jSpinnerAR = new JSpinner();
@@ -1769,7 +1904,6 @@ public class TilesetEditorDialog extends JDialog {
         jSpinnerAB = new JSpinner();
         jSpinnerSB = new JSpinner();
         jSpinnerEB = new JSpinner();
-
         panel7 = new JPanel();
         jbReplaceTexture = new JButton();
         jbReplaceMaterial = new JButton();
@@ -1779,8 +1913,8 @@ public class TilesetEditorDialog extends JDialog {
         setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
         setTitle("Tileset Editor");
         setIconImage(null);
-        setMinimumSize(new Dimension(1215, 650));
-        setPreferredSize(new Dimension(1565, 700));
+        setMinimumSize(new Dimension(1215, 700));
+        setPreferredSize(new Dimension(1215, 700));
         setModal(true);
         Container contentPane = getContentPane();
         contentPane.setLayout(new BoxLayout(contentPane, BoxLayout.X_AXIS));
@@ -1801,12 +1935,12 @@ public class TilesetEditorDialog extends JDialog {
                 GroupLayout tileDisplayLayout = new GroupLayout(tileDisplay);
                 tileDisplay.setLayout(tileDisplayLayout);
                 tileDisplayLayout.setHorizontalGroup(
-                        tileDisplayLayout.createParallelGroup()
-                                .addGap(0, 322, Short.MAX_VALUE)
+                    tileDisplayLayout.createParallelGroup()
+                        .addGap(0, 293, Short.MAX_VALUE)
                 );
                 tileDisplayLayout.setVerticalGroup(
-                        tileDisplayLayout.createParallelGroup()
-                                .addGap(0, 542, Short.MAX_VALUE)
+                    tileDisplayLayout.createParallelGroup()
+                        .addGap(0, 550, Short.MAX_VALUE)
                 );
             }
             panel18.add(tileDisplay);
@@ -1823,17 +1957,17 @@ public class TilesetEditorDialog extends JDialog {
                     jPanel4.setMinimumSize(null);
                     jPanel4.setPreferredSize(null);
                     jPanel4.setLayout(new MigLayout(
-                            "fill",
-                            // columns
-                            "[grow]" +
-                                    "[grow,shrink 0,fill]" +
-                                    "[grow,shrink 0,fill]" +
-                                    "[grow,shrink 0,fill]" +
-                                    "[grow,shrink 0,fill]" +
-                                    "[grow,shrink 0,fill]",
-                            // rows
-                            "[shrink 0,center]" +
-                                    "[shrink 0,center]"));
+                        "fill",
+                        // columns
+                        "[grow]" +
+                        "[grow,shrink 0,fill]" +
+                        "[grow,shrink 0,fill]" +
+                        "[grow,shrink 0,fill]" +
+                        "[grow,shrink 0,fill]" +
+                        "[grow,shrink 0,fill]",
+                        // rows
+                        "[shrink 0,center]" +
+                        "[shrink 0,center]"));
 
                     //---- jLabel12 ----
                     jLabel12.setText("Rotate: ");
@@ -1852,7 +1986,7 @@ public class TilesetEditorDialog extends JDialog {
                     jPanel4.add(jbRotateModel, "cell 1 0,dock center");
 
                     //---- jbMoveModelLeft ----
-                    jbMoveModelLeft.setForeground(new Color(204, 0, 0));
+                    jbMoveModelLeft.setForeground(new Color(0xcc0000));
                     jbMoveModelLeft.setMaximumSize(null);
                     jbMoveModelLeft.setMinimumSize(null);
                     jbMoveModelLeft.setPreferredSize(null);
@@ -1861,7 +1995,7 @@ public class TilesetEditorDialog extends JDialog {
                     jPanel4.add(jbMoveModelLeft, "cell 2 0 1 2,dock center");
 
                     //---- jbMoveModelUp ----
-                    jbMoveModelUp.setForeground(new Color(0, 153, 0));
+                    jbMoveModelUp.setForeground(new Color(0x009900));
                     jbMoveModelUp.setMaximumSize(null);
                     jbMoveModelUp.setMinimumSize(null);
                     jbMoveModelUp.setPreferredSize(null);
@@ -1870,7 +2004,7 @@ public class TilesetEditorDialog extends JDialog {
                     jPanel4.add(jbMoveModelUp, "cell 3 0,dock center");
 
                     //---- jbMoveModelRight ----
-                    jbMoveModelRight.setForeground(new Color(204, 0, 0));
+                    jbMoveModelRight.setForeground(new Color(0xcc0000));
                     jbMoveModelRight.setMaximumSize(null);
                     jbMoveModelRight.setMinimumSize(null);
                     jbMoveModelRight.setPreferredSize(null);
@@ -1905,7 +2039,7 @@ public class TilesetEditorDialog extends JDialog {
                     jPanel4.add(jbFlipModel, "cell 1 1,dock center");
 
                     //---- jbMoveModelDown ----
-                    jbMoveModelDown.setForeground(new Color(0, 153, 0));
+                    jbMoveModelDown.setForeground(new Color(0x009900));
                     jbMoveModelDown.setMaximumSize(null);
                     jbMoveModelDown.setMinimumSize(null);
                     jbMoveModelDown.setPreferredSize(null);
@@ -1930,14 +2064,14 @@ public class TilesetEditorDialog extends JDialog {
                     jPanel8.setMinimumSize(null);
                     jPanel8.setPreferredSize(null);
                     jPanel8.setLayout(new MigLayout(
-                            "insets 5 5 5 05,hidemode 3,gap 5 5",
-                            // columns
-                            "[grow,fill]" +
-                                    "[grow,fill]",
-                            // rows
-                            "[fill]" +
-                                    "[fill]" +
-                                    "[]"));
+                        "insets 5 5 5 05,hidemode 3,gap 5 5",
+                        // columns
+                        "[grow,fill]" +
+                        "[grow,fill]",
+                        // rows
+                        "[fill]" +
+                        "[fill]" +
+                        "[]"));
 
                     //---- jcbBackfaceCulling ----
                     jcbBackfaceCulling.setSelected(true);
@@ -1994,6 +2128,8 @@ public class TilesetEditorDialog extends JDialog {
             {
                 jScrollPane2.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
                 jScrollPane2.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
+                jScrollPane2.setInheritsPopupMenu(true);
+                jScrollPane2.setMaximumSize(new Dimension(500, 400));
 
                 //======== tileSelector ========
                 {
@@ -2010,12 +2146,12 @@ public class TilesetEditorDialog extends JDialog {
                     GroupLayout tileSelectorLayout = new GroupLayout(tileSelector);
                     tileSelector.setLayout(tileSelectorLayout);
                     tileSelectorLayout.setHorizontalGroup(
-                            tileSelectorLayout.createParallelGroup()
-                                    .addGap(0, 128, Short.MAX_VALUE)
+                        tileSelectorLayout.createParallelGroup()
+                            .addGap(0, 128, Short.MAX_VALUE)
                     );
                     tileSelectorLayout.setVerticalGroup(
-                            tileSelectorLayout.createParallelGroup()
-                                    .addGap(0, 0, Short.MAX_VALUE)
+                        tileSelectorLayout.createParallelGroup()
+                            .addGap(0, 0, Short.MAX_VALUE)
                     );
                 }
                 jScrollPane2.setViewportView(tileSelector);
@@ -2024,14 +2160,16 @@ public class TilesetEditorDialog extends JDialog {
             GroupLayout jPanel2Layout = new GroupLayout(jPanel2);
             jPanel2.setLayout(jPanel2Layout);
             jPanel2Layout.setHorizontalGroup(
-                    jPanel2Layout.createParallelGroup()
-                            .addGroup(jPanel2Layout.createSequentialGroup()
-                                    .addComponent(jScrollPane2, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-                                    .addGap(0, 0, Short.MAX_VALUE))
+                jPanel2Layout.createParallelGroup()
+                    .addGroup(jPanel2Layout.createSequentialGroup()
+                        .addComponent(jScrollPane2, GroupLayout.PREFERRED_SIZE, 146, GroupLayout.PREFERRED_SIZE)
+                        .addGap(0, 0, Short.MAX_VALUE))
             );
             jPanel2Layout.setVerticalGroup(
-                    jPanel2Layout.createParallelGroup()
-                            .addComponent(jScrollPane2, GroupLayout.DEFAULT_SIZE, 638, Short.MAX_VALUE)
+                jPanel2Layout.createParallelGroup()
+                    .addGroup(GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
+                        .addGap(0, 0, Short.MAX_VALUE)
+                        .addComponent(jScrollPane2, GroupLayout.PREFERRED_SIZE, 645, GroupLayout.PREFERRED_SIZE))
             );
         }
         contentPane.add(jPanel2);
@@ -2060,12 +2198,12 @@ public class TilesetEditorDialog extends JDialog {
                     GroupLayout smartGridEditableDisplayLayout = new GroupLayout(smartGridEditableDisplay);
                     smartGridEditableDisplay.setLayout(smartGridEditableDisplayLayout);
                     smartGridEditableDisplayLayout.setHorizontalGroup(
-                            smartGridEditableDisplayLayout.createParallelGroup()
-                                    .addGap(0, 188, Short.MAX_VALUE)
+                        smartGridEditableDisplayLayout.createParallelGroup()
+                            .addGap(0, 188, Short.MAX_VALUE)
                     );
                     smartGridEditableDisplayLayout.setVerticalGroup(
-                            smartGridEditableDisplayLayout.createParallelGroup()
-                                    .addGap(0, 587, Short.MAX_VALUE)
+                        smartGridEditableDisplayLayout.createParallelGroup()
+                            .addGap(0, 587, Short.MAX_VALUE)
                     );
                 }
                 jScrollPaneSmartGrid.setViewportView(smartGridEditableDisplay);
@@ -2106,19 +2244,19 @@ public class TilesetEditorDialog extends JDialog {
             GroupLayout jPanel9Layout = new GroupLayout(jPanel9);
             jPanel9.setLayout(jPanel9Layout);
             jPanel9Layout.setHorizontalGroup(
-                    jPanel9Layout.createParallelGroup()
-                            .addGroup(jPanel9Layout.createSequentialGroup()
-                                    .addGroup(jPanel9Layout.createParallelGroup(GroupLayout.Alignment.LEADING, false)
-                                            .addComponent(panel9, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                            .addComponent(jScrollPaneSmartGrid, GroupLayout.DEFAULT_SIZE, 95, Short.MAX_VALUE))
-                                    .addGap(0, 0, 0))
+                jPanel9Layout.createParallelGroup()
+                    .addGroup(jPanel9Layout.createSequentialGroup()
+                        .addGroup(jPanel9Layout.createParallelGroup(GroupLayout.Alignment.LEADING, false)
+                            .addComponent(panel9, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(jScrollPaneSmartGrid, GroupLayout.DEFAULT_SIZE, 95, Short.MAX_VALUE))
+                        .addGap(0, 0, 0))
             );
             jPanel9Layout.setVerticalGroup(
-                    jPanel9Layout.createParallelGroup()
-                            .addGroup(jPanel9Layout.createSequentialGroup()
-                                    .addComponent(jScrollPaneSmartGrid, GroupLayout.DEFAULT_SIZE, 574, Short.MAX_VALUE)
-                                    .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
-                                    .addComponent(panel9, GroupLayout.PREFERRED_SIZE, 58, GroupLayout.PREFERRED_SIZE))
+                jPanel9Layout.createParallelGroup()
+                    .addGroup(jPanel9Layout.createSequentialGroup()
+                        .addComponent(jScrollPaneSmartGrid, GroupLayout.DEFAULT_SIZE, 582, Short.MAX_VALUE)
+                        .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(panel9, GroupLayout.PREFERRED_SIZE, 58, GroupLayout.PREFERRED_SIZE))
             );
         }
         contentPane.add(jPanel9);
@@ -2135,15 +2273,15 @@ public class TilesetEditorDialog extends JDialog {
                 jPanel1.setPreferredSize(null);
                 jPanel1.setMaximumSize(null);
                 jPanel1.setLayout(new MigLayout(
-                        "",
-                        // columns
-                        "[shrink 0,fill]",
-                        // rows
-                        "0[fill]0" +
-                                "[fill]0" +
-                                "[fill]0" +
-                                "[fill]0" +
-                                "[128:n,grow,shrink 0,fill]"));
+                    null,
+                    // columns
+                    "[shrink 0,fill]",
+                    // rows
+                    "0[fill]0" +
+                    "[fill]0" +
+                    "[fill]0" +
+                    "[fill]0" +
+                    "[128:n,grow,shrink 0,fill]"));
 
                 //======== panel8 ========
                 {
@@ -2151,15 +2289,15 @@ public class TilesetEditorDialog extends JDialog {
                     panel8.setMinimumSize(null);
                     panel8.setPreferredSize(null);
                     panel8.setLayout(new MigLayout(
-                            "insets 0,hidemode 3,gap 10 0",
-                            // columns
-                            "[fill]" +
-                                    "[210:n,grow,fill]" +
-                                    "[fill]" +
-                                    "[fill]" +
-                                    "[fill]",
-                            // rows
-                            "[fill]"));
+                        "insets 0,hidemode 3,gap 10 0",
+                        // columns
+                        "[fill]" +
+                        "[210:n,grow,fill]" +
+                        "[fill]" +
+                        "[fill]" +
+                        "[fill]",
+                        // rows
+                        "[fill]"));
 
                     //---- jLabel3 ----
                     jLabel3.setText("Tile selected: ");
@@ -2207,14 +2345,14 @@ public class TilesetEditorDialog extends JDialog {
                     panel1.setMinimumSize(null);
                     panel1.setPreferredSize(null);
                     panel1.setLayout(new MigLayout(
-                            "insets 0,hidemode 3,gap 5 0",
-                            // columns
-                            "[grow,fill]" +
-                                    "[grow,fill]" +
-                                    "[129,grow,fill]" +
-                                    "[grow,fill]",
-                            // rows
-                            "[grow,fill]"));
+                        "insets 0,hidemode 3,gap 5 0",
+                        // columns
+                        "[grow,fill]" +
+                        "[grow,fill]" +
+                        "[129,grow,fill]" +
+                        "[grow,fill]",
+                        // rows
+                        "[grow,fill]"));
 
                     //---- jbAddTile ----
                     jbAddTile.setIcon(new ImageIcon(getClass().getResource("/icons/AddTileIcon.png")));
@@ -2261,14 +2399,14 @@ public class TilesetEditorDialog extends JDialog {
                     jPanel5.setMinimumSize(null);
                     jPanel5.setPreferredSize(null);
                     jPanel5.setLayout(new MigLayout(
-                            "insets 5,hidemode 3,gap 5 10",
-                            // columns
-                            "[313,grow,fill]" +
-                                    "[fill]",
-                            // rows
-                            "[]" +
-                                    "[fill]" +
-                                    "[fill]"));
+                        "insets 5,hidemode 3,gap 5 10",
+                        // columns
+                        "[313,grow,fill]" +
+                        "[fill]",
+                        // rows
+                        "[]" +
+                        "[fill]" +
+                        "[fill]"));
 
                     //======== panel2 ========
                     {
@@ -2276,18 +2414,18 @@ public class TilesetEditorDialog extends JDialog {
                         panel2.setMinimumSize(null);
                         panel2.setPreferredSize(null);
                         panel2.setLayout(new MigLayout(
-                                "insets 0,hidemode 3,gap 5 5",
-                                // columns
-                                "[grow,fill]" +
-                                        "[42:67,grow,fill]" +
-                                        "[grow,fill]" +
-                                        "[55:n,grow,fill]",
-                                // rows
-                                "[grow,fill]" +
-                                        "[grow,fill]"));
+                            "insets 0,hidemode 3,gap 5 5",
+                            // columns
+                            "[grow,fill]" +
+                            "[42:67,grow,fill]" +
+                            "[grow,fill]" +
+                            "[55:n,grow,fill]",
+                            // rows
+                            "[grow,fill]" +
+                            "[grow,fill]"));
 
                         //---- jLabel1 ----
-                        jLabel1.setForeground(new Color(204, 0, 0));
+                        jLabel1.setForeground(new Color(0xcc0000));
                         jLabel1.setText("X Size:");
                         jLabel1.setMaximumSize(null);
                         jLabel1.setMinimumSize(null);
@@ -2319,7 +2457,7 @@ public class TilesetEditorDialog extends JDialog {
                         panel2.add(jbMoreSizeX, "cell 3 0");
 
                         //---- jLabel2 ----
-                        jLabel2.setForeground(new Color(0, 153, 0));
+                        jLabel2.setForeground(new Color(0x009900));
                         jLabel2.setText("Y Size:");
                         jLabel2.setMaximumSize(null);
                         jLabel2.setMinimumSize(null);
@@ -2358,16 +2496,16 @@ public class TilesetEditorDialog extends JDialog {
                         panel4.setMinimumSize(null);
                         panel4.setPreferredSize(null);
                         panel4.setLayout(new MigLayout(
-                                "insets 0,hidemode 3,gap 5 5",
-                                // columns
-                                "[grow,fill]" +
-                                        "[grow,fill]",
-                                // rows
-                                "[grow,fill]" +
-                                        "[grow,fill]"));
+                            "insets 0,hidemode 3,gap 5 5",
+                            // columns
+                            "[grow,fill]" +
+                            "[grow,fill]",
+                            // rows
+                            "[grow,fill]" +
+                            "[grow,fill]"));
 
                         //---- jcbTileableX ----
-                        jcbTileableX.setForeground(new Color(204, 0, 0));
+                        jcbTileableX.setForeground(new Color(0xcc0000));
                         jcbTileableX.setText("X Tileable");
                         jcbTileableX.setMaximumSize(null);
                         jcbTileableX.setMinimumSize(null);
@@ -2376,7 +2514,7 @@ public class TilesetEditorDialog extends JDialog {
                         panel4.add(jcbTileableX, "cell 0 0");
 
                         //---- jcbUtileable ----
-                        jcbUtileable.setForeground(new Color(204, 0, 0));
+                        jcbUtileable.setForeground(new Color(0xcc0000));
                         jcbUtileable.setText("Texture U Tileable");
                         jcbUtileable.setMaximumSize(null);
                         jcbUtileable.setMinimumSize(null);
@@ -2385,7 +2523,7 @@ public class TilesetEditorDialog extends JDialog {
                         panel4.add(jcbUtileable, "cell 1 0");
 
                         //---- jcbTileableY ----
-                        jcbTileableY.setForeground(new Color(0, 153, 0));
+                        jcbTileableY.setForeground(new Color(0x009900));
                         jcbTileableY.setText("Y Tileable");
                         jcbTileableY.setMaximumSize(null);
                         jcbTileableY.setMinimumSize(null);
@@ -2394,7 +2532,7 @@ public class TilesetEditorDialog extends JDialog {
                         panel4.add(jcbTileableY, "cell 0 1");
 
                         //---- jcbVtileable ----
-                        jcbVtileable.setForeground(new Color(0, 153, 0));
+                        jcbVtileable.setForeground(new Color(0x009900));
                         jcbVtileable.setText("Texture V Tileable");
                         jcbVtileable.setMaximumSize(null);
                         jcbVtileable.setMinimumSize(null);
@@ -2410,27 +2548,28 @@ public class TilesetEditorDialog extends JDialog {
                         panel3.setMinimumSize(null);
                         panel3.setPreferredSize(null);
                         panel3.setLayout(new MigLayout(
-                                "insets 0,hidemode 3,gap 5 5",
-                                // columns
-                                "[fill]" +
-                                        "[10:n,grow,shrinkprio 80,shrink 80,fill]" +
-                                        "[fill]" +
-                                        "[fill]" +
-                                        "[10:n,grow,shrinkprio 80,shrink 80,fill]" +
-                                        "[fill]" +
-                                        "[fill]" +
-                                        "[10:n,grow,shrinkprio 80,shrink 80,fill]" +
-                                        "[fill]",
-                                // rows
-                                "[fill]"));
+                            "insets 0,hidemode 3,gap 5 5",
+                            // columns
+                            "[fill]" +
+                            "[10:n,grow,shrinkprio 80,shrink 80,fill]" +
+                            "[fill]" +
+                            "[fill]" +
+                            "[10:n,grow,shrinkprio 80,shrink 80,fill]" +
+                            "[fill]" +
+                            "[fill]" +
+                            "[10:n,grow,shrinkprio 80,shrink 80,fill]" +
+                            "[fill]",
+                            // rows
+                            "[fill]"));
 
                         //---- jLabel14 ----
-                        jlXOffset.setForeground(new Color(204, 0, 0));
-                        jlXOffset.setText("X Offset: ");
-                        jlXOffset.setMaximumSize(null);
-                        jlXOffset.setMinimumSize(null);
-                        jlXOffset.setPreferredSize(null);
-                        panel3.add(jlXOffset, "cell 0 0");
+                        jLabel14.setForeground(new Color(0xcc0000));
+                        jLabel14.setText("X Offset: ");
+                        jLabel14.setMaximumSize(null);
+                        jLabel14.setMinimumSize(null);
+                        jLabel14.setPreferredSize(null);
+                        panel3.add(jLabel14, "cell 0 0");
+                        panel3.add(jlXOffset);
 
                         //---- jtfXOffset ----
                         jtfXOffset.setText(" ");
@@ -2449,12 +2588,13 @@ public class TilesetEditorDialog extends JDialog {
                         panel3.add(jbXOffset, "cell 2 0");
 
                         //---- jLabel15 ----
-                        jlYOffset.setForeground(new Color(0, 153, 0));
-                        jlYOffset.setText("Y Offset: ");
-                        jlYOffset.setMaximumSize(null);
-                        jlYOffset.setMinimumSize(null);
-                        jlYOffset.setPreferredSize(null);
-                        panel3.add(jlYOffset, "cell 3 0");
+                        jLabel15.setForeground(new Color(0x009900));
+                        jLabel15.setText("Y Offset: ");
+                        jLabel15.setMaximumSize(null);
+                        jLabel15.setMinimumSize(null);
+                        jLabel15.setPreferredSize(null);
+                        panel3.add(jLabel15, "cell 3 0");
+                        panel3.add(jlYOffset);
 
                         //---- jtfYOffset ----
                         jtfYOffset.setText(" ");
@@ -2471,22 +2611,22 @@ public class TilesetEditorDialog extends JDialog {
                         jbYOffset.addActionListener(e -> jbYOffsetActionPerformed(e));
                         panel3.add(jbYOffset, "cell 5 0");
 
-                        //---- jLabelZoffset ----
-                        jlZOffset.setForeground(new Color(0, 100, 255));
+                        //---- jlZOffset ----
+                        jlZOffset.setForeground(new Color(0x0064ff));
                         jlZOffset.setText("Z Offset: ");
                         jlZOffset.setMaximumSize(null);
                         jlZOffset.setMinimumSize(null);
                         jlZOffset.setPreferredSize(null);
                         panel3.add(jlZOffset, "cell 6 0");
 
-                        //---- jtfYOffset ----
+                        //---- jtfZOffset ----
                         jtfZOffset.setText(" ");
                         jtfZOffset.setMaximumSize(null);
                         jtfZOffset.setMinimumSize(null);
                         jtfZOffset.setPreferredSize(null);
                         panel3.add(jtfZOffset, "cell 7 0");
 
-                        //---- jbYOffset ----
+                        //---- jbZOffset ----
                         jbZOffset.setText("Apply");
                         jbZOffset.setMaximumSize(null);
                         jbZOffset.setMinimumSize(null);
@@ -2502,14 +2642,14 @@ public class TilesetEditorDialog extends JDialog {
                         panel5.setMinimumSize(null);
                         panel5.setPreferredSize(null);
                         panel5.setLayout(new MigLayout(
-                                "insets 0,hidemode 3,gap 5 5",
-                                // columns
-                                "[172,grow,fill]" +
-                                        "[grow,fill]" +
-                                        "[121,grow,fill]" +
-                                        "[grow,fill]",
-                                // rows
-                                "[grow,fill]"));
+                            "insets 0,hidemode 3,gap 5 5",
+                            // columns
+                            "[172,grow,fill]" +
+                            "[grow,fill]" +
+                            "[121,grow,fill]" +
+                            "[grow,fill]",
+                            // rows
+                            "[grow,fill]"));
 
                         //---- jcbGlobalTexMapping ----
                         jcbGlobalTexMapping.setText("Global Texture Mapping");
@@ -2552,13 +2692,13 @@ public class TilesetEditorDialog extends JDialog {
                     jPanel6.setMinimumSize(null);
                     jPanel6.setPreferredSize(null);
                     jPanel6.setLayout(new MigLayout(
-                            "insets 5,hidemode 3,gap 5 5",
-                            // columns
-                            "[fill]" +
-                                    "[grow,fill]",
-                            // rows
-                            "[fill]" +
-                                    "[fill]"));
+                        "insets 5,hidemode 3,gap 5 5",
+                        // columns
+                        "[fill]" +
+                        "[grow,fill]",
+                        // rows
+                        "[fill]" +
+                        "[fill]"));
 
                     //---- jLabel5 ----
                     jLabel5.setText("Model name:");
@@ -2583,13 +2723,13 @@ public class TilesetEditorDialog extends JDialog {
                         panel10.setMinimumSize(null);
                         panel10.setPreferredSize(null);
                         panel10.setLayout(new MigLayout(
-                                "insets 0,hidemode 3,gap 5 5",
-                                // columns
-                                "[grow,fill]" +
-                                        "[grow,fill]" +
-                                        "[grow,fill]",
-                                // rows
-                                "[grow,fill]"));
+                            "insets 0,hidemode 3,gap 5 5",
+                            // columns
+                            "[grow,fill]" +
+                            "[grow,fill]" +
+                            "[grow,fill]",
+                            // rows
+                            "[grow,fill]"));
 
                         //---- jbExportTileAsObj ----
                         jbExportTileAsObj.setIcon(new ImageIcon(getClass().getResource("/icons/ExportTileIcon.png")));
@@ -2629,11 +2769,11 @@ public class TilesetEditorDialog extends JDialog {
                     jPanel7.setMinimumSize(null);
                     jPanel7.setPreferredSize(null);
                     jPanel7.setLayout(new MigLayout(
-                            "insets 5,gap 5 5",
-                            // columns
-                            "[grow,fill]",
-                            // rows
-                            "[128:121,grow,shrink 0,fill]"));
+                        "insets 5,gap 5 5",
+                        // columns
+                        "[grow,fill]",
+                        // rows
+                        "[128:121,grow,shrink 0,fill]"));
 
                     //======== panel6 ========
                     {
@@ -2641,17 +2781,17 @@ public class TilesetEditorDialog extends JDialog {
                         panel6.setMinimumSize(null);
                         panel6.setPreferredSize(null);
                         panel6.setLayout(new MigLayout(
-                                "insets 0,hidemode 3,gap 5 5",
-                                // columns
-                                "[158,grow]" +
-                                        "[171,fill]" +
-                                        "[fill]",
-                                // rows
-                                "[fill]" +
-                                        "[]" +
-                                        "[fill]" +
-                                        "[]" +
-                                        "[128:128,grow,shrink 0,fill]"));
+                            "insets 0,hidemode 3,gap 5 5",
+                            // columns
+                            "[158,grow]" +
+                            "[171,fill]" +
+                            "[fill]",
+                            // rows
+                            "[fill]" +
+                            "[]" +
+                            "[fill]" +
+                            "[]" +
+                            "[128:128,grow,shrink 0,fill]"));
 
                         //---- jLabel22 ----
                         jLabel22.setText("Materials used by the Tile:");
@@ -2659,6 +2799,10 @@ public class TilesetEditorDialog extends JDialog {
                         jLabel22.setMinimumSize(null);
                         jLabel22.setPreferredSize(null);
                         panel6.add(jLabel22, "cell 0 1");
+
+                        //---- Jlabel3 ----
+                        Jlabel3.setText("Tileable Tree Options");
+                        panel6.add(Jlabel3, "cell 1 1");
 
                         //---- label2 ----
                         label2.setText("Change Material:");
@@ -2695,6 +2839,69 @@ public class TilesetEditorDialog extends JDialog {
                         }
                         panel6.add(scrollPane1, "cell 0 2 1 3,grow");
 
+                        //======== panel15 ========
+                        {
+                            panel15.setLayout(new MigLayout(
+                                "fill,hidemode 3",
+                                // columns
+                                "[fill]" +
+                                "[fill]",
+                                // rows
+                                "[]"));
+
+                            //---- isTileableTreeCheckbox ----
+                            isTileableTreeCheckbox.setText("Is Tileable Tree?");
+                            isTileableTreeCheckbox.addActionListener(e -> isTileableTreeCheckboxEventClick(e));
+                            panel15.add(isTileableTreeCheckbox, "cell 0 0");
+                        }
+                        panel6.add(panel15, "cell 1 2");
+
+                        //======== panel16 ========
+                        {
+                            panel16.setLayout(new MigLayout(
+                                "fill,hidemode 3",
+                                // columns
+                                "[fill]" +
+                                "[fill]",
+                                // rows
+                                "[]"));
+
+                            //---- label4 ----
+                            label4.setText("Front Texture ID");
+                            panel16.add(label4, "cell 0 0");
+
+                            //---- tileableTreeFSpiner ----
+                            tileableTreeFSpiner.setEnabled(false);
+                            tileableTreeFSpiner.addChangeListener(e -> tileableTreeFSpinerStateChanged(e));
+                            panel16.add(tileableTreeFSpiner, "cell 1 0");
+                        }
+                        panel6.add(panel16, "cell 1 3");
+
+                        //======== panel19 ========
+                        {
+                            panel19.setLayout(new MigLayout(
+                                "fill,hidemode 3",
+                                // columns
+                                "[fill]" +
+                                "[fill]",
+                                // rows
+                                "[]" +
+                                "[]" +
+                                "[]" +
+                                "[]" +
+                                "[]"));
+
+                            //---- label5 ----
+                            label5.setText("Side Texture ID");
+                            panel19.add(label5, "cell 0 0");
+
+                            //---- tileableTreeSSpiner ----
+                            tileableTreeSSpiner.setEnabled(false);
+                            tileableTreeSSpiner.addChangeListener(e -> tileableTreeSSpinerStateChanged(e));
+                            panel19.add(tileableTreeSSpiner, "cell 1 0");
+                        }
+                        panel6.add(panel19, "cell 1 4");
+
                         //======== textureDisplay ========
                         {
                             textureDisplay.setBorder(LineBorder.createBlackLineBorder());
@@ -2706,12 +2913,12 @@ public class TilesetEditorDialog extends JDialog {
                             GroupLayout textureDisplayLayout = new GroupLayout(textureDisplay);
                             textureDisplay.setLayout(textureDisplayLayout);
                             textureDisplayLayout.setHorizontalGroup(
-                                    textureDisplayLayout.createParallelGroup()
-                                            .addGap(0, 125, Short.MAX_VALUE)
+                                textureDisplayLayout.createParallelGroup()
+                                    .addGap(0, 125, Short.MAX_VALUE)
                             );
                             textureDisplayLayout.setVerticalGroup(
-                                    textureDisplayLayout.createParallelGroup()
-                                            .addGap(0, 125, Short.MAX_VALUE)
+                                textureDisplayLayout.createParallelGroup()
+                                    .addGap(0, 125, Short.MAX_VALUE)
                             );
                         }
                         panel6.add(textureDisplay, "cell 2 4,align center top,grow 0 0");
@@ -2728,32 +2935,38 @@ public class TilesetEditorDialog extends JDialog {
                 jPanel3.setPreferredSize(null);
                 jPanel3.setMaximumSize(null);
                 jPanel3.setLayout(new MigLayout(
-                        null,
-                        // columns
-                        "[130:144,shrink 0,fill]" +
-                                "[shrink 0,fill]",
-                        // rows
-                        "[grow,fill]"));
+                    null,
+                    // columns
+                    "[130:144,shrink 0,fill]" +
+                    "[shrink 0,fill]",
+                    // rows
+                    "[grow,fill]"));
 
                 //======== panel13 ========
                 {
-                    panel13.setMinimumSize(new Dimension(120, 0));
+                    panel13.setMinimumSize(new Dimension(130, 0));
                     panel13.setMaximumSize(null);
                     panel13.setPreferredSize(null);
                     panel13.setLayout(new GridBagLayout());
                     ((GridBagLayout)panel13.getLayout()).columnWidths = new int[] {151, 0};
-                    ((GridBagLayout)panel13.getLayout()).rowHeights = new int[] {0, 0, 0};
+                    ((GridBagLayout)panel13.getLayout()).rowHeights = new int[] {0, 0, 0, 0};
                     ((GridBagLayout)panel13.getLayout()).columnWeights = new double[] {1.0, 1.0E-4};
-                    ((GridBagLayout)panel13.getLayout()).rowWeights = new double[] {0.0, 1.0, 1.0E-4};
+                    ((GridBagLayout)panel13.getLayout()).rowWeights = new double[] {0.0, 0.0, 1.0, 1.0E-4};
+
+                    //---- materialSearchBox ----
+                    materialSearchBox.addCaretListener(e -> materialSearchBoxCaretUpdate(e));
+                    panel13.add(materialSearchBox, new GridBagConstraints(0, 0, 1, 1, 0.0, 0.0,
+                        GridBagConstraints.CENTER, GridBagConstraints.BOTH,
+                        new Insets(0, 0, 5, 0), 0, 0));
 
                     //---- jLabel21 ----
                     jLabel21.setText("Material list:");
                     jLabel21.setMaximumSize(null);
                     jLabel21.setMinimumSize(null);
                     jLabel21.setPreferredSize(null);
-                    panel13.add(jLabel21, new GridBagConstraints(0, 0, 1, 1, 0.0, 0.0,
-                            GridBagConstraints.CENTER, GridBagConstraints.BOTH,
-                            new Insets(0, 0, 5, 0), 0, 0));
+                    panel13.add(jLabel21, new GridBagConstraints(0, 1, 1, 1, 0.0, 0.0,
+                        GridBagConstraints.CENTER, GridBagConstraints.BOTH,
+                        new Insets(0, 0, 5, 0), 0, 0));
 
                     //======== jScrollPane1 ========
                     {
@@ -2770,11 +2983,11 @@ public class TilesetEditorDialog extends JDialog {
                         jlistINames.addListSelectionListener(e -> jlistINamesValueChanged(e));
                         jScrollPane1.setViewportView(jlistINames);
                     }
-                    panel13.add(jScrollPane1, new GridBagConstraints(0, 1, 1, 1, 0.0, 0.0,
-                            GridBagConstraints.CENTER, GridBagConstraints.BOTH,
-                            new Insets(0, 0, 0, 0), 0, 0));
+                    panel13.add(jScrollPane1, new GridBagConstraints(0, 2, 1, 1, 0.0, 0.0,
+                        GridBagConstraints.CENTER, GridBagConstraints.BOTH,
+                        new Insets(0, 0, 0, 0), 0, 0));
                 }
-                jPanel3.add(panel13, "cell 0 0");
+                jPanel3.add(panel13, "pad 0 0 0 10,cell 0 0,gapx null 15");
 
                 //======== panel11 ========
                 {
@@ -2782,22 +2995,22 @@ public class TilesetEditorDialog extends JDialog {
                     panel11.setMinimumSize(null);
                     panel11.setPreferredSize(null);
                     panel11.setLayout(new MigLayout(
-                            "insets 0,gap 5 5",
-                            // columns
-                            "[96:n,fill]" +
-                                    "[134:95,shrink 0,fill]" +
-                                    "[shrink 0,fill]",
-                            // rows
-                            "[fill]" +
-                                    "[fill]" +
-                                    "[fill]" +
-                                    "[fill]" +
-                                    "[fill]" +
-                                    "[fill]" +
-                                    "[fill]" +
-                                    "[fill]" +
-                                    "[fill]" +
-                                    "[181:163,grow,fill]"));
+                        "insets 0,gap 5 5",
+                        // columns
+                        "[96:n,fill]" +
+                        "[134:95,shrink 0,fill]" +
+                        "[shrink 0,fill]",
+                        // rows
+                        "[fill]" +
+                        "[fill]" +
+                        "[fill]" +
+                        "[fill]" +
+                        "[fill]" +
+                        "[fill]" +
+                        "[fill]" +
+                        "[fill]" +
+                        "[fill]" +
+                        "[181:163,grow,fill]"));
 
                     //---- label1 ----
                     label1.setText("Move Material:");
@@ -2806,14 +3019,14 @@ public class TilesetEditorDialog extends JDialog {
                     //======== panel17 ========
                     {
                         panel17.setLayout(new MigLayout(
-                                "insets 0,hidemode 3,gap 10 0",
-                                // columns
-                                "[shrink 0,fill]" +
-                                "[shrink 0,fill]" +
-                                "[shrink 0,fill]" +
-                                "[shrink 0,fill]",
-                                // rows
-                                "[grow,fill]"));
+                            "insets 0,hidemode 3,gap 10 0",
+                            // columns
+                            "[shrink 0,fill]" +
+                            "[shrink 0,fill]" +
+                            "[shrink 0,fill]" +
+                            "[shrink 0,fill]",
+                            // rows
+                            "[grow,fill]"));
 
                         //---- jbMoveMaterialUp ----
                         jbMoveMaterialUp.setText("\u25b2");
@@ -2964,10 +3177,10 @@ public class TilesetEditorDialog extends JDialog {
                     //---- jcbTexGenMode ----
                     jcbTexGenMode.setMaximumRowCount(4);
                     jcbTexGenMode.setModel(new DefaultComboBoxModel<>(new String[] {
-                            "None",
-                            "Texture",
-                            "Normal",
-                            "Vertex"
+                        "None",
+                        "Texture",
+                        "Normal",
+                        "Vertex"
                     }));
                     jcbTexGenMode.setMaximumSize(null);
                     jcbTexGenMode.setMinimumSize(null);
@@ -2978,9 +3191,9 @@ public class TilesetEditorDialog extends JDialog {
                     //---- jcbTexTilingU ----
                     jcbTexTilingU.setMaximumRowCount(4);
                     jcbTexTilingU.setModel(new DefaultComboBoxModel<>(new String[] {
-                            "Repeat",
-                            "Clamp",
-                            "Flip"
+                        "Repeat",
+                        "Clamp",
+                        "Flip"
                     }));
                     jcbTexTilingU.setMaximumSize(null);
                     jcbTexTilingU.setMinimumSize(null);
@@ -2991,9 +3204,9 @@ public class TilesetEditorDialog extends JDialog {
                     //---- jcbTexTilingV ----
                     jcbTexTilingV.setMaximumRowCount(4);
                     jcbTexTilingV.setModel(new DefaultComboBoxModel<>(new String[] {
-                            "Repeat",
-                            "Clamp",
-                            "Flip"
+                        "Repeat",
+                        "Clamp",
+                        "Flip"
                     }));
                     jcbTexTilingV.setMaximumSize(null);
                     jcbTexTilingV.setMinimumSize(null);
@@ -3003,11 +3216,11 @@ public class TilesetEditorDialog extends JDialog {
 
                     //---- jcbColorFormat ----
                     jcbColorFormat.setModel(new DefaultComboBoxModel<>(new String[] {
-                            "Palette 4",
-                            "Palette 16",
-                            "Palette 256",
-                            "A3I5",
-                            "A5I3"
+                        "Palette 4",
+                        "Palette 16",
+                        "Palette 256",
+                        "A3I5",
+                        "A5I3"
                     }));
                     jcbColorFormat.setMaximumSize(null);
                     jcbColorFormat.setMinimumSize(null);
@@ -3021,17 +3234,17 @@ public class TilesetEditorDialog extends JDialog {
                         panel12.setMinimumSize(null);
                         panel12.setPreferredSize(null);
                         panel12.setLayout(new MigLayout(
-                                "insets 0,hidemode 3,gap 5 5",
-                                // columns
-                                "[242:n,shrink 0,fill]",
-                                // rows
-                                "[center]" +
-                                        "[center]" +
-                                        "[center]" +
-                                        "[center]" +
-                                        "[center]" +
-                                        "[center]" +
-                                        "[grow,fill]"));
+                            "insets 0,hidemode 3,gap 5 5",
+                            // columns
+                            "[242:n,shrink 0,fill]",
+                            // rows
+                            "[center]" +
+                            "[center]" +
+                            "[center]" +
+                            "[center]" +
+                            "[center]" +
+                            "[center]" +
+                            "[grow,fill]"));
 
                         //---- jcbEnableFog ----
                         jcbEnableFog.setText("Enable Fog");
@@ -3088,21 +3301,19 @@ public class TilesetEditorDialog extends JDialog {
                             panel14.setMinimumSize(null);
                             panel14.setPreferredSize(null);
                             panel14.setLayout(new MigLayout(
-                                    "insets 0,hidemode 3,gap 5 5",
-                                    // columns
-                                    "[fill]" +
-                                            "[fill]" +
-                                            "[fill]" +
-                                            "[fill]" +
-                                            "[fill]",
-                                    // rows
-                                    "[fill]" +
-                                            "[]" +
-                                            "[]" +
-                                            "[]" +
-                                            "[]" +
-                                            "[]" +
-                                            "[]"));
+                                "insets 0,hidemode 3,gap 5 5",
+                                // columns
+                                "[fill]" +
+                                "[fill]" +
+                                "[fill]" +
+                                "[fill]" +
+                                "[fill]",
+                                // rows
+                                "[fill]" +
+                                "[]" +
+                                "[]" +
+                                "[]" +
+                                "[]"));
 
                             //---- jLabel20 ----
                             jLabel20.setText("Lights: ");
@@ -3267,13 +3478,13 @@ public class TilesetEditorDialog extends JDialog {
                     //======== panel7 ========
                     {
                         panel7.setLayout(new MigLayout(
-                                "insets 0,hidemode 3,gap 5 5",
-                                // columns
-                                "[grow,fill]",
-                                // rows
-                                "[fill]" +
-                                        "[fill]" +
-                                        "[fill]"));
+                            "insets 0,hidemode 3,gap 5 5",
+                            // columns
+                            "[grow,fill]",
+                            // rows
+                            "[fill]" +
+                            "[fill]" +
+                            "[fill]"));
 
                         //---- jbReplaceTexture ----
                         jbReplaceTexture.setIcon(new ImageIcon(getClass().getResource("/icons/ImportTileIcon.png")));
@@ -3304,12 +3515,12 @@ public class TilesetEditorDialog extends JDialog {
                             GroupLayout textureDisplayMaterialLayout = new GroupLayout(textureDisplayMaterial);
                             textureDisplayMaterial.setLayout(textureDisplayMaterialLayout);
                             textureDisplayMaterialLayout.setHorizontalGroup(
-                                    textureDisplayMaterialLayout.createParallelGroup()
-                                            .addGap(0, 125, Short.MAX_VALUE)
+                                textureDisplayMaterialLayout.createParallelGroup()
+                                    .addGap(0, 125, Short.MAX_VALUE)
                             );
                             textureDisplayMaterialLayout.setVerticalGroup(
-                                    textureDisplayMaterialLayout.createParallelGroup()
-                                            .addGap(0, 125, Short.MAX_VALUE)
+                                textureDisplayMaterialLayout.createParallelGroup()
+                                    .addGap(0, 125, Short.MAX_VALUE)
                             );
                         }
                         panel7.add(textureDisplayMaterial, "cell 0 2,align center center,grow 0 0");
@@ -3321,7 +3532,7 @@ public class TilesetEditorDialog extends JDialog {
             jTabbedPane1.addTab("Material Editor", jPanel3);
         }
         contentPane.add(jTabbedPane1);
-        setSize(1215, 700);
+        pack();
         setLocationRelativeTo(getOwner());
         // JFormDesigner - End of component initialization  //GEN-END:initComponents
     }
@@ -3426,6 +3637,7 @@ public class TilesetEditorDialog extends JDialog {
     }
 
     // JFormDesigner - Variables declaration - DO NOT MODIFY  //GEN-BEGIN:variables
+    // Generated using JFormDesigner Educational license - Corentin Macé
     private JPanel panel18;
     private TileDisplay tileDisplay;
     private JTabbedPane jTabbedPane2;
@@ -3486,9 +3698,11 @@ public class TilesetEditorDialog extends JDialog {
     private JCheckBox jcbTileableY;
     private JCheckBox jcbVtileable;
     private JPanel panel3;
+    private JLabel jLabel14;
     private JLabel jlXOffset;
     private JTextField jtfXOffset;
     private JButton jbXOffset;
+    private JLabel jLabel15;
     private JLabel jlYOffset;
     private JTextField jtfYOffset;
     private JButton jbYOffset;
@@ -3510,14 +3724,24 @@ public class TilesetEditorDialog extends JDialog {
     private JPanel jPanel7;
     private JPanel panel6;
     private JLabel jLabel22;
+    private JLabel Jlabel3;
     private JLabel label2;
     private JButton jbAddTexture;
     private JComboBox<String> jcbMaterial;
     private JScrollPane scrollPane1;
     private JList jlTileMaterials;
+    private JPanel panel15;
+    private JCheckBox isTileableTreeCheckbox;
+    private JPanel panel16;
+    private JLabel label4;
+    private JSpinner tileableTreeFSpiner;
+    private JPanel panel19;
+    private JLabel label5;
+    private JSpinner tileableTreeSSpiner;
     private TextureDisplay textureDisplay;
     private JPanel jPanel3;
     private JPanel panel13;
+    private JTextField materialSearchBox;
     private JLabel jLabel21;
     private JScrollPane jScrollPane1;
     private JList<String> jlistINames;
@@ -3560,7 +3784,6 @@ public class TilesetEditorDialog extends JDialog {
     private JCheckBox jcbL1;
     private JCheckBox jcbL2;
     private JCheckBox jcbL3;
-
     private JLabel jLabelR;
     private JSpinner jSpinnerDR;
     private JSpinner jSpinnerAR;
@@ -3576,7 +3799,6 @@ public class TilesetEditorDialog extends JDialog {
     private JSpinner jSpinnerAB;
     private JSpinner jSpinnerSB;
     private JSpinner jSpinnerEB;
-
     private JPanel panel7;
     private JButton jbReplaceTexture;
     private JButton jbReplaceMaterial;

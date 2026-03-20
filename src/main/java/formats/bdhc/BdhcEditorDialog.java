@@ -3,6 +3,7 @@ package formats.bdhc;
 import editor.game.Game;
 import editor.handler.MapEditorHandler;
 import net.miginfocom.swing.*;
+import utils.FileChooserUtils;
 import utils.Utils;
 
 import java.awt.*;
@@ -15,6 +16,10 @@ import javax.swing.*;
 import javax.swing.border.*;
 import javax.swing.event.*;
 import javax.swing.filechooser.FileNameExtensionFilter;
+import static editor.mapmatrix.MapMatrix.ExportPath;
+
+
+import static editor.mapmatrix.MapMatrix.ExportPath;
 
 /**
  * @author Trifindo, JackHack96
@@ -337,63 +342,61 @@ public class BdhcEditorDialog extends JDialog {
     }
 
     public void openBdhcWithDialog() {
-        final JFileChooser fc = new JFileChooser();
-        if (handler.getLastBdhcDirectoryUsed() != null) {
-            fc.setCurrentDirectory(new File(handler.getLastBdhcDirectoryUsed()));
-        }
-        fc.setFileFilter(new FileNameExtensionFilter("Terrain File (*.bdhc)", Bdhc.fileExtension));
-        fc.setApproveButtonText("Open");
-        fc.setDialogTitle("Open");
-        final int returnVal = fc.showOpenDialog(this);
-        if (returnVal == JFileChooser.APPROVE_OPTION) {
-            try {
-                String path = fc.getSelectedFile().getPath();
-                handler.setLastBdhcDirectoryUsed(fc.getSelectedFile().getParent());
+        FileChooserUtils.selectFile(
+                "Open",
+                new File(ExportPath),
+                "Terrain File (*.bdhc)",
+                new String[]{"*." + Bdhc.fileExtension},
+                selectedFile -> {
+                    if (selectedFile != null) {
+                        try {
+                            String path = selectedFile.getPath();
+                            handler.setLastBdhcDirectoryUsed(selectedFile.getParent());
 
-                int game = handler.getGameIndex();
-                if (game == Game.DIAMOND || game == Game.PEARL) {
-                    handler.setBdhc(new BdhcLoaderDP().loadBdhcFromFile(path));
-                } else {
-                    handler.setBdhc(new BdhcLoaderHGSS().loadBdhcFromFile(path));
+                            int game = handler.getGameIndex();
+                            if (game == Game.DIAMOND || game == Game.PEARL) {
+                                handler.setBdhc(new BdhcLoaderDP().loadBdhcFromFile(path));
+                            } else {
+                                handler.setBdhc(new BdhcLoaderHGSS().loadBdhcFromFile(path));
+                            }
+
+                            bdhcHandler.setSelectedPlate(0);
+                            updateView();
+                            bdhcDisplay.repaint();
+
+                        } catch (IOException ex) {
+                            JOptionPane.showMessageDialog(this, "Can't open file", "Error opening BDHC file", JOptionPane.ERROR_MESSAGE);
+                        }
+                    }
                 }
-
-                bdhcHandler.setSelectedPlate(0);
-                updateView();
-                bdhcDisplay.repaint();
-
-            } catch (IOException ex) {
-                JOptionPane.showMessageDialog(this, "Can't open file", "Error opening BDHC file", JOptionPane.ERROR_MESSAGE);
-            }
-
-        }
+        );
     }
 
     public void saveBdhcWithDialog() {
-        final JFileChooser fc = new JFileChooser();
-        if (handler.getLastBdhcDirectoryUsed() != null) {
-            fc.setCurrentDirectory(new File(handler.getLastBdhcDirectoryUsed()));
-        }
-        fc.setFileFilter(new FileNameExtensionFilter("Terrain File (*.bdhc)", Bdhc.fileExtension));
-        fc.setApproveButtonText("Save");
-        fc.setDialogTitle("Save");
-        final int returnVal = fc.showOpenDialog(this);
-        if (returnVal == JFileChooser.APPROVE_OPTION) {
-            try {
-                String path = fc.getSelectedFile().getPath();
-                handler.setLastBdhcDirectoryUsed(fc.getSelectedFile().getParent());
-                path = Utils.addExtensionToPath(path, Bdhc.fileExtension);
+        FileChooserUtils.saveFile(
+                "Save",
+                new File(ExportPath),
+                "Terrain File (*.bdhc)",
+                new String[]{"*." + Bdhc.fileExtension},
+                selectedFile -> {
+                    if (selectedFile != null) {
+                        try {
+                            String path = selectedFile.getPath();
+                            handler.setLastBdhcDirectoryUsed(selectedFile.getParent());
+                            path = Utils.addExtensionToPath(path, Bdhc.fileExtension);
 
-                int game = handler.getGameIndex();
-                if (game == Game.DIAMOND || game == Game.PEARL) {
-                    BdhcWriterDP.writeBdhc(bdhcHandler.getBdhc(), path);
-                } else {
-                    BdhcWriterHGSS.writeBdhc(bdhcHandler.getBdhc(), path);
+                            int game = handler.getGameIndex();
+                            if (game == Game.DIAMOND || game == Game.PEARL) {
+                                BdhcWriterDP.writeBdhc(bdhcHandler.getBdhc(), path);
+                            } else {
+                                BdhcWriterHGSS.writeBdhc(bdhcHandler.getBdhc(), path);
+                            }
+                        } catch (IOException ex) {
+                            JOptionPane.showMessageDialog(this, "Can't save file", "Error saving BDHC", JOptionPane.ERROR_MESSAGE);
+                        }
+                    }
                 }
-            } catch (IOException ex) {
-                JOptionPane.showMessageDialog(this, "Can't save file", "Error saving BDHC", JOptionPane.ERROR_MESSAGE);
-            }
-
-        }
+        );
     }
 
     public void updateView() {

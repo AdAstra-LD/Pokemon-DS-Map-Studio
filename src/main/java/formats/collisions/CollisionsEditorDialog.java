@@ -21,6 +21,7 @@ import javax.swing.JOptionPane;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
 import net.miginfocom.swing.*;
+import utils.FileChooserUtils;
 import utils.Utils;
 
 /**
@@ -103,57 +104,64 @@ public class CollisionsEditorDialog extends JDialog {
     }
 
     public void openCollisionWithDialog() {
-        final JFileChooser fc = new JFileChooser();
-        if (handler.getLastCollisionsDirectoryUsed() != null) {
-            fc.setCurrentDirectory(new File(handler.getLastCollisionsDirectoryUsed()));
-        }
-        fc.setFileFilter(new FileNameExtensionFilter("Collision File (*.per)", Collisions.fileExtension));
-        fc.setApproveButtonText("Open");
-        fc.setDialogTitle("Open");
-        final int returnVal = fc.showOpenDialog(this);
-        if (returnVal == JFileChooser.APPROVE_OPTION) {
-            try {
-                String path = fc.getSelectedFile().getPath();
-                handler.setLastCollisionsDirectoryUsed(fc.getSelectedFile().getParent());
+        File lastDir = handler.getLastCollisionsDirectoryUsed() != null
+                ? new File(handler.getLastCollisionsDirectoryUsed())
+                : null;
 
-                collisionHandler.setCollisions(new Collisions(path));
+        FileChooserUtils.selectFile(
+                "Open",
+                lastDir,
+                "Collision File (*.per)",
+                new String[]{"*." + Collisions.fileExtension},
+                selectedFile -> {
+                    if (selectedFile != null) {
+                        try {
+                            String path = selectedFile.getPath();
+                            handler.setLastCollisionsDirectoryUsed(selectedFile.getParent());
 
-                collisionHandler.resetMapStateHandler();
-                updateView();
-                collisionsDisplay.repaint();
-                collisionLayerSelector.drawAllLayers();
-                collisionLayerSelector.repaint();
-                collisionsTypesDisplay.repaint();
-            } catch (IOException ex) {
-                JOptionPane.showMessageDialog(this, "Can't open file", "Error collision file", JOptionPane.INFORMATION_MESSAGE);
-            }
+                            collisionHandler.setCollisions(new Collisions(path));
 
-        }
+                            collisionHandler.resetMapStateHandler();
+                            updateView();
+                            collisionsDisplay.repaint();
+                            collisionLayerSelector.drawAllLayers();
+                            collisionLayerSelector.repaint();
+                            collisionsTypesDisplay.repaint();
+                        } catch (IOException ex) {
+                            JOptionPane.showMessageDialog(this, "Can't open file", "Error collision file", JOptionPane.INFORMATION_MESSAGE);
+                        }
+                    }
+                }
+        );
     }
 
     private void saveCollisionWithDialog() {
-        final JFileChooser fc = new JFileChooser();
-        if (handler.getLastCollisionsDirectoryUsed() != null) {
-            fc.setCurrentDirectory(new File(handler.getLastCollisionsDirectoryUsed()));
-        }
-        fc.setFileFilter(new FileNameExtensionFilter("Collision File (*.per)", Collisions.fileExtension));
-        fc.setApproveButtonText("Save");
-        fc.setDialogTitle("Save");
-        final int returnVal = fc.showOpenDialog(this);
-        if (returnVal == JFileChooser.APPROVE_OPTION) {
-            handler.setLastMapDirectoryUsed(fc.getSelectedFile().getParent());
-            try {
-                String path = fc.getSelectedFile().getPath();
-                path = Utils.addExtensionToPath(path, Collisions.fileExtension);
+        File lastDir = handler.getLastCollisionsDirectoryUsed() != null
+                ? new File(handler.getLastCollisionsDirectoryUsed())
+                : null;
 
-                collisionHandler.getCollisions().saveToFile(path);
-                JOptionPane.showMessageDialog(this, "Collision succesfully exported.",
-                        "Collisions saved", JOptionPane.INFORMATION_MESSAGE);
-            } catch (IOException ex) {
-                JOptionPane.showMessageDialog(this, "Can't save file.",
-                        "Error saving collision", JOptionPane.ERROR_MESSAGE);
-            }
-        }
+        FileChooserUtils.saveFile(
+                "Save",
+                lastDir,
+                "Collision File (*.per)",
+                new String[]{"*." + Collisions.fileExtension},
+                selectedFile -> {
+                    if (selectedFile != null) {
+                        handler.setLastMapDirectoryUsed(selectedFile.getParent());
+                        try {
+                            String path = selectedFile.getPath();
+                            path = Utils.addExtensionToPath(path, Collisions.fileExtension);
+
+                            collisionHandler.getCollisions().saveToFile(path);
+                            JOptionPane.showMessageDialog(this, "Collision succesfully exported.",
+                                    "Collisions saved", JOptionPane.INFORMATION_MESSAGE);
+                        } catch (IOException ex) {
+                            JOptionPane.showMessageDialog(this, "Can't save file.",
+                                    "Error saving collision", JOptionPane.ERROR_MESSAGE);
+                        }
+                    }
+                }
+        );
     }
 
     public void repaintDisplay() {

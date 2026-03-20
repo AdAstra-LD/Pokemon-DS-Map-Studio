@@ -1,4 +1,4 @@
-JFDML JFormDesigner: "7.0.2.6.321" Java: "11.0.8" encoding: "UTF-8"
+JFDML JFormDesigner: "8.2.4.0.393" Java: "21.0.7" encoding: "UTF-8"
 
 new FormModel {
 	contentType: "form/swing"
@@ -11,8 +11,8 @@ new FormModel {
 			"defaultCloseOperation": 2
 			"title": "Export Areas as NSBTX (Experimental)"
 			add( new FormContainer( "javax.swing.JPanel", new FormLayoutManager( class org.jdesktop.layout.GroupLayout ) {
-				"$horizontalGroup": "par l {seq {space :::p, par l {comp jScrollCheckboxList::::448:x, seq {par l {comp jLabel1:::p::p, seq l {comp jbSelectAll:::p::p, space u:::p, comp jbDeselectAll:::p::p}}, space :0:0:x}}, space :::p}}"
-				"$verticalGroup": "par l {seq l {space :p::p, comp jLabel1:::p:14:p, space :p::p, comp jScrollCheckboxList::::108:x, space u:p::p, par b {comp jbSelectAll::b:p::p, comp jbDeselectAll::b:p::p}, space :p::p}}"
+				"$horizontalGroup": "par l {seq {space :::p, par l {seq {comp jLabel1:::p::p, space :0:172:x}, seq {comp jbSelectAll:::p::p, space u:::p, comp jbDeselectAll:::p::p, space ::148:x, comp configureTilesForSeasonsBtn:::p:90:p}, seq l {comp jScrollCheckboxList::::357:x, space :::p, comp panel1:::p::p}}, space :p::p}}"
+				"$verticalGroup": "par l {seq l {space :p::p, comp jLabel1:::p:14:p, space :p::p, par l {comp panel1::::104:x, comp jScrollCheckboxList::::104:x}, space :::p, par b {comp jbSelectAll::b:p::p, comp jbDeselectAll::b:p::p, comp configureTilesForSeasonsBtn::b:p::p}, space :p::p}}"
 			} ) {
 				name: "jPanel1"
 				"border": new javax.swing.border.TitledBorder( "NSBTX settings" )
@@ -35,6 +35,67 @@ new FormModel {
 					"text": "Deselect All"
 					addEvent( new FormEvent( "java.awt.event.ActionListener", "actionPerformed", "jbDeselectAllActionPerformed", true ) )
 				} )
+				add( new FormContainer( "javax.swing.JPanel", new FormLayoutManager( class net.miginfocom.swing.MigLayout ) {
+					"$layoutConstraints": "fill,rtl,hidemode 3"
+					"$columnConstraints": "[fill][fill]"
+					"$rowConstraints": "[fill][][][][][][fill]"
+				} ) {
+					name: "panel1"
+					"name": "q"
+					add( new FormComponent( "javax.swing.JLabel" ) {
+						name: "label1"
+						"icon": new com.jformdesigner.model.SwingIcon( 0, "/icons/cherry-blossom.png" )
+					}, new FormLayoutConstraints( class net.miginfocom.layout.CC ) {
+						"value": "cell 0 0"
+					} )
+					add( new FormComponent( "javax.swing.JCheckBox" ) {
+						name: "exportSpringNsbtxCbo"
+						"selected": true
+					}, new FormLayoutConstraints( class net.miginfocom.layout.CC ) {
+						"value": "cell 1 0"
+					} )
+					add( new FormComponent( "javax.swing.JLabel" ) {
+						name: "label2"
+						"icon": new com.jformdesigner.model.SwingIcon( 0, "/icons/sun.png" )
+					}, new FormLayoutConstraints( class net.miginfocom.layout.CC ) {
+						"value": "cell 0 1"
+					} )
+					add( new FormComponent( "javax.swing.JCheckBox" ) {
+						name: "exportSummerNsbtxCbo"
+						"selected": true
+					}, new FormLayoutConstraints( class net.miginfocom.layout.CC ) {
+						"value": "cell 1 1"
+					} )
+					add( new FormComponent( "javax.swing.JLabel" ) {
+						name: "label3"
+						"icon": new com.jformdesigner.model.SwingIcon( 0, "/icons/leaf-fall.png" )
+					}, new FormLayoutConstraints( class net.miginfocom.layout.CC ) {
+						"value": "cell 0 2"
+					} )
+					add( new FormComponent( "javax.swing.JCheckBox" ) {
+						name: "exportFallNsbtxCbo"
+						"selected": true
+					}, new FormLayoutConstraints( class net.miginfocom.layout.CC ) {
+						"value": "cell 1 2"
+					} )
+					add( new FormComponent( "javax.swing.JLabel" ) {
+						name: "label4"
+						"icon": new com.jformdesigner.model.SwingIcon( 0, "/icons/snowflake.png" )
+					}, new FormLayoutConstraints( class net.miginfocom.layout.CC ) {
+						"value": "cell 0 3"
+					} )
+					add( new FormComponent( "javax.swing.JCheckBox" ) {
+						name: "exportWinterNsbtxCbo"
+						"selected": true
+					}, new FormLayoutConstraints( class net.miginfocom.layout.CC ) {
+						"value": "cell 1 3"
+					} )
+				} )
+				add( new FormComponent( "javax.swing.JButton" ) {
+					name: "configureTilesForSeasonsBtn"
+					"text": "Configure.."
+					addEvent( new FormEvent( "java.awt.event.ActionListener", "actionPerformed", "configureTilesForSeasonsBtn", true ) )
+				} )
 			} )
 			add( new FormComponent( "javax.swing.JButton" ) {
 				name: "jbCancel"
@@ -48,8 +109,8 @@ new FormModel {
 				addEvent( new FormEvent( "java.awt.event.ActionListener", "actionPerformed", "jbAcceptActionPerformed", true ) )
 			} )
 			add( new FormContainer( "javax.swing.JPanel", new FormLayoutManager( class org.jdesktop.layout.GroupLayout ) {
-				"$horizontalGroup": "par l {seq {space :::p, comp jLabel3:::p::p, space :::p, comp jtfNsbtxFolderPath::::212:x, space :::p, comp jbNsbBrowse:::p::p, space :::p}}"
-				"$verticalGroup": "par l {seq l {space :::p, par b {comp jLabel3::b:p::p, comp jtfNsbtxFolderPath::b:p::p, comp jbNsbBrowse::b:p::p}, space :::x}}"
+				"$horizontalGroup": "par l {seq {space :::p, comp jLabel3:::p::p, space :::p, comp jtfNsbtxFolderPath:::::x, space :::p, comp jbNsbBrowse:::p::p, space :::p}}"
+				"$verticalGroup": "par l {seq l {space :::p, par b {comp jLabel3::b:p::p, comp jtfNsbtxFolderPath::b:p::p, comp jbNsbBrowse::b:p::p}, space ::24:x}}"
 			} ) {
 				name: "jPanel2"
 				"border": new javax.swing.border.TitledBorder( "NSBTX settings" )
@@ -68,7 +129,8 @@ new FormModel {
 				} )
 			} )
 		}, new FormLayoutConstraints( null ) {
-			"size": new java.awt.Dimension( 400, 300 )
+			"size": new java.awt.Dimension( 455, 340 )
+			"location": new java.awt.Point( 15, 0 )
 		} )
 	}
 }

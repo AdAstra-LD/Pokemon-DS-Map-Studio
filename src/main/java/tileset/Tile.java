@@ -75,6 +75,11 @@ public class Tile {
     private BufferedImage thumbnail;
     private BufferedImage smallThumbnail;
 
+    // Tileable Trees
+    private boolean isTileableTree;
+    private int frontTileId;
+    private int sideTileId;
+
     //Bounds
     private float[] boundsPos;
     private float[] boundsSca;
@@ -83,7 +88,7 @@ public class Tile {
                 int width, int height, boolean xTileable, boolean yTileable,
                 boolean uTileable, boolean vTileable,
                 boolean globalTexMapping, float globalTexScale,
-                float xOffset, float yOffset, float zOffset)
+                float xOffset, float yOffset, float zOffset, boolean isTileableTree, int frontTileId, int sideTileId)
             throws IOException, TextureNotFoundException,
             NormalsNotFoundException {
 
@@ -106,6 +111,10 @@ public class Tile {
         this.yOffset = yOffset;
         this.zOffset = zOffset;
 
+        this.isTileableTree = isTileableTree;
+        this.frontTileId = frontTileId;
+        this.sideTileId = sideTileId;
+
         loadFromObj(folderPath, objFilename);
 
     }
@@ -115,7 +124,7 @@ public class Tile {
         this(tileset, new File(filePath).getParent(),
                 new File(filePath).getName(), 1, 1, false,
                 false, false, false, false, 1.0f,
-                0.0f, 0.0f, 0.0f);
+                0.0f, 0.0f, 0.0f, false, 0, 0);
     }
 
     public Tile(Tileset tileset, String filePath, Tile tile) throws IOException,
@@ -126,7 +135,7 @@ public class Tile {
                 tile.isUtileable(), tile.isVtileable(),
                 tile.useGlobalTextureMapping(),
                 tile.getGlobalTextureScale(),
-                tile.getXOffset(), tile.getYOffset(), tile.getZOffset());
+                tile.getXOffset(), tile.getYOffset(), tile.getZOffset(), tile.getIsTileableTree(), tile.getFrontTileId(), tile.getSideTileId());
     }
 
     public Tile() {
@@ -161,6 +170,10 @@ public class Tile {
         tile.xOffset = xOffset;
         tile.yOffset = yOffset;
         tile.zOffset = zOffset;
+
+        tile.isTileableTree = isTileableTree;
+        tile.frontTileId = frontTileId;
+        tile.sideTileId = sideTileId;
 
         tile.folderPath = folderPath;
         tile.objFilename = objFilename;
@@ -237,6 +250,9 @@ public class Tile {
         hash = 11 * hash + (this.uTileable ? 1 : 0);
         hash = 11 * hash + (this.vTileable ? 1 : 0);
         hash = 11 * hash + (this.globalTexMapping ? 1 : 0);
+        hash = 11 * hash + (this.isTileableTree ? 1 : 0);
+        hash = 11 * hash + (this.sideTileId);
+        hash = 11 * hash + (this.frontTileId);
         hash = 11 * hash + Float.floatToIntBits(this.globalTexScale);
         hash = 11 * hash + Float.floatToIntBits(this.xOffset);
         hash = 11 * hash + Float.floatToIntBits(this.yOffset);
@@ -285,6 +301,17 @@ public class Tile {
         if (this.globalTexMapping != other.globalTexMapping) {
             return false;
         }
+
+        if(this.isTileableTree != other.isTileableTree){
+            return false;
+        }
+        if (this.sideTileId != other.sideTileId) {
+            return false;
+        }
+        if (this.frontTileId != other.frontTileId) {
+            return false;
+        }
+
         if (Float.floatToIntBits(this.globalTexScale) != Float.floatToIntBits(other.globalTexScale)) {
             return false;
         }
@@ -347,6 +374,16 @@ public class Tile {
         if (this.globalTexMapping != other.globalTexMapping) {
             return false;
         }
+        if(this.isTileableTree != other.isTileableTree){
+            return false;
+        }
+        if (this.sideTileId != other.sideTileId) {
+            return false;
+        }
+        if(this.frontTileId != other.frontTileId){
+            return false;
+        }
+
         if (Float.floatToIntBits(this.globalTexScale) != Float.floatToIntBits(other.globalTexScale)) {
             return false;
         }
@@ -1212,6 +1249,30 @@ public class Tile {
     public void setGlobalTextureMapping(boolean useGlobalTexMapping) {
         this.globalTexMapping = useGlobalTexMapping;
     }
+
+    public void setIsTileableTree(boolean isTileable) {
+        this.isTileableTree = isTileable;
+    }
+
+    public boolean getIsTileableTree() {
+        return isTileableTree;
+    }
+
+    public int getFrontTileId() {
+        return frontTileId;
+    }
+    public int getSideTileId() {
+        return sideTileId;
+    }
+
+    public void setTileableTreeFrontId(int frontId) {
+        this.frontTileId = frontId;
+    }
+
+    public void setTileableTreeSideId(int sideId) {
+        this.sideTileId = sideId;
+    }
+
 
     public ArrayList<Float> getVertexCoordsObj() {
         return vCoordsObj;

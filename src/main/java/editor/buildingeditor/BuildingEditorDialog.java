@@ -2,6 +2,7 @@ package editor.buildingeditor;
 
 import editor.handler.MapEditorHandler;
 import net.miginfocom.swing.*;
+import utils.FileChooserUtils;
 import utils.Utils;
 
 import java.awt.*;
@@ -108,90 +109,106 @@ public class BuildingEditorDialog extends JDialog {
     }
 
     public void openMatshpWithDialog() {
-        final JFileChooser fc = new JFileChooser();
-        if (handler.getLastBuildDirectoryUsed() != null) {
-            fc.setCurrentDirectory(new File(handler.getLastBuildDirectoryUsed()));
-        }
-        fc.setApproveButtonText("Open");
-        fc.setDialogTitle("Open Build Model Matshp File");
-        final int returnVal = fc.showOpenDialog(this);
-        if (returnVal == JFileChooser.APPROVE_OPTION) {
-            handler.setLastBuildDirectoryUsed(fc.getSelectedFile().getParent());
-            try {
-                buildHandler.loadBuildModelMashup(fc.getSelectedFile().getPath());
+        File lastDir = handler.getLastBuildDirectoryUsed() != null
+                ? new File(handler.getLastBuildDirectoryUsed())
+                : null;
 
-                updateViewBmm();
-                updateViewMaterialOrder();
+        FileChooserUtils.selectFile(
+                "Open Build Model Matshp File",
+                lastDir,
+                selectedFile -> {
+                    if (selectedFile != null) {
+                        handler.setLastBuildDirectoryUsed(selectedFile.getParent());
+                        try {
+                            buildHandler.loadBuildModelMashup(selectedFile.getPath());
 
-            } catch (IOException ex) {
-                JOptionPane.showMessageDialog(this, "Can't open file.",
-                        "Error opening file", JOptionPane.ERROR_MESSAGE);
-            }
-        }
+                            updateViewBmm();
+                            updateViewMaterialOrder();
+
+                        } catch (IOException ex) {
+                            JOptionPane.showMessageDialog(this, "Can't open file.",
+                                    "Error opening file", JOptionPane.ERROR_MESSAGE);
+                        }
+                    }
+                }
+        );
     }
 
     public void openTilesetListWithDialog() {
-        final JFileChooser fc = new JFileChooser();
-        if (handler.getLastBuildDirectoryUsed() != null) {
-            fc.setCurrentDirectory(new File(handler.getLastBuildDirectoryUsed()));
-        }
-        fc.setApproveButtonText("Open");
-        fc.setDialogTitle("Open Build Tileset List");
-        final int returnVal = fc.showOpenDialog(this);
-        if (returnVal == JFileChooser.APPROVE_OPTION) {
-            handler.setLastBuildDirectoryUsed(fc.getSelectedFile().getParent());
-            try {
-                buildHandler.loadBuildTilesetList(fc.getSelectedFile().getPath());
-                updateViewBtl();
+        File lastDir = handler.getLastBuildDirectoryUsed() != null
+                ? new File(handler.getLastBuildDirectoryUsed())
+                : null;
 
-            } catch (IOException ex) {
-                JOptionPane.showMessageDialog(this, "Can't open file.",
-                        "Error opening file", JOptionPane.ERROR_MESSAGE);
-            }
-        }
+        FileChooserUtils.selectFile(
+                "Open Build Tileset List",
+                lastDir,
+                selectedFile -> {
+                    if (selectedFile != null) {
+                        handler.setLastBuildDirectoryUsed(selectedFile.getParent());
+                        try {
+                            buildHandler.loadBuildTilesetList(selectedFile.getPath());
+                            updateViewBtl();
+
+                        } catch (IOException ex) {
+                            JOptionPane.showMessageDialog(this, "Can't open file.",
+                                    "Error opening file", JOptionPane.ERROR_MESSAGE);
+                        }
+                    }
+                }
+        );
     }
 
     public void saveMatshpWithDialog() {
-        final JFileChooser fc = new JFileChooser();
-        if (handler.getLastBuildDirectoryUsed() != null) {
-            fc.setCurrentDirectory(new File(handler.getLastBuildDirectoryUsed()));
-        }
-        fc.setApproveButtonText("Save");
-        fc.setDialogTitle("Save Build Model Matshp File");
-        final int returnVal = fc.showOpenDialog(this);
-        if (returnVal == JFileChooser.APPROVE_OPTION) {
-            handler.setLastBuildDirectoryUsed(fc.getSelectedFile().getParent());
-            try {
-                String path = fc.getSelectedFile().getPath();
-                path = Utils.addExtensionToPath(path, "dat");
+        File lastDir = handler.getLastBuildDirectoryUsed() != null
+                ? new File(handler.getLastBuildDirectoryUsed())
+                : null;
 
-                buildHandler.getBuildModelMatshp().saveToFile(path);
-            } catch (IOException ex) {
-                JOptionPane.showMessageDialog(this, "Can't save file.",
-                        "Error saving Build Model Matshp File", JOptionPane.ERROR_MESSAGE);
-            }
-        }
+        FileChooserUtils.saveFile(
+                "Save Build Model Matshp File",
+                lastDir,
+                "DAT (*.dat)",
+                new String[]{"*.dat"},
+                selectedFile -> {
+                    if (selectedFile != null) {
+                        handler.setLastBuildDirectoryUsed(selectedFile.getParent());
+                        try {
+                            String path = selectedFile.getPath();
+                            path = Utils.addExtensionToPath(path, "dat");
+
+                            buildHandler.getBuildModelMatshp().saveToFile(path);
+                        } catch (IOException ex) {
+                            JOptionPane.showMessageDialog(this, "Can't save file.",
+                                    "Error saving Build Model Matshp File", JOptionPane.ERROR_MESSAGE);
+                        }
+                    }
+                }
+        );
     }
 
     public void saveBtlWithDialog() {
-        final JFileChooser fc = new JFileChooser();
-        if (handler.getLastBuildDirectoryUsed() != null) {
-            fc.setCurrentDirectory(new File(handler.getLastBuildDirectoryUsed()));
-        }
-        fc.setApproveButtonText("Save");
-        fc.setDialogTitle("Save Build Tile List");
-        final int returnVal = fc.showOpenDialog(this);
-        if (returnVal == JFileChooser.APPROVE_OPTION) {
-            handler.setLastBuildDirectoryUsed(fc.getSelectedFile().getParent());
-            try {
-                String path = fc.getSelectedFile().getPath();
+        File lastDir = handler.getLastBuildDirectoryUsed() != null
+                ? new File(handler.getLastBuildDirectoryUsed())
+                : null;
 
-                buildHandler.getBuildTilesetList().saveToFile(path);
-            } catch (IOException ex) {
-                JOptionPane.showMessageDialog(this, "Can't save file.",
-                        "Error saving Building Tileset List", JOptionPane.ERROR_MESSAGE);
-            }
-        }
+        FileChooserUtils.saveFile(
+                "Save Build Tile List",
+                lastDir,
+                null,
+                null,
+                selectedFile -> {
+                    if (selectedFile != null) {
+                        handler.setLastBuildDirectoryUsed(selectedFile.getParent());
+                        try {
+                            String path = selectedFile.getPath();
+
+                            buildHandler.getBuildTilesetList().saveToFile(path);
+                        } catch (IOException ex) {
+                            JOptionPane.showMessageDialog(this, "Can't save file.",
+                                    "Error saving Building Tileset List", JOptionPane.ERROR_MESSAGE);
+                        }
+                    }
+                }
+        );
     }
 
     public void updateViewBmm() {

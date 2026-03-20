@@ -35,7 +35,7 @@ import utils.Utils;
 public class MapEditorHandler {
 
     //Version name
-    public static final String versionName = "Pokemon DS Map Studio 2.2.1 [AdAstra]";
+    public static final String versionName = "Pokemon DS Map Studio 3.0 [LiT Version]";
 
     //Main frame
     private MainFrame mainFrame;
@@ -129,6 +129,8 @@ public class MapEditorHandler {
             indexTileSelected = newTileIndex;
         }
     }
+
+
 
     public void incrementHeightSelected(int delta) {
         int newHeightIndex = heightIndexSelected + delta;
@@ -288,6 +290,11 @@ public class MapEditorHandler {
         return getCurrentMap().getGrid().tileLayers[activeLayer];
     }
 
+    public int[][] getActiveLayerMinus(int subLayer) {
+        return getCurrentMap().getGrid().tileLayers[activeLayer-subLayer];
+    }
+
+
     public int[][] getActiveHeightLayer() {
         return getCurrentMap().getGrid().heightLayers[activeLayer];
     }
@@ -349,6 +356,10 @@ public class MapEditorHandler {
 
     public int getActiveLayerIndex() {
         return activeLayer;
+    }
+
+    public void setActiveLayerIndex(int index) {
+        activeLayer = index;
     }
 
     public SmartGrid getSmartGridSelected() {
