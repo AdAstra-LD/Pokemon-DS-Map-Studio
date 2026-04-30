@@ -10,6 +10,7 @@ import editor.buildingeditor2.areabuild.AreaBuildList;
 import editor.buildingeditor2.areadata.AreaDataListDPPt;
 import editor.buildingeditor2.tileset.BuildTileset;
 import editor.buildingeditor2.tileset.BuildTilesetList;
+import editor.game.GameFolder;
 import editor.game.GameFileSystemDPPt;
 import formats.narc2.Narc;
 import formats.narc2.NarcIO;
@@ -32,6 +33,7 @@ public class BuildHandlerDPPt {
 
     //private MapEditorHandler handler;
     private String gameFolderPath = "";
+    private GameFolder gameFolder;
     private GameFileSystemDPPt gameFileSystem;
 
     private BuildModelList buildModelList;
@@ -44,6 +46,7 @@ public class BuildHandlerDPPt {
 
     public BuildHandlerDPPt(String gameFolderPath) {
         this.gameFolderPath = gameFolderPath;
+        this.gameFolder = new GameFolder(gameFolderPath);
         this.gameFileSystem = new GameFileSystemDPPt();
     }
 
@@ -237,11 +240,11 @@ public class BuildHandlerDPPt {
     }
 
     private String getGameFilePath(String relativePath) {
-        return gameFolderPath + File.separator + relativePath;
+        return gameFolder.getPath(relativePath);
     }
 
     private boolean isGameFileAvailable(String path) {
-        return isFileAvailable(gameFolderPath + File.separator + path);
+        return isFileAvailable(getGameFilePath(path));
     }
 
     private boolean isFileAvailable(String path) {
@@ -250,6 +253,7 @@ public class BuildHandlerDPPt {
 
     public void setGameFolderPath(String path) {
         this.gameFolderPath = path;
+        this.gameFolder = new GameFolder(path);
     }
 
     public String getGameFolderPath() {

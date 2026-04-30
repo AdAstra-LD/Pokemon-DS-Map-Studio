@@ -1,11 +1,10 @@
 package editor.game.patches;
 
+import editor.game.GameFolder;
 import formats.narc2.Narc;
 import formats.narc2.NarcFile;
 import formats.narc2.NarcIO;
-import utils.BinaryArrayReader;
 import utils.BinaryReader;
-import utils.Utils;
 
 import java.io.File;
 import java.io.IOException;
@@ -14,7 +13,6 @@ import java.util.List;
 
 public class MultiFilePatch {
 
-    private static final String headerPath = "header.bin";
     private String gameCode;
     private List<FilePatch> patches;
 
@@ -24,13 +22,13 @@ public class MultiFilePatch {
     }
 
     public boolean canApplyPatch(String gameFolderPath) throws Exception{
-        byte[] headerData = Files.readAllBytes(new File(gameFolderPath + File.separator + headerPath).toPath());
-        if (!Utils.containsArray(headerData, gameCode.getBytes(), 12)) {
+        GameFolder gameFolder = new GameFolder(gameFolderPath);
+        if (!gameFolder.hasGameCode(gameCode)) {
             return false;
         }
 
         for(FilePatch patch : patches){
-            byte[] gameData = loadGameData(gameFolderPath + File.separator + patch.getFilePath());
+            byte[] gameData = loadGameData(gameFolder, patch.getFilePath());
             //byte[] gameData = Files.readAllBytes(new File(patch.getFilePath()).toPath());
             if(!patch.canApplyPatch(gameData)){
                 return false;
@@ -40,37 +38,40 @@ public class MultiFilePatch {
     }
 
     public boolean isPatched(String gameFolderPath) throws Exception{
+        GameFolder gameFolder = new GameFolder(gameFolderPath);
         for(FilePatch patch : patches){
             //byte[] gameData = Files.readAllBytes(new File(patch.getFilePath()).toPath());
-            byte[] gameData = loadGameData(gameFolderPath + File.separator + patch.getFilePath());
-            if(!Utils.containsArray(gameData, patch.getNewData(), patch.getDataOffset())){
+            byte[] gameData = loadGameData(gameFolder, patch.getFilePath());
+            if(!patch.isPatched(gameData)){
                 return false;
             }
         }
-        return false;
+        return true;
     }
 
     public void applyPatch(String gameFolderPath) throws Exception{
+        GameFolder gameFolder = new GameFolder(gameFolderPath);
         for(FilePatch patch : patches){
             //byte[] gameData = Files.readAllBytes(new File(patch.getFilePath()).toPath());
-            byte[] gameData = loadGameData(gameFolderPath + File.separator + patch.getFilePath());
+            byte[] gameData = loadGameData(gameFolder, patch.getFilePath());
             System.arraycopy(patch.getNewData(), 0, gameData, patch.getDataOffset(), patch.getNewData().length);
         }
     }
 
-    private static byte[] loadGameData(String path) throws IOException {
-        if(new File(path).exists()){
-            return Files.readAllBytes(new File(path).toPath());
+    private static byte[] loadGameData(GameFolder gameFolder, String relativePath) throws IOException {
+        File file = gameFolder.getFile(relativePath);
+        if(file.exists()){
+            return Files.readAllBytes(file.toPath());
         }else{
-            String[] splitPath = path.split(File.separator);
-            String fullPath = splitPath[0];
+            String[] splitPath = gameFolder.resolveRelativePath(relativePath).replace('\\', '/').split("/");
+            File fullPath = new File(gameFolder.getRootFolderPath());
 
-            for(int i = 1; i < splitPath.length; i++){
-                fullPath += File.separator + splitPath[i];
-                if(new File(fullPath).isFile()){
+            for(int i = 0; i < splitPath.length; i++){
+                fullPath = new File(fullPath, splitPath[i]);
+                if(fullPath.isFile()){
                     try {
-                        Narc narc = NarcIO.loadNarc(fullPath);
-                        NarcFile narcFile = narc.getFileByPath(path.substring(fullPath.length()));
+                        Narc narc = NarcIO.loadNarc(fullPath.getPath());
+                        NarcFile narcFile = narc.getFileByPath(joinPath(splitPath, i + 1));
                         if(narcFile != null){
                             return narcFile.getData();
                         }else{
@@ -83,6 +84,17 @@ public class MultiFilePatch {
             }
             throw new IOException("File and NARC not found Exception");
         }
+    }
+
+    private static String joinPath(String[] splitPath, int startIndex) {
+        String path = "";
+        for (int i = startIndex; i < splitPath.length; i++) {
+            if (!path.equals("")) {
+                path += "/";
+            }
+            path += splitPath[i];
+        }
+        return path;
     }
 
     private static boolean isNarc(String filePath) {
