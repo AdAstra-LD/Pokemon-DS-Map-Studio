@@ -707,12 +707,15 @@ public class TilesetIO {
 
     private static void writeIntValue(FileOutputStream out, int value)
             throws IOException {
-        out.write(ByteBuffer.allocate(Integer.BYTES).putInt(value).array());
+        out.write((value >>> 24) & 0xFF);
+        out.write((value >>> 16) & 0xFF);
+        out.write((value >>> 8) & 0xFF);
+        out.write(value & 0xFF);
     }
 
     private static void writeFloatValue(FileOutputStream out, float value)
             throws IOException {
-        out.write(ByteBuffer.allocate(Float.BYTES).putFloat(value).array());
+        writeIntValue(out, Float.floatToRawIntBits(value));
     }
 
     private static void writeByteValue(FileOutputStream out, byte value)

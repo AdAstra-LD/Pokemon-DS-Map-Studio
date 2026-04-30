@@ -88,11 +88,12 @@ public class Clusterer {
     }
 
     public static ArrayList<Color> clusterColors(ArrayList<Color> colors, int numColors, int maxIte, float tol) {
+        Random random = new Random();
         ArrayList<Color> centroids = new ArrayList<>(numColors);
         ArrayList<Color> lastCentroids = new ArrayList<>(numColors);
         for (int i = 0; i < numColors; i++) {
-            centroids.add(colors.get(new Random().nextInt(colors.size())));
-            lastCentroids.add(colors.get(new Random().nextInt(colors.size())));
+            centroids.add(colors.get(random.nextInt(colors.size())));
+            lastCentroids.add(colors.get(random.nextInt(colors.size())));
         }
 
         ArrayList<ArrayList<Integer>> colorsIndicesInClusters = new ArrayList<>(centroids.size());
@@ -115,7 +116,7 @@ public class Clusterer {
                 if (colorsIndicesInClusters.get(i).size() > 0) {
                     centroids.set(i, getMeanColor(colors, colorsIndicesInClusters.get(i)));
                 } else {
-                    centroids.set(i, colors.get(new Random().nextInt(colors.size())));
+                    centroids.set(i, colors.get(random.nextInt(colors.size())));
                 }
             }
 

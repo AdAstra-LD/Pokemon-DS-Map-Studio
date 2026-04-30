@@ -272,9 +272,9 @@ public class MapDisplay extends GLJPanel implements GLEventListener, MouseListen
 
         if (updateRequested) {
 
-            //Load Textures into OpenGL
-            handler.getTileset().loadTexturesGL();
-            handler.getBorderMapsTileset().loadTexturesGL();
+            //Reload textures without leaving the old GL objects allocated.
+            handler.getTileset().updateTextures(gl);
+            handler.getBorderMapsTileset().updateTextures(gl);
 
             updateMapLayersGL();
 
@@ -329,7 +329,6 @@ public class MapDisplay extends GLJPanel implements GLEventListener, MouseListen
                 screenshotRequested = false;
             }
 
-            gl.glFinish();
         } catch (GLException ex) {
             ex.printStackTrace();
         }

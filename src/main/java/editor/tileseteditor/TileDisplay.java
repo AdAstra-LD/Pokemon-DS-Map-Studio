@@ -192,7 +192,7 @@ public class TileDisplay extends GLJPanel implements GLEventListener, MouseListe
 
             //handler.getTileset().updateTextures(gl, "res/tileset");
             //handler.getTileset().loadTexturesGL();
-            loadTexturesGL();
+            updateTexturesGL(gl);
 
             //Load Textures into OpenGL
             //handler.getTileset().loadTextures("res/tileset");
@@ -247,7 +247,6 @@ public class TileDisplay extends GLJPanel implements GLEventListener, MouseListe
             }
         }
 
-        gl.glFinish();
     }
 
     @Override
@@ -729,6 +728,15 @@ public class TileDisplay extends GLJPanel implements GLEventListener, MouseListe
         for (int i = 0; i < handler.getTileset().getMaterials().size(); i++) {
             textures.add(loadTextureGL(i));
         }
+    }
+
+    private void updateTexturesGL(GL2 gl) {
+        for (Texture texture : textures) {
+            if (texture != null) {
+                texture.destroy(gl);
+            }
+        }
+        loadTexturesGL();
     }
 
     private Texture loadTextureGL(int index) {

@@ -142,9 +142,9 @@ public class BdhcamCameraDisplay extends GLJPanel implements GLEventListener, Mo
 
         if (updateRequested) {
 
-            //Load Textures into OpenGL
-            handler.getTileset().loadTexturesGL();
-            handler.getBorderMapsTileset().loadTexturesGL();
+            //Reload textures without leaving the old GL objects allocated.
+            handler.getTileset().updateTextures(gl);
+            handler.getBorderMapsTileset().updateTextures(gl);
             loadPlayerTextureGL();
 
             updateMapLayersGL();
@@ -174,7 +174,6 @@ public class BdhcamCameraDisplay extends GLJPanel implements GLEventListener, Mo
 
             drawPlayer(gl);
 
-            gl.glFinish();
         } catch (GLException ex) {
             ex.printStackTrace();
         }
