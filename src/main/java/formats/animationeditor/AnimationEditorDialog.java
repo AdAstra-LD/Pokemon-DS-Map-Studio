@@ -1,7 +1,6 @@
 package formats.animationeditor;
 
 import editor.handler.MapEditorHandler;
-import formats.nsbtx2.Nsbtx2;
 import utils.Utils;
 
 import javax.swing.*;
@@ -244,7 +243,8 @@ public class AnimationEditorDialog extends JDialog {
 
     public void changeAnimationName() {
         String name = jtfAnimationName.getText();
-        if (name.length() <= Nsbtx2.maxNameSize) {
+        String validationError = Animation.getNameValidationError(name);
+        if (validationError == null) {
             jtfAnimNameEnabled.value = false;
             animHandler.getAnimationSelected().setName(name);
             jtfAnimationName.setBackground(rightColor);
@@ -254,8 +254,8 @@ public class AnimationEditorDialog extends JDialog {
             updateViewAnimationListNames(jlAnimationNames.getSelectedIndex());
         } else {
             JOptionPane.showMessageDialog(this,
-                    "The animation name has more than 16 characters",
-                    "The name is too long",
+                    validationError,
+                    "Invalid animation name",
                     JOptionPane.ERROR_MESSAGE);
         }
 
@@ -326,8 +326,8 @@ public class AnimationEditorDialog extends JDialog {
                     animHandler.saveAnimationFile(path);
 
                 } catch (IOException ex) {
-                    JOptionPane.showMessageDialog(this, "There was an error saving the IMD",
-                            "Error saving IMD", JOptionPane.ERROR_MESSAGE);
+                    JOptionPane.showMessageDialog(this, "There was an error saving the animation file.",
+                            "Error saving animation file", JOptionPane.ERROR_MESSAGE);
                 }
             }
         }

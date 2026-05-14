@@ -8,6 +8,9 @@ public class Animation {
 
     public static final int maxNameSize = 16;
     public static final int maxNumFrames = 18;
+    public static final int endCode = 255;
+    public static final int maxFrameValue = 254;
+    public static final int maxDelayValue = 254;
 
     private String name;
     private int[] frames;
@@ -25,8 +28,8 @@ public class Animation {
         this.delays = new int[maxNumFrames];
 
         for (int i = 0; i < frames.length; i++) {
-            frames[i] = 255;
-            delays[i] = 255;
+            frames[i] = endCode;
+            delays[i] = endCode;
         }
         frames[0] = 0;
         delays[0] = 1;
@@ -34,7 +37,7 @@ public class Animation {
 
     public int size() {
         for (int i = 0; i < frames.length; i++) {
-            if (frames[i] == 255) {
+            if (frames[i] == endCode) {
                 return i;
             }
         }
@@ -50,11 +53,11 @@ public class Animation {
     }
 
     public void setDelay(int index, int value) {
-        this.delays[index] = Math.min(Math.max(value, 0), 254);
+        this.delays[index] = Math.min(Math.max(value, 0), maxDelayValue);
     }
 
     public void setFrame(int index, int value) {
-        this.frames[index] = Math.min(Math.max(value, 0), 254);
+        this.frames[index] = Math.min(Math.max(value, 0), maxFrameValue);
     }
 
     public String getName() {
@@ -68,8 +71,8 @@ public class Animation {
     public boolean addFrame(int frameIndex, int delay) {
         int size = size();
         if (size < frames.length) {
-            frames[size] = frameIndex;
-            delays[size] = delay;
+            setFrame(size, frameIndex);
+            setDelay(size, delay);
             return true;
         } else {
             return false;
@@ -84,13 +87,40 @@ public class Animation {
                     frames[i] = frames[i + 1];
                     delays[i] = delays[i + 1];
                 }
-                frames[size - 1] = 255;
-                delays[size - 1] = 255;
+                frames[size - 1] = endCode;
+                delays[size - 1] = endCode;
                 return true;
             }
         }
         return false;
 
+    }
+
+    public static String getNameValidationError(String name) {
+        if (name == null) {
+            return "The animation name is empty.";
+        }
+
+        if (name.isEmpty()) {
+            return "The animation name is empty.";
+        }
+
+        if (name.length() > maxNameSize) {
+            return "The animation name has more than 16 bytes.";
+        }
+
+        for (int i = 0; i < name.length(); i++) {
+            char ch = name.charAt(i);
+            if (ch == '\u0000' || ch > 0x7f) {
+                return "The animation name must use ASCII characters only.";
+            }
+        }
+
+        return null;
+    }
+
+    public static boolean isValidName(String name) {
+        return getNameValidationError(name) == null;
     }
 
 }

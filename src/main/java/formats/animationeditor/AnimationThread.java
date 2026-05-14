@@ -16,14 +16,15 @@ public class AnimationThread extends Thread {
     @Override
     public void run() {
         while (running) {
-            animHandler.incrementFrameIndex();
             animHandler.repaintDialog();
 
             try {
-                Thread.sleep((long) ((animHandler.getCurrentDelay() / 30.0f) * 1000));
+                Thread.sleep((long) ((Math.max(animHandler.getCurrentDelay(), 1) / 30.0f) * 1000));
             } catch (InterruptedException ex) {
                 ex.printStackTrace();
             }
+
+            animHandler.incrementFrameIndex();
         }
     }
 
