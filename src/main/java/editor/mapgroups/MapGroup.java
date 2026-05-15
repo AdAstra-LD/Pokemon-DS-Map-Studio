@@ -2,10 +2,10 @@ package editor.mapgroups;
 
 import editor.mapmatrix.PointComparator;
 
-import java.awt.*;
+import java.awt.Point;
 import java.util.TreeSet;
 
-public class MapGroup implements Comparable<MapGroup>{
+public class MapGroup implements Comparable<MapGroup> {
     private final int index;
     private final TreeSet<Point> coordList = new TreeSet<>(new PointComparator());
 
@@ -25,12 +25,11 @@ public class MapGroup implements Comparable<MapGroup>{
 
     @Override
     public String toString() {
-        String msg = "#" + index + ":   ";
+        StringBuilder msg = new StringBuilder("#" + index + ":   ");
         for (Point p : coordList) {
-            msg += (( "(" + (int) p.getX()) + ", " + (int) p.getY() + "); ");
+            msg.append("(").append((int) p.getX()).append(", ").append((int) p.getY()).append("); ");
         }
-        System.out.println(msg);
-        return msg;
+        return msg.toString();
     }
 
 

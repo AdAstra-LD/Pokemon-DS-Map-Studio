@@ -1,0 +1,11 @@
+*.bat text eol=crlf
+*.cmd text eol=crlf
+*.sh text eol=lf
+gradlew text eol=lf
+
+*.jar binary
+*.png binary
+*.gif binary
+*.ico binary
+*.pdsts binary
+*.pdsmap binary

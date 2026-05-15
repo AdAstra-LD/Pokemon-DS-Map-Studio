@@ -30,41 +30,38 @@ import tileset.Face;
 public class Utils {
 
     public static String[] readShaderAsResource(String filename) {
-        Vector lines = new Vector();
-        Scanner sc;
-        sc = new Scanner(Utils.class.getClassLoader().getResourceAsStream(filename));
-
-        while (sc.hasNext()) {
-            lines.addElement(sc.nextLine());
+        ArrayList<String> lines = new ArrayList<>();
+        try (Scanner sc = new Scanner(Utils.class.getClassLoader().getResourceAsStream(filename))) {
+            while (sc.hasNext()) {
+                lines.add(sc.nextLine() + "\n");
+            }
         }
-
-        String[] program = new String[lines.size()];
-
-        for (int i = 0; i < lines.size(); ++i) {
-            program[i] = (String) lines.elementAt(i) + "\n";
-        }
-
-        sc.close();
-        return program;
+        return lines.toArray(new String[0]);
     }
 
     public static BufferedImage loadTexImageAsResource(String path) {
-        BufferedImage img = null;
         try {
-            img = ImageIO.read(Utils.class.getResource(path));
+            BufferedImage img = ImageIO.read(Utils.class.getResource(path));
+            return img != null ? img : createMissingTextureImage();
         } catch (IOException | IllegalArgumentException ex) {
-            int size = 64;
-            img = new BufferedImage(size, size, BufferedImage.TYPE_INT_RGB);
-            Graphics g = img.getGraphics();
+            return createMissingTextureImage();
+        }
+    }
+
+    private static BufferedImage createMissingTextureImage() {
+        int size = 64;
+        BufferedImage img = new BufferedImage(size, size, BufferedImage.TYPE_INT_RGB);
+        Graphics g = img.getGraphics();
+        try {
             g.setColor(Color.WHITE);
             g.fillRect(0, 0, size, size);
             g.setColor(Color.CYAN);
             g.fillRect(0, 0, size / 2, size / 2);
-            g.setColor(Color.CYAN);
             g.fillRect(size / 2, size / 2, size, size);
             g.setColor(Color.BLACK);
             g.drawRect(0, 0, size - 1, size - 1);
-            System.out.println("IO Exception leyendo imagen como resource");
+        } finally {
+            g.dispose();
         }
         return img;
     }
@@ -103,22 +100,22 @@ public class Utils {
     }
 
     public static float imageDifferenceNorm(BufferedImage img1, BufferedImage img2) {
-        float totalDiff = 0.0f;
-        try {
-            for (int i = 0; i < img1.getWidth(); i++) {
-                for (int j = 0; j < img1.getHeight(); j++) {
-                    int c1 = img1.getRGB(i, j);
-                    int c2 = img2.getRGB(i, j);
-
-                    totalDiff += Math.abs((((c1 & 0x00FF0000) >> 16) - ((c2 & 0x00FF0000) >> 16)));
-                    totalDiff += Math.abs((((c1 & 0x0000FF00) >> 8) - ((c2 & 0x0000FF00) >> 8)));
-                    totalDiff += Math.abs(((c1 & 0x000000FF) - (c2 & 0x000000FF)));
-                }
-            }
-            return totalDiff / (img1.getWidth() * img1.getHeight() * 255 * 3);
-        } catch (Exception ex) {
+        if (img1 == null || img2 == null || img1.getWidth() != img2.getWidth() || img1.getHeight() != img2.getHeight()) {
             return 1.0f;
         }
+
+        float totalDiff = 0.0f;
+        for (int i = 0; i < img1.getWidth(); i++) {
+            for (int j = 0; j < img1.getHeight(); j++) {
+                int c1 = img1.getRGB(i, j);
+                int c2 = img2.getRGB(i, j);
+
+                totalDiff += Math.abs((((c1 & 0x00FF0000) >> 16) - ((c2 & 0x00FF0000) >> 16)));
+                totalDiff += Math.abs((((c1 & 0x0000FF00) >> 8) - ((c2 & 0x0000FF00) >> 8)));
+                totalDiff += Math.abs(((c1 & 0x000000FF) - (c2 & 0x000000FF)));
+            }
+        }
+        return totalDiff / (img1.getWidth() * img1.getHeight() * 255 * 3);
     }
 
     public static BufferedImage addBackgroundColor(Color color, BufferedImage img) {
@@ -153,7 +150,7 @@ public class Utils {
                 return toBufferedImage(img);
             }
             return null;
-        } catch (Exception ex) {
+        } catch (IOException | UnsupportedFlavorException | IllegalStateException ex) {
             return null;
         }
     }
@@ -198,19 +195,11 @@ public class Utils {
     }
 
     public static ArrayList<Integer> cloneArrayListInt(ArrayList<Integer> list) {
-        ArrayList<Integer> newList = new ArrayList<>();
-        for (int i = 0; i < list.size(); i++) {
-            newList.add(new Integer(list.get(i).intValue()));
-        }
-        return newList;
+        return new ArrayList<>(list);
     }
 
     public static ArrayList<Float> cloneArrayListFloat(ArrayList<Float> list) {
-        ArrayList<Float> newList = new ArrayList<>();
-        for (int i = 0; i < list.size(); i++) {
-            newList.add(new Float(list.get(i).floatValue()));
-        }
-        return newList;
+        return new ArrayList<>(list);
     }
 
     public static float[] cloneArray(float[] src) {
@@ -237,39 +226,32 @@ public class Utils {
     }
 
     public static String removeMapCoordsFromName(String name) {
-        try {
-            if (nameHasMapCoords(name)) {
-                String[] splitString = name.split("_");
-                String newName = "";
-                for (int i = 0; i < splitString.length - 3; i++) {
-                    newName += splitString[i] + "_";
-                }
-                newName += splitString[splitString.length - 3];
-                return newName;
-            } else {
-                return name;
-            }
-        } catch (Exception ex) {
+        if (!nameHasMapCoords(name)) {
             return name;
         }
+
+        String[] splitString = name.split("_");
+        StringBuilder newName = new StringBuilder();
+        for (int i = 0; i < splitString.length - 3; i++) {
+            newName.append(splitString[i]).append("_");
+        }
+        newName.append(splitString[splitString.length - 3]);
+        return newName.toString();
     }
 
     private static boolean nameHasMapCoords(String fileName) {
         String name = Utils.removeExtensionFromPath(fileName);
-        try {
-            String[] splitName = name.split("_");
-            return canParseInteger(splitName[splitName.length - 1])
-                    && canParseInteger(splitName[splitName.length - 2]);
-        } catch (Exception ex) {
-            return false;
-        }
+        String[] splitName = name.split("_");
+        return splitName.length > 2
+                && canParseInteger(splitName[splitName.length - 1])
+                && canParseInteger(splitName[splitName.length - 2]);
     }
 
     private static boolean canParseInteger(String string) {
         try {
             Integer.parseInt(string);
             return true;
-        } catch (Exception ex) {
+        } catch (NumberFormatException ex) {
             return false;
         }
     }
@@ -478,16 +460,15 @@ public class Utils {
     }
 
     private static boolean isTileAreaAvailable(int screen[][], boolean[][] mask, int x, int y, int prevC, int newC, int M, int N, int tileWidth, int tileHeight) {
-        try {
-            for (int i = 0; i < tileWidth; i++) {
-                for (int j = 0; j < tileHeight; j++) {
-                    if (screen[x + i][y + j] != prevC || !mask[x + i][y + j]) {
-                        return false;
-                    }
+        if (x < 0 || y < 0 || x + tileWidth > M || y + tileHeight > N) {
+            return false;
+        }
+        for (int i = 0; i < tileWidth; i++) {
+            for (int j = 0; j < tileHeight; j++) {
+                if (screen[x + i][y + j] != prevC || !mask[x + i][y + j]) {
+                    return false;
                 }
             }
-        } catch (Exception ex) {
-            return false;
         }
         return true;
     }

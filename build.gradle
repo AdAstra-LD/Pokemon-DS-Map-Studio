@@ -6,7 +6,6 @@ plugins {
 
 repositories {
     mavenCentral()
-    jcenter()
     flatDir {
         dirs 'libs'
     }
@@ -26,6 +25,7 @@ compileTestJava.options.encoding = 'UTF-8'
 
 jar {
     entryCompression = ZipEntryCompression.STORED
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
 
     manifest {
         attributes "Main-Class": mainClassName

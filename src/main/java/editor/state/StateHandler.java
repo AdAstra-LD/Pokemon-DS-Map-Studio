@@ -12,7 +12,7 @@ public class StateHandler {
     private int stateIndex;
     private boolean stateAdded = false;
 
-    private ArrayList<State> states;
+    private final ArrayList<State> states;
 
     public StateHandler() {
         states = new ArrayList<>(maxNumStates + 1);
@@ -23,8 +23,8 @@ public class StateHandler {
         states.add(stateIndex, state);
         stateIndex++;
         stateAdded = true;
-        for (int i = stateIndex, size = states.size(); i < size; i++) {
-            states.remove(stateIndex);
+        if (stateIndex < states.size()) {
+            states.subList(stateIndex, states.size()).clear();
         }
         if (states.size() > maxNumStates) {
             states.remove(0);
@@ -33,6 +33,9 @@ public class StateHandler {
     }
 
     public State getPreviousState(State state) {
+        if (!canGetPreviousState()) {
+            return null;
+        }
         if (stateAdded) {
             states.add(stateIndex, state);
         }
@@ -42,6 +45,9 @@ public class StateHandler {
     }
 
     public State getNextState() {
+        if (!canGetNextState()) {
+            return null;
+        }
         stateIndex++;
         return states.get(stateIndex);
     }
@@ -59,11 +65,10 @@ public class StateHandler {
     }
 
     public State getLastState() {
-        try {
-            return states.get(stateIndex - 1);
-        } catch (Exception ex) {
+        if (stateIndex == 0) {
             return null;
         }
+        return states.get(stateIndex - 1);
     }
 
 }
