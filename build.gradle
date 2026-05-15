@@ -17,13 +17,15 @@ dependencies {
     implementation group: 'com.miglayout', name: 'miglayout-swing', version: '5.0'
 }
 
-version '2.2'
+version '2.2.2'
 mainClassName = "editor.MainFrame"
+applicationName = rootProject.name
 
 compileJava.options.encoding = 'UTF-8'
 compileTestJava.options.encoding = 'UTF-8'
 
 jar {
+    archiveFileName = "${rootProject.name}-${project.version}.jar"
     entryCompression = ZipEntryCompression.STORED
     duplicatesStrategy = DuplicatesStrategy.EXCLUDE
 
@@ -34,4 +36,12 @@ jar {
     from {
         configurations.runtimeClasspath.collect { it.isDirectory() ? it : zipTree(it) }
     }
+}
+
+distZip {
+    archiveFileName = "${rootProject.name}-${project.version}.zip"
+}
+
+distTar {
+    archiveFileName = "${rootProject.name}-${project.version}.tar"
 }
