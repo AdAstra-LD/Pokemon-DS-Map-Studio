@@ -37,7 +37,7 @@ final class MainFrameViewUpdater {
     private final JLabel gameNameLabel;
     private final JLabel gameIconLabel;
     private final JPanel areaColorPanel;
-    private final JCheckBox exportGroupCenterCheckBox;
+    private final ExportGroupCenterCheckBox exportGroupCenterCheckBox;
     private final JSpinner selectedAreaSpinner;
     private final JPanel exportGroupColorPanel;
     private final JSpinner selectedExportGroupSpinner;
@@ -126,7 +126,7 @@ final class MainFrameViewUpdater {
         selectedAreaSpinner.setValue(currentMap.getAreaIndex());
         int exportGroupIndex = currentMap.getExportGroupIndex();
         exportGroupCenterCheckBox.setEnabled(exportGroupIndex > 0);
-        exportGroupCenterCheckBox.setSelected(exportGroupIndex > 0 && currentMap.isExportGroupCenter());
+        exportGroupCenterCheckBox.setCenterState(getExportGroupCenterState(currentMap, exportGroupIndex));
         selectedExportGroupSpinner.setValue(exportGroupIndex);
 
         updateViewGeometryCount();
@@ -134,6 +134,18 @@ final class MainFrameViewUpdater {
 
         Point coords = handler.getMapSelected();
         mapCoordsLabel.setText("(" + coords.x + ", " + coords.y + ")");
+    }
+
+    private ExportGroupCenterCheckBox.CenterState getExportGroupCenterState(MapData currentMap, int exportGroupIndex) {
+        if (exportGroupIndex <= 0) {
+            return ExportGroupCenterCheckBox.CenterState.EMPTY;
+        }
+        if (currentMap.isExportGroupCenter()) {
+            return ExportGroupCenterCheckBox.CenterState.CURRENT_MAP;
+        }
+        return handler.getMapMatrix().getExportGroupCenterCoords(exportGroupIndex) == null
+                ? ExportGroupCenterCheckBox.CenterState.EMPTY
+                : ExportGroupCenterCheckBox.CenterState.OTHER_MAP;
     }
 
     void updateViewGeometryCount() {

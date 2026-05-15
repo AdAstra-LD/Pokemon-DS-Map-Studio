@@ -550,9 +550,7 @@ public class MainFrame extends JFrame {
             MapData md = handler.getMapData();
             Integer newExportGroupIndex = (Integer) jsSelectedExportgroup.getValue();
             handler.getMapMatrix().setMapExportGroupIndex(md, newExportGroupIndex);
-
-            jCbExportGroupCenter.setEnabled(newExportGroupIndex > 0);
-            jCbExportGroupCenter.setSelected(md.isExportGroupCenter());
+            updateExportGroupCenterCheckBoxState(md);
 
             jPanelExportgroupColor.setBackground(handler.getMapMatrix().getExportgroupColors().get(newExportGroupIndex));
             jPanelExportgroupColor.repaint();
@@ -561,13 +559,53 @@ public class MainFrame extends JFrame {
         }
     }
 
-    private void jCbExportGroupCenterStateChanged(ChangeEvent e) {
+    private void jCbExportGroupCenterActionPerformed() {
         try {
+            if (jCbExportGroupCenter.isApplyingCenterState()) {
+                return;
+            }
             MapData md = handler.getMapData();
-            handler.getMapMatrix().setExportGroupCenter(handler.getMapSelected(), jCbExportGroupCenter.isSelected());
-            jCbExportGroupCenter.setSelected(md.isExportGroupCenter());
+            int exportGroupIndex = md.getExportGroupIndex();
+            if (exportGroupIndex <= 0) {
+                updateExportGroupCenterCheckBoxState(md);
+                return;
+            }
+
+            Point selectedMap = handler.getMapSelected();
+            Point currentCenter = handler.getMapMatrix().getExportGroupCenterCoords(exportGroupIndex);
+            boolean settingCurrentMapAsCenter = jCbExportGroupCenter.isSelected();
+            if (settingCurrentMapAsCenter && currentCenter != null && !currentCenter.equals(selectedMap)) {
+                int result = JOptionPane.showConfirmDialog(this,
+                        "Export Group " + exportGroupIndex + " already has a center at ("
+                                + currentCenter.x + ", " + currentCenter.y + ").\n\nReplace it with the current map at ("
+                                + selectedMap.x + ", " + selectedMap.y + ")?",
+                        "Replace Export Group Center?",
+                        JOptionPane.YES_NO_OPTION,
+                        JOptionPane.WARNING_MESSAGE);
+                if (result != JOptionPane.YES_OPTION) {
+                    updateExportGroupCenterCheckBoxState(md);
+                    return;
+                }
+            }
+
+            handler.getMapMatrix().setExportGroupCenter(selectedMap, settingCurrentMapAsCenter);
+            updateExportGroupCenterCheckBoxState(md);
         } catch (Exception ex) {
             ex.printStackTrace();
+        }
+    }
+
+    private void updateExportGroupCenterCheckBoxState(MapData currentMap) {
+        int exportGroupIndex = currentMap.getExportGroupIndex();
+        jCbExportGroupCenter.setEnabled(exportGroupIndex > 0);
+        if (exportGroupIndex <= 0) {
+            jCbExportGroupCenter.setCenterState(ExportGroupCenterCheckBox.CenterState.EMPTY);
+        } else if (currentMap.isExportGroupCenter()) {
+            jCbExportGroupCenter.setCenterState(ExportGroupCenterCheckBox.CenterState.CURRENT_MAP);
+        } else if (handler.getMapMatrix().getExportGroupCenterCoords(exportGroupIndex) != null) {
+            jCbExportGroupCenter.setCenterState(ExportGroupCenterCheckBox.CenterState.OTHER_MAP);
+        } else {
+            jCbExportGroupCenter.setCenterState(ExportGroupCenterCheckBox.CenterState.EMPTY);
         }
     }
 
@@ -952,7 +990,7 @@ public class MainFrame extends JFrame {
         return jsSelectedExportgroup;
     }
 
-    private JCheckBox getJCbExportGroupCenter() {
+    private ExportGroupCenterCheckBox getJCbExportGroupCenter() {
         return jCbExportGroupCenter;
     }
 
@@ -1119,7 +1157,7 @@ public class MainFrame extends JFrame {
         jlArea = new JLabel();
         jsSelectedArea = new JSpinner();
         jPanelAreaColor = new JPanel();
-        jCbExportGroupCenter = new JCheckBox();
+        jCbExportGroupCenter = new ExportGroupCenterCheckBox();
         jlExportgroup = new JLabel();
         jsSelectedExportgroup = new JSpinner();
         jPanelExportgroupColor = new JPanel();
@@ -2439,7 +2477,7 @@ public class MainFrame extends JFrame {
                                 jCbExportGroupCenter.setPreferredSize(null);
                                 jCbExportGroupCenter.setMinimumSize(null);
                                 jCbExportGroupCenter.setMaximumSize(null);
-                                jCbExportGroupCenter.addChangeListener(e -> jCbExportGroupCenterStateChanged(e));
+                                jCbExportGroupCenter.addActionListener(e -> jCbExportGroupCenterActionPerformed());
                                 jpAreaTools.add(jCbExportGroupCenter, "cell 0 2");
 
                                 //======== jpMoveMap ========
@@ -2858,7 +2896,7 @@ public class MainFrame extends JFrame {
     private JLabel jlArea;
     private JSpinner jsSelectedArea;
     private JPanel jPanelAreaColor;
-    private JCheckBox jCbExportGroupCenter;
+    private ExportGroupCenterCheckBox jCbExportGroupCenter;
     private JLabel jlExportgroup;
     private JSpinner jsSelectedExportgroup;
     private JPanel jPanelExportgroupColor;

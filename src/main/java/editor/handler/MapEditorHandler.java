@@ -38,10 +38,10 @@ public class MapEditorHandler {
     public static final String versionName = "Pokemon DS Map Studio 2.2.2 [AdAstra]";
 
     //Main frame
-    private MainFrame mainFrame;
+    private final MainFrame mainFrame;
 
     //Game
-    private Game game;
+    private final Game game;
 
     //Working directory
     private String lastTilesetDirectoryUsed = null;
@@ -62,7 +62,7 @@ public class MapEditorHandler {
     public static final int minHeight = -15;
     public static final int maxHeight = 15;
     public static final int numHeights = maxHeight - minHeight + 1;
-    private int[] heights = new int[numHeights];
+    private final int[] heights = new int[numHeights];
     private final Color[] heightColors = new Color[numHeights];
     private int heightIndexSelected = 15;
     private BufferedImage[] heightImages = new BufferedImage[numHeights];
@@ -294,15 +294,15 @@ public class MapEditorHandler {
 
     public void setActiveTileLayer(int index) {
         MapGrid grid = getCurrentMap().getGrid();
-        if (index >= 0 && index < grid.numLayers) {
+        if (index >= 0 && index < MapGrid.numLayers) {
             activeLayer = index;
         }
     }
 
     public void setOnlyActiveTileLayer(int index) {
         MapGrid grid = getCurrentMap().getGrid();
-        if (index >= 0 && index < grid.numLayers) {
-            for (int i = 0; i < grid.numLayers; i++) {
+        if (index >= 0 && index < MapGrid.numLayers) {
+            for (int i = 0; i < MapGrid.numLayers; i++) {
                 renderLayers[i] = false;
             }
             renderLayers[index] = true;
@@ -310,11 +310,11 @@ public class MapEditorHandler {
             mainFrame.repaintMapDisplay();
         }
     }
-    
+
     public void invertEveryLayer(int index) {
         MapGrid grid = getCurrentMap().getGrid();
-        if (index >= 0 && index < grid.numLayers) {
-            for (int i = 0; i < grid.numLayers; i++) {
+        if (index >= 0 && index < MapGrid.numLayers) {
+            for (int i = 0; i < MapGrid.numLayers; i++) {
                 renderLayers[i] = !renderLayers[i];
             }
             activeLayer = index;
@@ -324,17 +324,17 @@ public class MapEditorHandler {
 
     public boolean isLayerTheOnlyActive(int index) {
         MapGrid grid = getCurrentMap().getGrid();
-        for(int i = 0; i < grid.numLayers; i++){
+        for(int i = 0; i < MapGrid.numLayers; i++){
             if(renderLayers[i] && i != index){
                 return false;
             }
         }
         return true;
     }
-    
+
     public void setAllLayersState(boolean enabled) {
         MapGrid grid = getCurrentMap().getGrid();
-        for(int i = 0; i < grid.numLayers; i++){
+        for(int i = 0; i < MapGrid.numLayers; i++){
             renderLayers[i] = enabled;
         }
     }
@@ -584,7 +584,7 @@ public class MapEditorHandler {
     }
 
     public boolean mapExists(Point mapCoords) {
-        return mapMatrix.getMatrix().keySet().contains(mapCoords);
+        return mapMatrix.getMatrix().containsKey(mapCoords);
     }
 
     public boolean mapSelectedExists() {

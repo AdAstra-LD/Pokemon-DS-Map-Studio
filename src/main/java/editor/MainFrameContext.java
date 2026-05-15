@@ -41,7 +41,7 @@ final class MainFrameContext {
     final JLabel gameNameLabel;
     final JLabel gameIconLabel;
     final JPanel areaColorPanel;
-    final JCheckBox exportGroupCenterCheckBox;
+    final ExportGroupCenterCheckBox exportGroupCenterCheckBox;
     final JSpinner selectedAreaSpinner;
     final JPanel exportGroupColorPanel;
     final JSpinner selectedExportGroupSpinner;
@@ -65,7 +65,7 @@ final class MainFrameContext {
             MapMatrixDisplay mapMatrixDisplay, HeightSelector heightSelector, JScrollPane tileListScrollPane,
             SmartGridDisplay smartGridDisplay, ThumbnailLayerSelector thumbnailLayerSelector,
             JScrollPane mapMatrixScrollPane, JLabel gameNameLabel, JLabel gameIconLabel, JPanel areaColorPanel,
-            JCheckBox exportGroupCenterCheckBox, JSpinner selectedAreaSpinner, JPanel exportGroupColorPanel,
+            ExportGroupCenterCheckBox exportGroupCenterCheckBox, JSpinner selectedAreaSpinner, JPanel exportGroupColorPanel,
             JSpinner selectedExportGroupSpinner, JLabel mapCoordsLabel, JLabel numPolygonsLabel,
             JLabel numMaterialsLabel, JLabel tileTextLabel, JPanel statusBarPanel, JLabel statusLabel,
             JButton undoButton, JButton redoButton, AbstractButton useBackImageControl) {
