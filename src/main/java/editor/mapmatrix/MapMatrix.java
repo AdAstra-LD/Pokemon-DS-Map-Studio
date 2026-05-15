@@ -108,6 +108,7 @@ public class MapMatrix {
         updateContourPoints(areaIndices);
 
         updateAreaColors(areaIndices);
+        updateExportgroupColors(getExportGroupIndices());
     }
 
     public void saveGridsToFile(String path, Set<Map.Entry<Point, MapData>> entrySet) throws FileNotFoundException {
@@ -226,6 +227,8 @@ public class MapMatrix {
             mapData.setGrid(currentGrid);
             matrix.put(new Point(0, 0), mapData);
         }
+        normalizeExportGroupCenters(matrix);
+        updateExportgroupColors(getExportGroupIndices());
 
         br.close();
         input.close();
@@ -291,6 +294,7 @@ public class MapMatrix {
             mapData.setGrid(currentGrid);
             matrix.put(new Point(0, 0), mapData);
         }
+        normalizeExportGroupCenters(matrix);
 
         br.close();
         input.close();
@@ -393,6 +397,7 @@ public class MapMatrix {
 
     public void saveMapsAsObj(String path, boolean saveTextures, boolean includeVertexColors, HashSet<Integer> exportGroups, float tileUpscale) throws FileNotFoundException {
         removeUnusedMaps();
+        normalizeExportGroupCenters(matrix);
 
         String folderPath = new File(path).getParent();
         String fileName = Utils.removeExtensionFromPath(new File(path).getName());
@@ -1022,6 +1027,57 @@ public class MapMatrix {
         return exportGroups;
     }
 
+    public void setMapExportGroupIndex(MapData mapData, int exportGroupIndex) {
+        if (mapData == null) {
+            return;
+        }
+        int previousExportGroupIndex = mapData.getExportGroupIndex();
+        mapData.setExportgroupIndex(exportGroupIndex);
+        if (previousExportGroupIndex != exportGroupIndex || exportGroupIndex == 0) {
+            mapData.setExportGroupCenter(false);
+        }
+        updateExportgroupColors(getExportGroupIndices());
+    }
+
+    public void setExportGroupCenter(Point mapCoords, boolean exportGroupCenter) {
+        MapData selectedMap = matrix.get(mapCoords);
+        if (selectedMap == null) {
+            return;
+        }
+        int exportGroupIndex = selectedMap.getExportGroupIndex();
+        if (exportGroupIndex == 0) {
+            selectedMap.setExportGroupCenter(false);
+            return;
+        }
+        if (exportGroupCenter) {
+            clearExportGroupCenters(exportGroupIndex);
+        }
+        selectedMap.setExportGroupCenter(exportGroupCenter);
+    }
+
+    private void clearExportGroupCenters(int exportGroupIndex) {
+        for (MapData mapData : matrix.values()) {
+            if (mapData.getExportGroupIndex() == exportGroupIndex) {
+                mapData.setExportGroupCenter(false);
+            }
+        }
+    }
+
+    private static void normalizeExportGroupCenters(HashMap<Point, MapData> maps) {
+        HashSet<Integer> centeredGroups = new HashSet<>();
+        TreeSet<Point> sortedPoints = new TreeSet<>(new PointComparator());
+        sortedPoints.addAll(maps.keySet());
+        for (Point point : sortedPoints) {
+            MapData mapData = maps.get(point);
+            int exportGroupIndex = mapData.getExportGroupIndex();
+            if (exportGroupIndex == 0) {
+                mapData.setExportGroupCenter(false);
+            } else if (mapData.isExportGroupCenter() && !centeredGroups.add(exportGroupIndex)) {
+                mapData.setExportGroupCenter(false);
+            }
+        }
+    }
+
     public TreeMap<Integer, MapGroup> getExportGroups() {
         TreeMap<Integer, MapGroup> exportGroups = new TreeMap<>();
 
@@ -1212,14 +1268,15 @@ public class MapMatrix {
         return map;
     }
 
-    public Point getExportGroupCenterCoords (int exportGroup) {
+    public Point getExportGroupCenterCoords(int exportGroup) {
+        TreeSet<Point> centerCoords = new TreeSet<>(new PointComparator());
         for (HashMap.Entry<Point, MapData> mapEntry : matrix.entrySet()) {
             MapData mapd = mapEntry.getValue();
-
-            if (mapd.getExportGroupIndex() == exportGroup && mapd.isExportGroupCenter())
-                return mapEntry.getKey();
+            if (mapd.getExportGroupIndex() == exportGroup && mapd.isExportGroupCenter()) {
+                centerCoords.add(mapEntry.getKey());
+            }
         }
-        return null;
+        return centerCoords.isEmpty() ? null : centerCoords.first();
     }
 
     public BufferedImage getMapMatrixImage() {

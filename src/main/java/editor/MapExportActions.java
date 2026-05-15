@@ -212,7 +212,7 @@ final class MapExportActions {
                     if (exportAllMapsBothModes) {
                         path = Utils.removeMapCoordsFromName(path);
                         handler.getMapMatrix().saveMapsAsObj(path, saveTextures, includeVertexColors,
-                                handler.getMapMatrix().getExportGroupIndices(), tileUpscale);
+                                useExportgroups ? handler.getMapMatrix().getExportGroupIndices() : null, tileUpscale);
                         handler.getMapMatrix().saveMapsAsObjJoined(path, saveTextures, includeVertexColors,
                                 tileUpscale);
 
@@ -223,7 +223,7 @@ final class MapExportActions {
                     } else if (exportAllMapsSeparately) {
                         path = Utils.removeMapCoordsFromName(path);
                         handler.getMapMatrix().saveMapsAsObj(path, saveTextures, includeVertexColors,
-                                handler.getMapMatrix().getExportGroupIndices(), tileUpscale);
+                                useExportgroups ? handler.getMapMatrix().getExportGroupIndices() : null, tileUpscale);
 
                         JOptionPane.showMessageDialog(frame, "OBJ " + type + " succesfully exported separately.",
                                 type.substring(0, 1).toUpperCase() + type.substring(1) + " saved",
@@ -236,9 +236,10 @@ final class MapExportActions {
                         JOptionPane.showMessageDialog(frame, "OBJ maps succesfully exported as one.", "Map saved",
                                 JOptionPane.INFORMATION_MESSAGE);
                     } else {
-                        if (useExportgroups) {
+                        int currentExportGroupIndex = handler.getCurrentMap().getExportGroupIndex();
+                        if (useExportgroups && currentExportGroupIndex != 0) {
                             HashSet<Integer> groupsToExport = new HashSet<>();
-                            groupsToExport.add(handler.getCurrentMap().getExportGroupIndex());
+                            groupsToExport.add(currentExportGroupIndex);
 
                             handler.getMapMatrix().saveMapsAsObj(path, saveTextures, includeVertexColors,
                                     groupsToExport, tileUpscale);

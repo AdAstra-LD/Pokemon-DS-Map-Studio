@@ -124,8 +124,10 @@ final class MainFrameViewUpdater {
         exportGroupColorPanel.repaint();
 
         selectedAreaSpinner.setValue(currentMap.getAreaIndex());
-        exportGroupCenterCheckBox.setSelected(currentMap.isExportGroupCenter());
-        selectedExportGroupSpinner.setValue(currentMap.getExportGroupIndex());
+        int exportGroupIndex = currentMap.getExportGroupIndex();
+        exportGroupCenterCheckBox.setEnabled(exportGroupIndex > 0);
+        exportGroupCenterCheckBox.setSelected(exportGroupIndex > 0 && currentMap.isExportGroupCenter());
+        selectedExportGroupSpinner.setValue(exportGroupIndex);
 
         updateViewGeometryCount();
         updateTileSelectedID();

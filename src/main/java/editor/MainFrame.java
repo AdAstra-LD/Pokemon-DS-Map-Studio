@@ -549,16 +549,10 @@ public class MainFrame extends JFrame {
         try {
             MapData md = handler.getMapData();
             Integer newExportGroupIndex = (Integer) jsSelectedExportgroup.getValue();
-            md.setExportgroupIndex(newExportGroupIndex);
+            handler.getMapMatrix().setMapExportGroupIndex(md, newExportGroupIndex);
 
-            if (newExportGroupIndex == 0) {
-                jCbExportGroupCenter.setEnabled(false);
-                jCbExportGroupCenter.setSelected(false);
-            } else {
-                jCbExportGroupCenter.setEnabled(true);
-            }
-
-            handler.getMapMatrix().updateExportgroupColors(handler.getMapMatrix().getExportGroupIndices());
+            jCbExportGroupCenter.setEnabled(newExportGroupIndex > 0);
+            jCbExportGroupCenter.setSelected(md.isExportGroupCenter());
 
             jPanelExportgroupColor.setBackground(handler.getMapMatrix().getExportgroupColors().get(newExportGroupIndex));
             jPanelExportgroupColor.repaint();
@@ -570,9 +564,8 @@ public class MainFrame extends JFrame {
     private void jCbExportGroupCenterStateChanged(ChangeEvent e) {
         try {
             MapData md = handler.getMapData();
-            if (md.getExportGroupIndex() > 0) {
-                md.setExportGroupCenter(jCbExportGroupCenter.isSelected());
-            }
+            handler.getMapMatrix().setExportGroupCenter(handler.getMapSelected(), jCbExportGroupCenter.isSelected());
+            jCbExportGroupCenter.setSelected(md.isExportGroupCenter());
         } catch (Exception ex) {
             ex.printStackTrace();
         }
