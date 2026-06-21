@@ -34,7 +34,7 @@ echo "#!/usr/bin/env xdg-open
 [Desktop Entry]
 Type=Application
 Name=Pokemon DS Map Studio
-Exec=/usr/bin/java -jar \"${PWD}/Pokemon DS Map Studio-2.2/lib/Pokemon DS Map Studio-2.2.jar\"
+Exec=/usr/bin/java -jar \"${PWD}/Pokemon DS Map Studio-2.2.2/lib/Pokemon DS Map Studio-2.2.2.jar\"
 Icon=${PWD}/Pokemon DS Map Studio-2.2/icon.png
 Categories=Development;
 " > PDSMS.desktop
