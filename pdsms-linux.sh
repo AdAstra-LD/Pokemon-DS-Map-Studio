@@ -18,7 +18,7 @@ command -v java >/dev/null 2>&1 || {
     exit 1
 }
 
-# download PDSMS 2.2.1 to local user applications
+# download PDSMS 2.2.2 to local user applications
 cd ~/.local/share/applications/ || exit
 wget "https://github.com/AdAstra-LD/Pokemon-DS-Map-Studio/releases/download/v2.2.2/Pokemon.DS.Map.Studio-2.2.2.zip"
 unzip "Pokemon.DS.Map.Studio-2.2.2.zip"
