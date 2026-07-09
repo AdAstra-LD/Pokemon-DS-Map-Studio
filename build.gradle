@@ -18,8 +18,16 @@ dependencies {
 }
 
 version '2.2.2'
-mainClassName = "editor.MainFrame"
-applicationName = rootProject.name
+
+java {
+    sourceCompatibility = JavaVersion.VERSION_11
+    targetCompatibility = JavaVersion.VERSION_11
+}
+
+application {
+    mainClass = 'editor.MainFrame'
+    applicationName = rootProject.name
+}
 
 compileJava.options.encoding = 'UTF-8'
 compileTestJava.options.encoding = 'UTF-8'
@@ -30,7 +38,7 @@ jar {
     duplicatesStrategy = DuplicatesStrategy.EXCLUDE
 
     manifest {
-        attributes "Main-Class": mainClassName
+        attributes "Main-Class": application.mainClass.get()
     }
 
     from {

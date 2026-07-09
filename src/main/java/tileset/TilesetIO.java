@@ -157,6 +157,9 @@ public class TilesetIO {
         }
 
         out.close();
+
+        //Palette folders / tile names / collision defaults sidecar
+        TileMetadataIO.write(path, tset);
     }
 
     public static Tileset readTilesetFromFileAsResourceURI(String path)
@@ -179,7 +182,9 @@ public class TilesetIO {
     public static Tileset readTilesetFromFile(String path)
             throws FileNotFoundException, IOException, NullPointerException,
             TextureNotFoundException {
-        return readTilesetFromFile(new FileInputStream(path), path, false);
+        Tileset tset = readTilesetFromFile(new FileInputStream(path), path, false);
+        TileMetadataIO.read(path, tset);
+        return tset;
     }
 
     private static Tileset readTilesetFromFile(InputStream in, String path, boolean asResource)

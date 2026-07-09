@@ -74,10 +74,21 @@ public class Tile {
 
     private BufferedImage thumbnail;
     private BufferedImage smallThumbnail;
+    private BufferedImage paletteThumbnail;
 
     //Bounds
     private float[] boundsPos;
     private float[] boundsSca;
+
+    //Palette metadata (saved in the tileset .meta sidecar file, not the .pdsts)
+    private String paletteName = "";
+    private String paletteFolder = PaletteFolder.UNSORTED;
+    private int paletteSlot = -1;   //Cell index inside the folder's layout grid; -1 = flow
+    private int paletteDisplayWidth = 0;    //0 = use real tile width
+    private int paletteDisplayHeight = 0;   //0 = use real tile height
+    //Collision layer -> per-cell default values indexed [column][row]
+    //(row 0 = top of the tile image); -1 = no default for that cell
+    private java.util.TreeMap<Integer, int[][]> collisionDefaults = new java.util.TreeMap<>();
 
     public Tile(Tileset tileset, String folderPath, String objFilename,
                 int width, int height, boolean xTileable, boolean yTileable,
@@ -188,6 +199,13 @@ public class Tile {
 
         tile.thumbnail = thumbnail;
         tile.smallThumbnail = smallThumbnail;
+        tile.paletteThumbnail = paletteThumbnail;
+        tile.paletteName = paletteName;
+        tile.paletteFolder = paletteFolder;
+        tile.paletteSlot = paletteSlot;
+        tile.paletteDisplayWidth = paletteDisplayWidth;
+        tile.paletteDisplayHeight = paletteDisplayHeight;
+        tile.collisionDefaults = new java.util.TreeMap<>(collisionDefaults);
 
         return tile;
     }
@@ -1263,6 +1281,124 @@ public class Tile {
 
     public void setObjFilename(String objFilename) {
         this.objFilename = objFilename;
+    }
+
+    /** Human readable palette name; empty when the tile has not been named. */
+    public String getPaletteName() {
+        return paletteName;
+    }
+
+    public void setPaletteName(String paletteName) {
+        this.paletteName = paletteName == null ? "" : paletteName;
+    }
+
+    /** Palette folder path; PaletteFolder.UNSORTED when not in a folder. */
+    public String getPaletteFolder() {
+        return paletteFolder;
+    }
+
+    public void setPaletteFolder(String paletteFolder) {
+        this.paletteFolder = paletteFolder == null ? PaletteFolder.UNSORTED : paletteFolder;
+    }
+
+    /** Cell index inside the folder's layout template grid; -1 = flow layout. */
+    public int getPaletteSlot() {
+        return paletteSlot;
+    }
+
+    public void setPaletteSlot(int paletteSlot) {
+        this.paletteSlot = paletteSlot < 0 ? -1 : paletteSlot;
+    }
+
+    public int getPaletteDisplayWidth() {
+        return paletteDisplayWidth > 0 ? paletteDisplayWidth : width;
+    }
+
+    public void setPaletteDisplayWidth(int paletteDisplayWidth) {
+        this.paletteDisplayWidth = paletteDisplayWidth <= 0 || paletteDisplayWidth == width
+                ? 0 : Math.min(maxTileSize, paletteDisplayWidth);
+    }
+
+    public int getPaletteDisplayHeight() {
+        return paletteDisplayHeight > 0 ? paletteDisplayHeight : height;
+    }
+
+    public void setPaletteDisplayHeight(int paletteDisplayHeight) {
+        this.paletteDisplayHeight = paletteDisplayHeight <= 0 || paletteDisplayHeight == height
+                ? 0 : Math.min(maxTileSize, paletteDisplayHeight);
+    }
+
+    public boolean hasPaletteDisplaySize() {
+        return paletteDisplayWidth > 0 || paletteDisplayHeight > 0;
+    }
+
+    public BufferedImage getPaletteThumbnail() {
+        return paletteThumbnail == null ? thumbnail : paletteThumbnail;
+    }
+
+    public void setPaletteThumbnail(BufferedImage paletteThumbnail) {
+        this.paletteThumbnail = paletteThumbnail;
+    }
+
+    /**
+     * Default collision values applied where this tile is placed on a map:
+     * collision layer index to a per-cell value grid indexed [column][row]
+     * where row 0 is the top of the tile image. -1 = no default for the cell.
+     */
+    public java.util.TreeMap<Integer, int[][]> getCollisionDefaults() {
+        return collisionDefaults;
+    }
+
+    /**
+     * The default grid of a collision layer, sized to the tile's current
+     * dimensions (created or resized as needed).
+     */
+    public int[][] getOrCreateCollisionDefaultGrid(int layer) {
+        int[][] grid = collisionDefaults.get(layer);
+        if (grid == null || grid.length != width || grid[0].length != height) {
+            int[][] resized = new int[width][height];
+            for (int i = 0; i < width; i++) {
+                for (int j = 0; j < height; j++) {
+                    resized[i][j] = grid != null && i < grid.length && j < grid[0].length
+                            ? grid[i][j] : -1;
+                }
+            }
+            grid = resized;
+            collisionDefaults.put(layer, grid);
+        }
+        return grid;
+    }
+
+    /** Removes layers whose grid has no cell values left. */
+    public void pruneEmptyCollisionDefaults() {
+        collisionDefaults.values().removeIf(grid -> {
+            for (int[] column : grid) {
+                for (int value : column) {
+                    if (value >= 0) {
+                        return false;
+                    }
+                }
+            }
+            return true;
+        });
+    }
+
+    public boolean hasCollisionDefaults() {
+        for (int[][] grid : collisionDefaults.values()) {
+            for (int[] column : grid) {
+                for (int value : column) {
+                    if (value >= 0) {
+                        return true;
+                    }
+                }
+            }
+        }
+        return false;
+    }
+
+    public boolean hasPaletteMetadata() {
+        return !paletteName.isEmpty() || !paletteFolder.isEmpty()
+                || paletteSlot >= 0 || hasPaletteDisplaySize() || hasCollisionDefaults();
     }
 
     public void setTexOffsetsQuad(ArrayList<Integer> textureOffsets) {

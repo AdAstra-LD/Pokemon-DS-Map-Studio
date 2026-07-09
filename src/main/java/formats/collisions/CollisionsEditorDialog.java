@@ -34,6 +34,115 @@ public class CollisionsEditorDialog extends JDialog {
     public CollisionsEditorDialog(Window owner) {
         super(owner);
         initComponents();
+
+        //Smart collision defaults (set per tile in the main window tile list)
+        jbSmartDefaults = new JButton("Apply Smart Defaults");
+        jbSmartDefaults.setToolTipText("Fill the collision of this map from the tiles' collision defaults "
+                + "(right-click a tile in the main window tile list > Collision Defaults). "
+                + "Cells without a default are left untouched.");
+        jbSmartDefaults.addActionListener(e -> applySmartDefaults());
+        panel1.add(jbSmartDefaults, "cell 2 0");
+    }
+
+    /**
+     * Fills the collision layers of the current map from the collision
+     * defaults carried by the placed tiles. Higher map tile layers override
+     * lower ones; cells whose tiles define no default keep their current
+     * value, so manual edits elsewhere are preserved. Undoable per layer.
+     */
+    private void applySmartDefaults() {
+        tileset.Tileset tset = handler.getTileset();
+        editor.grid.MapGrid grid = handler.getGrid();
+        Collisions collisions = collisionHandler.getCollisions();
+        int numCollLayers = collisions.getNumLayers();
+        int cols = Collisions.cols;
+        int rows = Collisions.rows;
+
+        //Collect the defaults per cell in map grid coords (y = 0 is the bottom row)
+        int[][][] values = new int[numCollLayers][cols][rows];
+        for (int[][] layerValues : values) {
+            for (int[] column : layerValues) {
+                java.util.Arrays.fill(column, -1);
+            }
+        }
+        for (int layer = 0; layer < grid.tileLayers.length; layer++) {
+            for (int x = 0; x < cols; x++) {
+                for (int y = 0; y < rows; y++) {
+                    int tileIndex = grid.tileLayers[layer][x][y];
+                    if (tileIndex < 0 || tileIndex >= tset.size()) {
+                        continue;
+                    }
+                    tileset.Tile tile = tset.get(tileIndex);
+                    if (tile.getCollisionDefaults().isEmpty()) {
+                        continue;
+                    }
+                    for (java.util.Map.Entry<Integer, int[][]> entry : tile.getCollisionDefaults().entrySet()) {
+                        int collLayer = entry.getKey();
+                        if (collLayer < 0 || collLayer >= numCollLayers) {
+                            continue;
+                        }
+                        //The tile is anchored at (x, y) and covers width x height
+                        //map cells upwards; default grid row 0 is the TOP of the
+                        //tile image, i.e. the highest covered map row
+                        int[][] cellValues = entry.getValue();
+                        for (int i = 0; i < tile.getWidth() && x + i < cols; i++) {
+                            for (int j = 0; j < tile.getHeight() && y + j < rows; j++) {
+                                int row = tile.getHeight() - 1 - j;
+                                if (i < cellValues.length && row < cellValues[i].length
+                                        && cellValues[i][row] >= 0) {
+                                    values[collLayer][x + i][y + j] = cellValues[i][row];
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        int changedCells = 0;
+        for (int collLayer = 0; collLayer < numCollLayers; collLayer++) {
+            boolean layerHasDefaults = false;
+            for (int x = 0; x < cols && !layerHasDefaults; x++) {
+                for (int y = 0; y < rows && !layerHasDefaults; y++) {
+                    layerHasDefaults = values[collLayer][x][y] >= 0;
+                }
+            }
+            if (!layerHasDefaults) {
+                continue;
+            }
+            collisionHandler.addLayerState(new CollisionLayerState(
+                    "Smart collision defaults", collisionHandler, collLayer));
+            for (int x = 0; x < cols; x++) {
+                for (int y = 0; y < rows; y++) {
+                    int value = values[collLayer][x][y];
+                    if (value < 0) {
+                        continue;
+                    }
+                    //Collision rows are counted downwards, map grid rows upwards
+                    int collY = rows - 1 - y;
+                    if (collisions.getValue(collLayer, x, collY) != value) {
+                        changedCells++;
+                    }
+                    collisions.setValue(value, collLayer, x, collY);
+                }
+            }
+        }
+
+        if (changedCells == 0) {
+            JOptionPane.showMessageDialog(this,
+                    "No collision cells were changed.\n\n"
+                            + "Set defaults on tiles first: right-click a tile in the\n"
+                            + "main window tile list and choose \"Collision Defaults...\".",
+                    "Smart Defaults", JOptionPane.INFORMATION_MESSAGE);
+            return;
+        }
+        repaintDisplay();
+        collisionLayerSelector.drawAllLayers();
+        repaintLayerSelector();
+        JOptionPane.showMessageDialog(this,
+                "Smart defaults applied: " + changedCells + " collision cells updated.\n"
+                        + "Cells without tile defaults were left untouched (use Undo to revert).",
+                "Smart Defaults", JOptionPane.INFORMATION_MESSAGE);
     }
 
     private void jSlider1StateChanged(ChangeEvent e) {
@@ -535,4 +644,7 @@ public class CollisionsEditorDialog extends JDialog {
     private JPanel panel3;
     private JTextArea textArea1;
     // JFormDesigner - End of variables declaration  //GEN-END:variables
+
+    //Custom component (not generated by JFormDesigner)
+    private JButton jbSmartDefaults;
 }

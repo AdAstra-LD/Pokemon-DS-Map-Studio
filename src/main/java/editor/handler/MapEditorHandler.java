@@ -84,6 +84,11 @@ public class MapEditorHandler {
     private int[][] tileLayerCopy = null;
     private int[][] heightLayerCopy = null;
 
+    //Region clipboard (tile selection copy/paste)
+    private int[][] tileRegionClipboard = null;
+    private int[][] heightRegionClipboard = null;
+    private boolean[][] regionClipboardMask = null;
+
     //Map State Hanlder
     private StateHandler mapStateHandler = new StateHandler();
     private boolean layerChanged = false;
@@ -696,6 +701,28 @@ public class MapEditorHandler {
     public void clearCopyLayer() {
         tileLayerCopy = null;
         heightLayerCopy = null;
+    }
+
+    public void setRegionClipboard(int[][] tiles, int[][] heights, boolean[][] mask) {
+        this.tileRegionClipboard = tiles;
+        this.heightRegionClipboard = heights;
+        this.regionClipboardMask = mask;
+    }
+
+    public boolean[][] getRegionClipboardMask() {
+        return regionClipboardMask;
+    }
+
+    public boolean hasRegionClipboard() {
+        return tileRegionClipboard != null && heightRegionClipboard != null;
+    }
+
+    public int[][] getTileRegionClipboard() {
+        return tileRegionClipboard;
+    }
+
+    public int[][] getHeightRegionClipboard() {
+        return heightRegionClipboard;
     }
 
     public void indexOfTileVisualData() {
