@@ -29,7 +29,7 @@ import editor.smartdrawing.SmartGrid;
 public class TileMetadataIO {
 
     public static final String fileExtension = "meta";
-    private static final String HEADER = "# Pokemon DS Map Studio tile metadata v5";
+    private static final String HEADER = "# Pokemon DS Map Studio tile metadata v6";
 
     public static String getMetadataPath(String tilesetPath) {
         return tilesetPath + "." + fileExtension;
@@ -64,7 +64,8 @@ public class TileMetadataIO {
                         + "|" + folder.getRows()
                         + "|" + (folder.isCollapsed() ? 1 : 0)
                         + "|" + (folder.isPinned() ? 1 : 0)
-                        + "|" + (folder.isGridLinesVisible() ? 1 : 0));
+                        + "|" + (folder.isGridLinesVisible() ? 1 : 0)
+                        + "|" + (folder.areSmartDrawingsCollapsed() ? 1 : 0));
             }
             for (int i = 0; i < tset.size(); i++) {
                 Tile tile = tset.get(i);
@@ -150,7 +151,9 @@ public class TileMetadataIO {
             throws IOException {
         List<String> lines = Files.readAllLines(new File(metadataPath).toPath(),
                 StandardCharsets.UTF_8);
-        boolean legacyAllTilesPin = lines.stream().noneMatch(line -> line.equals(HEADER));
+        boolean legacyAllTilesPin = lines.stream().noneMatch(line ->
+                line.equals("# Pokemon DS Map Studio tile metadata v5")
+                || line.equals(HEADER));
         boolean recognized = false;
         for (String line : lines) {
             if (line.startsWith("# Pokemon DS Map Studio tile metadata v")
@@ -221,6 +224,9 @@ public class TileMetadataIO {
                 }
                 if (fields.length >= 7) {
                     folder.setGridLinesVisible(fields[6].equals("1"));
+                }
+                if (fields.length >= 8) {
+                    folder.setSmartDrawingsCollapsed(fields[7].equals("1"));
                 }
             } else {
                 folder.setRows(PaletteFolder.DEFAULT_ROWS);

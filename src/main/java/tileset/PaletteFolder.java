@@ -19,6 +19,7 @@ public class PaletteFolder {
     private boolean collapsed = false;
     private boolean pinned = false;
     private boolean gridLinesVisible = true;
+    private boolean smartDrawingsCollapsed = false;
     private transient int pinnedScrollY = 0;
 
     public PaletteFolder(String path) {
@@ -77,6 +78,14 @@ public class PaletteFolder {
 
     public void setGridLinesVisible(boolean gridLinesVisible) {
         this.gridLinesVisible = gridLinesVisible;
+    }
+
+    public boolean areSmartDrawingsCollapsed() {
+        return smartDrawingsCollapsed;
+    }
+
+    public void setSmartDrawingsCollapsed(boolean smartDrawingsCollapsed) {
+        this.smartDrawingsCollapsed = smartDrawingsCollapsed;
     }
 
     public int getPinnedScrollY() {

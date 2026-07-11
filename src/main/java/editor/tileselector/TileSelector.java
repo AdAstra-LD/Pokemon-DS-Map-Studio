@@ -57,6 +57,11 @@ public class TileSelector extends JPanel {
     private int mouseX, mouseY;
     private BufferedImage multiSelectImg;
     private ArrayList<Integer> dragSelectionIndices = null;
+    private int dragSelectionAnchorIndex = -1;
+    private ArrayList<Integer> rangeSelectedIndices = new ArrayList<>();
+    private Section rangeSelectionSection = null;
+    private boolean rangeSelectionInitialized = false;
+    private boolean rangeAnchorFromRightClick = false;
 
     //Folder view (main window selector only)
     private static final Rectangle HIDDEN_BOUNDS = new Rectangle(-1, -1, 0, 0);
@@ -182,31 +187,63 @@ public class TileSelector extends JPanel {
         }
         int index = getIndexSelected(evt);
         if (index != -1) {
+            Section clickedSection = getSectionAt(evt.getX(), evt.getY());
             if (SwingUtilities.isLeftMouseButton(evt)) {
-                if (index >= handler.getTileIndexSelected() && index <= indexSecondTileSelected && multiselecting) {
+                if (rangeAnchorFromRightClick && clickedSection == rangeSelectionSection) {
+                    rangeSelectedIndices = getVisualRange(rangeSelectionSection,
+                            handler.getTileIndexSelected(), index);
+                    indexSecondTileSelected = index;
+                    multiselecting = rangeSelectedIndices.size() > 1;
+                    rangeAnchorFromRightClick = false;
+                } else if (multiselecting && rangeSelectedIndices.contains(index)) {
                     canDrag = true;
                     dragSelectionIndices = getIndicesSelected();
-                    multiSelectImg = getSubTilesetImage(handler.getTileIndexSelected(), indexSecondTileSelected);
-                } else if (index == handler.getTileIndexSelected()) {
+                    dragSelectionAnchorIndex = index;
+                    multiSelectImg = handler.getTileset().get(index).getThumbnail();
+                    multiselecting = false;
+                } else if (rangeSelectionInitialized && clickedSection == rangeSelectionSection
+                        && index == handler.getTileIndexSelected()) {
                     canDrag = true;
                     indexSecondTileSelected = handler.getTileIndexSelected();
                     dragSelectionIndices = getIndicesSelected();
+                    dragSelectionAnchorIndex = index;
                     multiSelectImg = handler.getTileSelected().getThumbnail();
+                    multiselecting = false;
                 } else {
                     handler.setIndexTileSelected(index);
+                    rangeSelectionSection = clickedSection;
+                    rangeSelectionInitialized = true;
+                    rangeSelectedIndices.clear();
+                    rangeSelectedIndices.add(index);
                     dragSelectionIndices = null;
+                    multiselecting = false;
+                    rangeAnchorFromRightClick = false;
                 }
-                multiselecting = false;
             } else if (SwingUtilities.isRightMouseButton(evt) && multiSelectionEnabled) {
-                multiselecting = true;
                 indexSecondTileSelected = index;
-                if (indexSecondTileSelected < handler.getTileIndexSelected()) {
-                    indexSecondTileSelected = handler.getTileIndexSelected();
+                if (!rangeSelectionInitialized || clickedSection != rangeSelectionSection
+                        || (rangeSelectionSection != null
+                        && !rangeSelectionSection.tileIndices.contains(handler.getTileIndexSelected()))) {
                     handler.setIndexTileSelected(index);
+                    rangeSelectionSection = clickedSection;
+                    rangeSelectionInitialized = true;
+                    rangeSelectedIndices.clear();
+                    rangeSelectedIndices.add(index);
+                    multiselecting = false;
+                    rangeAnchorFromRightClick = true;
+                } else {
+                    rangeSelectedIndices = getVisualRange(rangeSelectionSection,
+                            handler.getTileIndexSelected(), index);
+                    multiselecting = rangeSelectedIndices.size() > 1;
+                    rangeAnchorFromRightClick = false;
                 }
             }
         } else {
             multiselecting = false;
+            rangeSelectedIndices.clear();
+            rangeSelectionSection = null;
+            rangeSelectionInitialized = false;
+            rangeAnchorFromRightClick = false;
         }
         handler.getMainFrame().updateTileSelectedID();
         repaint();
@@ -304,42 +341,45 @@ public class TileSelector extends JPanel {
         if (dragging) {
             dragging = false;
 
+            Section sourceSection = rangeSelectionSection;
             if (folderViewActive && dropSelectedTilesToFolder(evt)) {
                 repaint();
                 dragSelectionIndices = null;
+                dragSelectionAnchorIndex = -1;
+                return;
+            }
+
+            //A selection arranged in a palette folder never changes Tile ID order.
+            if (sourceSection != null && !sourceSection.allTiles) {
+                repaint();
+                dragSelectionIndices = null;
+                dragSelectionAnchorIndex = -1;
                 return;
             }
 
             int index = getIndexSelected(evt);
-            if (index != -1) {
-                if (index < handler.getTileIndexSelected() || index > indexSecondTileSelected) {
-                    ArrayList<Integer> indices = new ArrayList<>(handler.getTileset().size());
-                    for (int i = 0; i < handler.getTileset().size(); i++) {
-                        indices.add(i);
-                    }
-                    ArrayList<Integer> selectionIndices = new ArrayList(
-                            indices.subList(handler.getTileIndexSelected(),
-                                    indexSecondTileSelected + 1));
-                    for (int i = 0; i < selectionIndices.size(); i++) {
-                        indices.remove(handler.getTileIndexSelected());
-                    }
-
-                    if (index > handler.getTileIndexSelected()) {
-                        index -= selectionIndices.size();
-                    }
-
-                    indices.addAll(index, selectionIndices);
-
-                    handler.getTileset().moveTiles(indices);
-
-                    handler.setIndexTileSelected(index);
-                    updateLayout();
-                    dialog.updateViewTileIndex();
+            ArrayList<Integer> selectionIndices = dragSelectionIndices == null
+                    ? getIndicesSelected() : new ArrayList<>(dragSelectionIndices);
+            if (index != -1 && !selectionIndices.contains(index)) {
+                ArrayList<Integer> indices = new ArrayList<>(handler.getTileset().size());
+                for (int i = 0; i < handler.getTileset().size(); i++) {
+                    indices.add(i);
                 }
+                indices.removeAll(selectionIndices);
+                int insertionIndex = Math.max(0, indices.indexOf(index));
+                indices.addAll(insertionIndex, selectionIndices);
+                handler.getTileset().moveTiles(indices);
+                handler.setIndexTileSelected(insertionIndex);
+                rangeSelectedIndices.clear();
+                rangeSelectedIndices.add(insertionIndex);
+                multiselecting = false;
+                updateLayout();
+                dialog.updateViewTileIndex();
             }
             repaint();
         }
         dragSelectionIndices = null;
+        dragSelectionAnchorIndex = -1;
     }
 
     @Override
@@ -360,9 +400,12 @@ public class TileSelector extends JPanel {
 
         if (handler != null) {
             if (handler.getTileset().size() > 0) {
-                if (multiSelectionEnabled && (multiselecting || dragging || canDrag) && boundingBoxes.size() > 0) {
-                    int limit = Math.min(indexSecondTileSelected, handler.getTileset().size() - 1);
-                    for (int i = handler.getTileIndexSelected() + 1; i <= limit; i++) {
+                if (multiSelectionEnabled && !rangeSelectedIndices.isEmpty()
+                        && boundingBoxes.size() > 0) {
+                    for (int i : rangeSelectedIndices) {
+                        if (i == handler.getTileIndexSelected()) {
+                            continue;
+                        }
                         g.setColor(Color.red);
                         drawTileBounds(g, i);
                     }
@@ -791,9 +834,11 @@ public class TileSelector extends JPanel {
         }
         g.setColor(Color.red);
         drawTileBoundsInSection(g, handler.getTileIndexSelected(), section);
-        if (multiSelectionEnabled && (multiselecting || dragging || canDrag)) {
-            int limit = Math.min(indexSecondTileSelected, handler.getTileset().size() - 1);
-            for (int i = handler.getTileIndexSelected() + 1; i <= limit; i++) {
+        if (multiSelectionEnabled && !rangeSelectedIndices.isEmpty()) {
+            for (int i : rangeSelectedIndices) {
+                if (i == handler.getTileIndexSelected()) {
+                    continue;
+                }
                 drawTileBoundsInSection(g, i, section);
             }
         } else if (!multiSelectionEnabled && !multiSelected.isEmpty()) {
@@ -968,11 +1013,12 @@ public class TileSelector extends JPanel {
             target.folder.setRows(target.folder.getRows() + 1);
             target.folder.setCollapsed(false);
             target.folder.setPinned(true);
-            placeSelectedTilesInFolder(selected, target, firstNewRowSlot);
+            placeSelectedTilesInFolder(selected, target, firstNewRowSlot, true);
         } else if (target.columns > 0 && !target.isCollapsed()
                 && target.bodyBounds != null && target.bodyBounds.contains(sourcePoint.x, sourcePoint.y)) {
             Point cell = getSlotCellAt(target, sourcePoint.x, sourcePoint.y);
-            placeSelectedTilesInFolder(selected, target, cell.y * target.columns + cell.x);
+            placeSelectedTilesInFolder(selected, target,
+                    cell.y * target.columns + cell.x, false);
         } else {
             moveTilesToFolder(selected, target.folder.getPath());
             target.folder.setCollapsed(false);
@@ -985,9 +1031,14 @@ public class TileSelector extends JPanel {
         return true;
     }
 
-    private void placeSelectedTilesInFolder(ArrayList<Integer> selected, Section target, int firstSlot) {
+    private void placeSelectedTilesInFolder(ArrayList<Integer> selected, Section target,
+            int firstSlot, boolean alignTopLeft) {
         if (target.columns <= 0) {
             moveTilesToFolder(selected, target.folder.getPath());
+            return;
+        }
+        if (placeSelectedTilesPreservingShape(selected, target, firstSlot, alignTopLeft)) {
+            target.folder.setCollapsed(false);
             return;
         }
         int slot = Math.max(0, firstSlot);
@@ -1005,6 +1056,62 @@ public class TileSelector extends JPanel {
             slot += Math.max(1, getDisplayWidth(tile, target));
         }
         target.folder.setCollapsed(false);
+    }
+
+    private boolean placeSelectedTilesPreservingShape(ArrayList<Integer> selected,
+            Section target, int firstSlot, boolean alignTopLeft) {
+        Section source = rangeSelectionSection;
+        if (source == null || source.allTiles || source.columns <= 0 || selected.isEmpty()) {
+            return false;
+        }
+        String sourcePath = source.folder.getPath();
+        for (int index : selected) {
+            if (handler.getTileset().get(index).getPaletteSlot(sourcePath) < 0) {
+                return false;
+            }
+        }
+
+        int anchorIndex = selected.contains(dragSelectionAnchorIndex)
+                ? dragSelectionAnchorIndex : selected.get(0);
+        int anchorSlot = handler.getTileset().get(anchorIndex).getPaletteSlot(sourcePath);
+        int anchorCol = anchorSlot % source.columns;
+        int anchorRow = anchorSlot / source.columns;
+        int minCol = Integer.MAX_VALUE;
+        int minRow = Integer.MAX_VALUE;
+        int maxCol = Integer.MIN_VALUE;
+        for (int index : selected) {
+            Tile tile = handler.getTileset().get(index);
+            int slot = tile.getPaletteSlot(sourcePath);
+            int col = slot % source.columns;
+            int row = slot / source.columns;
+            minCol = Math.min(minCol, col);
+            minRow = Math.min(minRow, row);
+            maxCol = Math.max(maxCol, col);
+        }
+        if (maxCol - minCol + 1 > target.columns) {
+            return false;
+        }
+
+        int targetCol = firstSlot % target.columns;
+        int targetRow = firstSlot / target.columns;
+        int deltaCol = alignTopLeft ? targetCol - minCol : targetCol - anchorCol;
+        int deltaRow = alignTopLeft ? targetRow - minRow : targetRow - anchorRow;
+        deltaCol = Math.max(-minCol,
+                Math.min(target.columns - 1 - maxCol, deltaCol));
+        deltaRow = Math.max(-minRow, deltaRow);
+
+        String targetPath = target.folder.getPath();
+        for (int index : selected) {
+            Tile tile = handler.getTileset().get(index);
+            int sourceSlot = tile.getPaletteSlot(sourcePath);
+            int col = sourceSlot % source.columns + deltaCol;
+            int row = sourceSlot / source.columns + deltaRow;
+            int newSlot = row * target.columns + col;
+            tile.setPaletteSlot(targetPath, newSlot);
+            int rowEnd = row + Math.max(1, getDisplayHeight(tile, target));
+            target.folder.setRows(Math.max(target.folder.getRows(), rowEnd));
+        }
+        return true;
     }
 
     private boolean slotOccupiedByOther(Section section, int slot, ArrayList<Integer> movingIndices) {
@@ -1135,9 +1242,11 @@ public class TileSelector extends JPanel {
     private ArrayList<PinnedLayout> getPinnedLayouts() {
         Rectangle visible = getVisibleRect();
         ArrayList<Section> active = new ArrayList<>();
+        int maxStack = Math.max(headerHeight, (int) (visible.height * 0.28));
         for (Section section : sections) {
             if (section.folder != null && section.folder.isPinned()
-                    && section.headerBounds != null && section.headerBounds.y < visible.y) {
+                    && section.headerBounds != null
+                    && shouldActivatePinnedSection(section, visible, maxStack)) {
                 active.add(section);
             }
         }
@@ -1155,7 +1264,9 @@ public class TileSelector extends JPanel {
             for (Section section : sections) {
                 if (!active.contains(section) && section.folder != null
                         && section.folder.isPinned() && section.headerBounds != null
-                        && section.headerBounds.y < coveredBottom) {
+                        && (usesPinnedBody(section)
+                        ? shouldActivatePinnedSection(section, visible, maxStack)
+                        : section.headerBounds.y < coveredBottom)) {
                     active.add(section);
                     added = true;
                 }
@@ -1167,12 +1278,63 @@ public class TileSelector extends JPanel {
         return result;
     }
 
+    private boolean shouldActivatePinnedSection(Section section, Rectangle visible,
+            int maxStack) {
+        if (usesPinnedBody(section)) {
+            int index = sections.indexOf(section);
+            if (index >= 0 && index + 1 < sections.size()) {
+                Section next = sections.get(index + 1);
+                int reservedHeaders = getPinnedAncestorHeaderHeight(section, visible);
+                int available = Math.max(headerHeight, maxStack - reservedHeaders);
+                int sectionHeight = headerHeight + 1 + section.bodyBounds.height;
+                int activationBottom = visible.y + reservedHeaders
+                        + Math.min(sectionHeight, available);
+                return next.headerBounds != null && next.headerBounds.y <= activationBottom;
+            }
+        }
+        return section.headerBounds.y < visible.y;
+    }
+
+    private boolean usesPinnedBody(Section section) {
+        if (section.allTiles || section.isCollapsed() || section.bodyBounds == null
+                || section.bodyBounds.height == 0) {
+            return false;
+        }
+        int index = sections.indexOf(section);
+        if (index >= 0 && index + 1 < sections.size()) {
+            Section next = sections.get(index + 1);
+            if (!next.allTiles && next.folder != null && section.folder != null
+                    && next.folder.getPath().startsWith(section.folder.getPath() + "/")) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    private int getPinnedAncestorHeaderHeight(Section section, Rectangle visible) {
+        if (section.folder == null) {
+            return 0;
+        }
+        int height = 0;
+        String path = section.folder.getPath();
+        for (Section candidate : sections) {
+            if (candidate == section || candidate.folder == null || candidate.allTiles
+                    || !candidate.folder.isPinned() || candidate.headerBounds == null) {
+                continue;
+            }
+            if (path.startsWith(candidate.folder.getPath() + "/")
+                    && candidate.headerBounds.y < visible.y) {
+                height += headerHeight;
+            }
+        }
+        return height;
+    }
+
     private ArrayList<PinnedLayout> buildPinnedLayouts(ArrayList<Section> active,
             Rectangle visible) {
         int expanded = 0;
         for (Section section : active) {
-            if (!section.allTiles && !section.isCollapsed() && section.bodyBounds != null
-                    && section.bodyBounds.height > 0) {
+            if (usesPinnedBody(section)) {
                 expanded++;
             }
         }
@@ -1183,7 +1345,7 @@ public class TileSelector extends JPanel {
         int bodyShare = expanded == 0 ? 0 : bodyBudget / expanded;
         int y = visible.y;
         for (Section section : active) {
-            int bodyHeight = section.allTiles || section.isCollapsed() || section.bodyBounds == null
+            int bodyHeight = !usesPinnedBody(section)
                     ? 0 : Math.min(section.bodyBounds.height, bodyShare);
             int maxScroll = Math.max(0, section.bodyBounds == null
                     ? 0 : section.bodyBounds.height - bodyHeight);
@@ -1808,33 +1970,85 @@ public class TileSelector extends JPanel {
         for (int layer = 0; layer < numLayers; layer++) {
             layerCombo.addItem("Layer " + layer);
         }
-        JComboBox<String> valueCombo = new JComboBox<>();
         final int[] selectedCollisionValue = {0x00};
-        final boolean[] updatingValueCombo = {false};
-        java.util.function.IntConsumer rebuildValueCombo = layer -> {
-            updatingValueCombo[0] = true;
-            valueCombo.removeAllItems();
-            for (int value = 0; value < CollisionTypes.numCollisions; value++) {
-                String collisionName = types.getCollisionName(layer, value);
-                valueCombo.addItem(String.format("%02X", value)
-                        + (collisionName == null ? "" : "  " + collisionName));
+        JTextField valueField = new JTextField("00", 3);
+        valueField.setHorizontalAlignment(JTextField.CENTER);
+        JLabel collisionNameLabel = new JLabel();
+        java.util.function.Function<String, Integer> parseCollisionValue = text -> {
+            String value = text == null ? "" : text.trim();
+            if (value.startsWith("0x") || value.startsWith("0X")) {
+                value = value.substring(2);
             }
-            valueCombo.setSelectedIndex(Math.max(0,
-                    Math.min(CollisionTypes.numCollisions - 1, selectedCollisionValue[0])));
-            updatingValueCombo[0] = false;
+            if (value.isEmpty()) {
+                return null;
+            }
+            try {
+                int parsed = Integer.parseInt(value, 16);
+                return parsed >= 0 && parsed < CollisionTypes.numCollisions ? parsed : null;
+            } catch (NumberFormatException ex) {
+                return null;
+            }
         };
-        rebuildValueCombo.accept(0);
-        valueCombo.addActionListener(e -> {
-            if (!updatingValueCombo[0] && valueCombo.getSelectedIndex() >= 0) {
-                selectedCollisionValue[0] = valueCombo.getSelectedIndex();
+        Runnable updateCollisionName = () -> {
+            int layer = Math.max(0, layerCombo.getSelectedIndex());
+            Integer value = parseCollisionValue.apply(valueField.getText());
+            if (value == null) {
+                collisionNameLabel.setText("");
+            } else {
+                selectedCollisionValue[0] = value;
+                String name = types.getCollisionName(layer, value);
+                collisionNameLabel.setText(name == null ? "" : name);
+            }
+        };
+        valueField.getDocument().addDocumentListener(new javax.swing.event.DocumentListener() {
+            @Override
+            public void insertUpdate(javax.swing.event.DocumentEvent e) {
+                updateCollisionName.run();
+            }
+
+            @Override
+            public void removeUpdate(javax.swing.event.DocumentEvent e) {
+                updateCollisionName.run();
+            }
+
+            @Override
+            public void changedUpdate(javax.swing.event.DocumentEvent e) {
+                updateCollisionName.run();
             }
         });
-        layerCombo.addActionListener(e -> {
-            int layer = layerCombo.getSelectedIndex();
-            if (layer >= 0) {
-                rebuildValueCombo.accept(layer);
+        JButton valueUp = new JButton("\u25B2");
+        JButton valueDown = new JButton("\u25BC");
+        valueUp.setMargin(new java.awt.Insets(0, 3, 0, 3));
+        valueDown.setMargin(new java.awt.Insets(0, 3, 0, 3));
+        valueUp.setFocusable(false);
+        valueDown.setFocusable(false);
+        java.util.function.IntConsumer stepCollisionValue = amount -> {
+            Integer parsed = parseCollisionValue.apply(valueField.getText());
+            int current = parsed == null ? selectedCollisionValue[0] : parsed;
+            int next = Math.max(0, Math.min(CollisionTypes.numCollisions - 1,
+                    current + amount));
+            valueField.setText(String.format("%02X", next));
+        };
+        valueUp.addActionListener(e -> stepCollisionValue.accept(1));
+        valueDown.addActionListener(e -> stepCollisionValue.accept(-1));
+        JPanel valueArrows = new JPanel(new java.awt.GridLayout(2, 1, 0, 0));
+        valueArrows.add(valueUp);
+        valueArrows.add(valueDown);
+        JPanel valueControl = new JPanel(new BorderLayout(0, 0));
+        valueControl.add(valueField, BorderLayout.CENTER);
+        valueControl.add(valueArrows, BorderLayout.EAST);
+        layerCombo.addActionListener(e -> updateCollisionName.run());
+        updateCollisionName.run();
+        java.util.function.IntSupplier readCollisionValue = () -> {
+            Integer value = parseCollisionValue.apply(valueField.getText());
+            if (value == null) {
+                java.awt.Toolkit.getDefaultToolkit().beep();
+                valueField.requestFocusInWindow();
+                return -1;
             }
-        });
+            selectedCollisionValue[0] = value;
+            return value;
+        };
 
         //Grid painted over the tile's own image; big enough cells to click
         final int cellPx = Math.max(12, Math.min(48, 320 / Math.max(w, h)));
@@ -1879,6 +2093,9 @@ public class TileSelector extends JPanel {
         gridPanel.setPreferredSize(new Dimension(w * cellPx, h * cellPx));
         MouseAdapter painter = new MouseAdapter() {
             private void paintCell(MouseEvent e) {
+                if (readCollisionValue.getAsInt() < 0) {
+                    return;
+                }
                 int i = e.getX() / cellPx;
                 int j = e.getY() / cellPx;
                 if (i < 0 || i >= w || j < 0 || j >= h) {
@@ -1906,6 +2123,9 @@ public class TileSelector extends JPanel {
 
         JButton fillAll = new JButton("Fill All");
         fillAll.addActionListener(e -> {
+            if (readCollisionValue.getAsInt() < 0) {
+                return;
+            }
             int layer = layerCombo.getSelectedIndex();
             for (int[] column : work[layer]) {
                 java.util.Arrays.fill(column, selectedCollisionValue[0]);
@@ -1927,7 +2147,8 @@ public class TileSelector extends JPanel {
         top.add(new JLabel("The yellow cell is the tile's map placement anchor."));
         JPanel combos = new JPanel(new FlowLayout(FlowLayout.LEFT, 4, 0));
         combos.add(layerCombo);
-        combos.add(valueCombo);
+        combos.add(valueControl);
+        combos.add(collisionNameLabel);
         top.add(combos);
 
         JPanel gridWrapper = new JPanel(new FlowLayout(FlowLayout.CENTER, 0, 6));
@@ -2014,27 +2235,51 @@ public class TileSelector extends JPanel {
     /* -------------------- Misc accessors -------------------- */
 
     public ArrayList<Integer> getIndicesSelected() {
-        ArrayList<Integer> indices;
-        if (multiselecting) {
-            int indexStart = handler.getTileIndexSelected();
-            int indexEnd = indexSecondTileSelected;
-            if (indexEnd < indexStart) {
-                indexStart = indexSecondTileSelected;
-                indexEnd = handler.getTileIndexSelected();
-            }
-            indices = new ArrayList<>(indexEnd - indexStart + 1);
-            for (int i = 0; i < indexEnd - indexStart + 1; i++) {
-                indices.add(indexStart + i);
-            }
-        } else {
-            indices = new ArrayList<>(1);
-            indices.add(handler.getTileIndexSelected());
+        if (!rangeSelectedIndices.isEmpty()) {
+            return new ArrayList<>(rangeSelectedIndices);
         }
+        ArrayList<Integer> indices = new ArrayList<>(1);
+        indices.add(handler.getTileIndexSelected());
         return indices;
+    }
+
+    private ArrayList<Integer> getVisualRange(Section section, int anchorIndex, int endIndex) {
+        ArrayList<Placement> orderedPlacements = new ArrayList<>();
+        for (Placement placement : placements) {
+            if (placement.section == section) {
+                orderedPlacements.add(placement);
+            }
+        }
+        orderedPlacements.sort((a, b) -> {
+            int row = Integer.compare(a.bounds.y, b.bounds.y);
+            return row != 0 ? row : Integer.compare(a.bounds.x, b.bounds.x);
+        });
+        ArrayList<Integer> ordered = new ArrayList<>();
+        for (Placement placement : orderedPlacements) {
+            if (!ordered.contains(placement.tileIndex)) {
+                ordered.add(placement.tileIndex);
+            }
+        }
+        int anchor = ordered.indexOf(anchorIndex);
+        int end = ordered.indexOf(endIndex);
+        if (anchor < 0 || end < 0) {
+            ArrayList<Integer> single = new ArrayList<>();
+            single.add(endIndex);
+            return single;
+        }
+        int from = Math.min(anchor, end);
+        int to = Math.max(anchor, end);
+        return new ArrayList<>(ordered.subList(from, to + 1));
     }
 
     /** The named folder containing the most visibly selected tile occurrences. */
     public String getSelectedLayoutFolderPath() {
+        if (rangeSelectionInitialized) {
+            if (rangeSelectionSection == null) {
+                return null;
+            }
+            return rangeSelectionSection.allTiles ? null : rangeSelectionSection.folder.getPath();
+        }
         ArrayList<Integer> selected = getIndicesSelected();
         Section best = null;
         int bestCount = 0;
@@ -2134,6 +2379,13 @@ public class TileSelector extends JPanel {
 
     public void setIndexSecondTileSelected(int index) {
         this.indexSecondTileSelected = index;
+        if (index < 0) {
+            rangeSelectedIndices.clear();
+            rangeSelectionSection = null;
+            rangeSelectionInitialized = false;
+            multiselecting = false;
+            rangeAnchorFromRightClick = false;
+        }
     }
 
     private void initComponents() {
