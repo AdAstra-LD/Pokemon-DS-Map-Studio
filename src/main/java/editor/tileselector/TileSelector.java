@@ -503,7 +503,7 @@ public class TileSelector extends JPanel {
         }
         Section allTiles = new Section();
         allTiles.allTiles = true;
-        allTiles.folder = tset.getPaletteFolder(PaletteFolder.UNSORTED);
+        allTiles.folder = tset.getOrCreatePaletteFolder(PaletteFolder.UNSORTED);
         newSections.add(allTiles);
 
         for (int i = 0; i < tset.size(); i++) {
@@ -1135,28 +1135,55 @@ public class TileSelector extends JPanel {
     private ArrayList<PinnedLayout> getPinnedLayouts() {
         Rectangle visible = getVisibleRect();
         ArrayList<Section> active = new ArrayList<>();
-        int expanded = 0;
         for (Section section : sections) {
-            if (!section.allTiles && section.folder != null && section.folder.isPinned()
+            if (section.folder != null && section.folder.isPinned()
                     && section.headerBounds != null && section.headerBounds.y < visible.y) {
                 active.add(section);
-                if (!section.isCollapsed() && section.bodyBounds != null
-                        && section.bodyBounds.height > 0) {
-                    expanded++;
+            }
+        }
+        if (active.isEmpty()) {
+            return new ArrayList<>();
+        }
+
+        ArrayList<PinnedLayout> result;
+        boolean added;
+        do {
+            result = buildPinnedLayouts(active, visible);
+            int coveredBottom = result.get(result.size() - 1).bounds.y
+                    + result.get(result.size() - 1).bounds.height;
+            added = false;
+            for (Section section : sections) {
+                if (!active.contains(section) && section.folder != null
+                        && section.folder.isPinned() && section.headerBounds != null
+                        && section.headerBounds.y < coveredBottom) {
+                    active.add(section);
+                    added = true;
                 }
+            }
+            if (added) {
+                active.sort((a, b) -> Integer.compare(sections.indexOf(a), sections.indexOf(b)));
+            }
+        } while (added);
+        return result;
+    }
+
+    private ArrayList<PinnedLayout> buildPinnedLayouts(ArrayList<Section> active,
+            Rectangle visible) {
+        int expanded = 0;
+        for (Section section : active) {
+            if (!section.allTiles && !section.isCollapsed() && section.bodyBounds != null
+                    && section.bodyBounds.height > 0) {
+                expanded++;
             }
         }
         ArrayList<PinnedLayout> result = new ArrayList<>();
-        if (active.isEmpty()) {
-            return result;
-        }
         int maxStack = Math.max(headerHeight, (int) (visible.height * 0.28));
         int headerBudget = active.size() * headerHeight;
         int bodyBudget = Math.max(0, maxStack - headerBudget - active.size());
         int bodyShare = expanded == 0 ? 0 : bodyBudget / expanded;
         int y = visible.y;
         for (Section section : active) {
-            int bodyHeight = section.isCollapsed() || section.bodyBounds == null
+            int bodyHeight = section.allTiles || section.isCollapsed() || section.bodyBounds == null
                     ? 0 : Math.min(section.bodyBounds.height, bodyShare);
             int maxScroll = Math.max(0, section.bodyBounds == null
                     ? 0 : section.bodyBounds.height - bodyHeight);
@@ -1171,9 +1198,6 @@ public class TileSelector extends JPanel {
     }
 
     private void scrollPinnedFolder(MouseWheelEvent evt) {
-        if (!evt.isShiftDown()) {
-            return;
-        }
         for (PinnedLayout layout : getPinnedLayouts()) {
             if (layout.bodyViewportHeight <= 0 || !layout.bounds.contains(evt.getPoint())
                     || evt.getY() < layout.bounds.y + headerHeight + 1) {
@@ -1191,9 +1215,29 @@ public class TileSelector extends JPanel {
                 layout.section.folder.setPinnedScrollY(next);
                 evt.consume();
                 repaint();
+                return;
             }
+            break; //At an edge: continue scrolling the main Tile List.
+        }
+        scrollMainTileList(evt);
+    }
+
+    private void scrollMainTileList(MouseWheelEvent evt) {
+        JScrollPane scrollPane = (JScrollPane) SwingUtilities.getAncestorOfClass(
+                JScrollPane.class, this);
+        if (scrollPane == null) {
             return;
         }
+        JScrollBar bar = scrollPane.getVerticalScrollBar();
+        int direction = evt.getWheelRotation() < 0 ? -1 : 1;
+        int delta;
+        if (evt.getScrollType() == MouseWheelEvent.WHEEL_BLOCK_SCROLL) {
+            delta = direction * bar.getBlockIncrement(direction);
+        } else {
+            delta = evt.getUnitsToScroll() * bar.getUnitIncrement(direction);
+        }
+        bar.setValue(bar.getValue() + delta);
+        evt.consume();
     }
 
     private Rectangle offsetRect(Rectangle r, int dx, int dy) {
@@ -1312,6 +1356,19 @@ public class TileSelector extends JPanel {
     private void showFolderMenu(Section section, MouseEvent evt) {
         JPopupMenu menu = new JPopupMenu();
         PaletteFolder folder = section.allTiles ? null : section.folder;
+
+        if (section.allTiles) {
+            PaletteFolder allTilesFolder = section.folder != null ? section.folder
+                    : handler.getTileset().getOrCreatePaletteFolder(PaletteFolder.UNSORTED);
+            JCheckBoxMenuItem miPinned = new JCheckBoxMenuItem(
+                    "Pin All Tiles While Scrolling", allTilesFolder.isPinned());
+            miPinned.addActionListener(e -> {
+                allTilesFolder.setPinned(miPinned.isSelected());
+                repaint();
+            });
+            menu.add(miPinned);
+            menu.addSeparator();
+        }
 
         if (folder != null) {
             JMenuItem miNewSub = new JMenuItem("New Subfolder...");

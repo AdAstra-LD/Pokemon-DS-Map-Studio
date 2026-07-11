@@ -572,7 +572,7 @@ public class NsbtxOutputInfoDialog extends javax.swing.JDialog {
                         String filename = new File(pathSave).getName();
                         filename = Utils.removeExtensionFromPath(filename);
                         try {
-                            String converterPath = "converter/g3dcvtr.exe";
+                            String converterPath = ConverterLocator.getConverterPath();
                             String[] cmd;
                             if (System.getProperty("os.name").toLowerCase().startsWith("windows")) {
                                 cmd = new String[]{converterPath, pathSave, "-etex", "-o", filename};

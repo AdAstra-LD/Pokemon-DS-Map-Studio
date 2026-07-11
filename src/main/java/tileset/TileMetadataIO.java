@@ -29,7 +29,7 @@ import editor.smartdrawing.SmartGrid;
 public class TileMetadataIO {
 
     public static final String fileExtension = "meta";
-    private static final String HEADER = "# Pokemon DS Map Studio tile metadata v4";
+    private static final String HEADER = "# Pokemon DS Map Studio tile metadata v5";
 
     public static String getMetadataPath(String tilesetPath) {
         return tilesetPath + "." + fileExtension;
@@ -150,6 +150,7 @@ public class TileMetadataIO {
             throws IOException {
         List<String> lines = Files.readAllLines(new File(metadataPath).toPath(),
                 StandardCharsets.UTF_8);
+        boolean legacyAllTilesPin = lines.stream().noneMatch(line -> line.equals(HEADER));
         boolean recognized = false;
         for (String line : lines) {
             if (line.startsWith("# Pokemon DS Map Studio tile metadata v")
@@ -170,6 +171,12 @@ public class TileMetadataIO {
                 parseLine(line, tset, !replace);
             } catch (RuntimeException ex) {
                 System.err.println("Skipping bad tile metadata line: " + line);
+            }
+        }
+        if (legacyAllTilesPin) {
+            PaletteFolder allTiles = tset.getPaletteFolder(PaletteFolder.UNSORTED);
+            if (allTiles != null) {
+                allTiles.setPinned(true);
             }
         }
     }

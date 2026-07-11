@@ -25,6 +25,8 @@ public class PaletteFolder {
         this.path = path;
         if (path != null && !path.isEmpty()) {
             this.columns = DEFAULT_COLUMNS;
+        } else {
+            this.pinned = true;
         }
     }
 

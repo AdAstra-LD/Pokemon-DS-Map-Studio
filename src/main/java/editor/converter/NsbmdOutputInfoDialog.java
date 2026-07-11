@@ -457,7 +457,7 @@ public class NsbmdOutputInfoDialog extends javax.swing.JDialog {
                     String filename = new File(nsbPath).getName();
 
                     try {
-                        String converterPath = "converter/g3dcvtr.exe";
+                        String converterPath = ConverterLocator.getConverterPath();
                         String[] cmd;
                         if (System.getProperty("os.name").toLowerCase().startsWith("windows")) {
                             if (includeNsbtx) {
