@@ -30,6 +30,7 @@ import javax.swing.filechooser.FileNameExtensionFilter;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.TransformerException;
 import tileset.TextureNotFoundException;
+import tileset.TileMetadataIO;
 import tileset.Tileset;
 import tileset.TilesetIO;
 import utils.Utils;
@@ -312,6 +313,68 @@ final class MapProjectActions {
         }
     }
 
+    void importTileMetadataWithDialog() {
+        if (handler.getTileset().size() == 0) {
+            JOptionPane.showMessageDialog(frame, "The tileset is empty.",
+                    "Import Tile Metadata", JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+        JFileChooser fileChooser = createMetadataFileChooser("Import Tile Metadata");
+        if (fileChooser.showOpenDialog(frame) != JFileChooser.APPROVE_OPTION) {
+            return;
+        }
+        try {
+            File file = fileChooser.getSelectedFile();
+            handler.setLastTilesetDirectoryUsed(file.getParent());
+            TileMetadataIO.readFile(file.getPath(), handler.getTileset(), false);
+            viewUpdater.renderTilesetThumbnails();
+            tileSelector.updateLayout();
+            tileSelector.repaint();
+            JOptionPane.showMessageDialog(frame,
+                    "Tile metadata merged. Existing folders and tile settings were kept.",
+                    "Import Tile Metadata", JOptionPane.INFORMATION_MESSAGE);
+        } catch (IOException ex) {
+            JOptionPane.showMessageDialog(frame, "Can't import metadata:\n" + ex.getMessage(),
+                    "Import Tile Metadata", JOptionPane.ERROR_MESSAGE);
+        }
+    }
+
+    void exportTileMetadataWithDialog() {
+        if (handler.getTileset().size() == 0) {
+            JOptionPane.showMessageDialog(frame, "The tileset is empty.",
+                    "Export Tile Metadata", JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+        JFileChooser fileChooser = createMetadataFileChooser("Export Tile Metadata");
+        fileChooser.setSelectedFile(new File("TileMetadata.meta"));
+        if (fileChooser.showSaveDialog(frame) != JFileChooser.APPROVE_OPTION) {
+            return;
+        }
+        try {
+            File selected = fileChooser.getSelectedFile();
+            String path = selected.getPath().toLowerCase().endsWith(".meta")
+                    ? selected.getPath() : selected.getPath() + ".meta";
+            handler.setLastTilesetDirectoryUsed(selected.getParent());
+            TileMetadataIO.writeFile(path, handler.getTileset());
+            JOptionPane.showMessageDialog(frame, "Tile metadata exported.",
+                    "Export Tile Metadata", JOptionPane.INFORMATION_MESSAGE);
+        } catch (IOException ex) {
+            JOptionPane.showMessageDialog(frame, "Can't export metadata:\n" + ex.getMessage(),
+                    "Export Tile Metadata", JOptionPane.ERROR_MESSAGE);
+        }
+    }
+
+    private JFileChooser createMetadataFileChooser(String title) {
+        JFileChooser fileChooser = new JFileChooser();
+        if (handler.getLastTilesetDirectoryUsed() != null) {
+            fileChooser.setCurrentDirectory(new File(handler.getLastTilesetDirectoryUsed()));
+        }
+        fileChooser.setFileFilter(new FileNameExtensionFilter(
+                "Pokemon DS Map Studio tile metadata (*.meta)", "meta"));
+        fileChooser.setDialogTitle(title);
+        return fileChooser;
+    }
+
     void openBackImgWithDialog() {
         final JFileChooser fileChooser = new JFileChooser();
         if (handler.getLastMapDirectoryUsed() != null) {
@@ -481,7 +544,8 @@ final class MapProjectActions {
 
                     saveTilesetThumbnail(path + File.separator + "TilesetThumbnail.png");
 
-                    JOptionPane.showMessageDialog(frame, "Tileset succesfully exported.", "Tileset saved",
+                    JOptionPane.showMessageDialog(frame,
+                            "Tileset and tile metadata successfully exported.", "Tileset saved",
                             JOptionPane.INFORMATION_MESSAGE);
                 } catch (IOException ex) {
                     JOptionPane.showMessageDialog(frame, "Can't save file", "Error saving tileset",

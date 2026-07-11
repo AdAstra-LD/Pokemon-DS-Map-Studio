@@ -145,9 +145,11 @@ public class SmartGridDisplay extends JPanel {
                     handler.setSmartGridIndexSelected(gridIndex);
                     repaint();
 
-                    if (handler.getMainFrame().getMapDisplay().getViewMode().getViewID() == ViewMode.ViewID.VIEW_ORTHO) {
-                        if (handler.getMainFrame().getMapDisplay().getEditMode() != MapDisplay.EditMode.MODE_INV_SMART_PAINT) {
-                            handler.getMainFrame().getMapDisplay().setEditMode(MapDisplay.EditMode.MODE_SMART_PAINT);
+                    MapDisplay mapDisplay = handler.getMainFrame().getMapDisplay();
+                    if (mapDisplay.getViewMode().getViewID() == ViewMode.ViewID.VIEW_ORTHO
+                            && !mapDisplay.isSmartToolsEnabled()) {
+                        if (mapDisplay.getEditMode() != MapDisplay.EditMode.MODE_INV_SMART_PAINT) {
+                            mapDisplay.setEditMode(MapDisplay.EditMode.MODE_SMART_PAINT);
                             handler.getMainFrame().getJtbModeSmartPaint().setSelected(true);
                         }
                     }

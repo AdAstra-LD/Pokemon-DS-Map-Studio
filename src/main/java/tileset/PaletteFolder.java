@@ -14,10 +14,12 @@ public class PaletteFolder {
     public static final int DEFAULT_ROWS = 4;
 
     private String path;
-    private int columns = 0;   //Layout template grid width in tile units; 0 = flow layout
+    private int columns = 0;   //All Tiles uses flow layout; named folders always use a grid
     private int rows = DEFAULT_ROWS;
     private boolean collapsed = false;
     private boolean pinned = false;
+    private boolean gridLinesVisible = true;
+    private transient int pinnedScrollY = 0;
 
     public PaletteFolder(String path) {
         this.path = path;
@@ -39,7 +41,8 @@ public class PaletteFolder {
     }
 
     public void setColumns(int columns) {
-        this.columns = Math.max(0, columns);
+        this.columns = path == null || path.isEmpty()
+                ? Math.max(0, columns) : Math.max(1, columns);
     }
 
     public int getRows() {
@@ -64,5 +67,21 @@ public class PaletteFolder {
 
     public void setPinned(boolean pinned) {
         this.pinned = pinned;
+    }
+
+    public boolean isGridLinesVisible() {
+        return gridLinesVisible;
+    }
+
+    public void setGridLinesVisible(boolean gridLinesVisible) {
+        this.gridLinesVisible = gridLinesVisible;
+    }
+
+    public int getPinnedScrollY() {
+        return pinnedScrollY;
+    }
+
+    public void setPinnedScrollY(int pinnedScrollY) {
+        this.pinnedScrollY = Math.max(0, pinnedScrollY);
     }
 }

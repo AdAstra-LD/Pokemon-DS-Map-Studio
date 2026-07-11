@@ -40,7 +40,6 @@ public class AnimationEditorDialog extends JDialog {
         initComponents();
         jScrollPane1.getHorizontalScrollBar().setUnitIncrement(AnimationFramesDisplay.cellSize);
         Utils.addListenerToJTextFieldColor(jtfAnimationName, jtfAnimNameEnabled, editingColor, Color.black);
-        System.out.println(jbPlay.getText());
     }
 
     private void formWindowClosed(WindowEvent e) {
@@ -153,6 +152,8 @@ public class AnimationEditorDialog extends JDialog {
                 jtfAnimationName.setBackground(UIManager.getColor("TextPane.background"));
                 jtfAnimationName.setForeground(UIManager.getColor("TextPane.foreground"));
                 jtfAnimNameEnabled.value = true;
+            } else {
+                jtfAnimationName.setText("");
             }
 
             animationDisplay.repaint();
@@ -188,7 +189,10 @@ public class AnimationEditorDialog extends JDialog {
     }
 
     public void updateViewDelayDisplay() {
-        jsDelay.setValue(animHandler.getCurrentDelay());
+        int delay = animHandler.getCurrentDelay();
+        if (!Integer.valueOf(delay).equals(jsDelay.getValue())) {
+            jsDelay.setValue(delay);
+        }
     }
 
     public void updateViewAnimationListNames(int indexSelected) {
@@ -206,8 +210,11 @@ public class AnimationEditorDialog extends JDialog {
                 indexSelected = 0;
             }
             jlAnimationNames.setSelectedIndex(indexSelected);
-            jlAnimationNames.ensureIndexIsVisible(indexSelected);
+            if (indexSelected >= 0) {
+                jlAnimationNames.ensureIndexIsVisible(indexSelected);
+            }
             animationListEnabled = true;
+            updateView();
         }
     }
 
@@ -227,6 +234,7 @@ public class AnimationEditorDialog extends JDialog {
             }
             jlTextureNames.setSelectedIndex(indexSelected);
             textureListEnabled = true;
+            repaintFrames();
         }
     }
 
@@ -239,9 +247,11 @@ public class AnimationEditorDialog extends JDialog {
                 setComponentsEnabled(true);
             } else {
                 animHandler.playAnimation();
-                jbPlay.setText(stopButtonIcon);
-                jbPlay.setForeground(stopButtonColor);
-                setComponentsEnabled(false);
+                if (animHandler.isAnimationRunning()) {
+                    jbPlay.setText(stopButtonIcon);
+                    jbPlay.setForeground(stopButtonColor);
+                    setComponentsEnabled(false);
+                }
             }
         }
     }
@@ -258,6 +268,7 @@ public class AnimationEditorDialog extends JDialog {
         jsDelay.setEnabled(enabled);
         jtfAnimationName.setEnabled(enabled);
         jlTextureNames.setEnabled(enabled);
+        jlAnimationNames.setEnabled(enabled);
     }
 
     public void changeAnimationName() {
@@ -286,19 +297,16 @@ public class AnimationEditorDialog extends JDialog {
             fc.setCurrentDirectory(new File(handler.getLastNsbtxDirectoryUsed()));
         }
         fc.setApproveButtonText("Open");
-        fc.setDialogTitle("Open Animation File File");
+        fc.setDialogTitle("Open Animation File");
         final int returnVal = fc.showOpenDialog(this);
         if (returnVal == JFileChooser.APPROVE_OPTION) {
             handler.setLastNsbtxDirectoryUsed(fc.getSelectedFile().getParent());
             try {
                 animHandler.readAnimationFile(fc.getSelectedFile().getPath());
-
-                updateView();
-
                 updateViewAnimationListNames(0);
 
             } catch (IOException ex) {
-                JOptionPane.showMessageDialog(this, "Can't open file.",
+                JOptionPane.showMessageDialog(this, "Can't open file:\n" + ex.getMessage(),
                         "Error opening animation file", JOptionPane.ERROR_MESSAGE);
             }
         }
@@ -317,12 +325,10 @@ public class AnimationEditorDialog extends JDialog {
             handler.setLastNsbtxDirectoryUsed(fc.getSelectedFile().getParent());
             try {
                 animHandler.readNsbtx(fc.getSelectedFile().getPath());
-
-                updateView();
                 updateViewTextureNames(0);
 
             } catch (IOException ex) {
-                JOptionPane.showMessageDialog(this, "Can't open file.",
+                JOptionPane.showMessageDialog(this, "Can't open file:\n" + ex.getMessage(),
                         "Error opening NSBTX", JOptionPane.ERROR_MESSAGE);
             }
         }
@@ -336,7 +342,7 @@ public class AnimationEditorDialog extends JDialog {
             }
             fc.setApproveButtonText("Save");
             fc.setDialogTitle("Save Animation File");
-            final int returnVal = fc.showOpenDialog(this);
+            final int returnVal = fc.showSaveDialog(this);
             if (returnVal == JFileChooser.APPROVE_OPTION) {
                 handler.setLastNsbtxDirectoryUsed(fc.getSelectedFile().getParent());
                 try {
@@ -345,7 +351,8 @@ public class AnimationEditorDialog extends JDialog {
                     animHandler.saveAnimationFile(path);
 
                 } catch (IOException ex) {
-                    JOptionPane.showMessageDialog(this, "There was an error saving the animation file.",
+                    JOptionPane.showMessageDialog(this,
+                            "There was an error saving the animation file:\n" + ex.getMessage(),
                             "Error saving animation file", JOptionPane.ERROR_MESSAGE);
                 }
             }

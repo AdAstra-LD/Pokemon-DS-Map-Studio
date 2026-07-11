@@ -141,10 +141,11 @@ public class Tileset {
         String prefix = folder.getPath() + "/";
         paletteFolders.removeIf(f -> f == folder || f.getPath().startsWith(prefix));
         for (Tile tile : tiles) {
-            String path = tile.getPaletteFolder();
-            if (path.equals(folder.getPath()) || path.startsWith(prefix)) {
-                tile.setPaletteFolder(PaletteFolder.UNSORTED);
-                tile.setPaletteSlot(-1);
+            ArrayList<String> memberships = new ArrayList<>(tile.getPaletteFolderSlots().keySet());
+            for (String path : memberships) {
+                if (path.equals(folder.getPath()) || path.startsWith(prefix)) {
+                    tile.removePaletteFolder(path);
+                }
             }
         }
     }
@@ -164,12 +165,7 @@ public class Tileset {
             }
         }
         for (Tile tile : tiles) {
-            String path = tile.getPaletteFolder();
-            if (path.equals(oldPath)) {
-                tile.setPaletteFolder(newPath);
-            } else if (path.startsWith(oldPrefix)) {
-                tile.setPaletteFolder(newPath + "/" + path.substring(oldPrefix.length()));
-            }
+            tile.renamePaletteFolder(oldPath, newPath);
         }
     }
 

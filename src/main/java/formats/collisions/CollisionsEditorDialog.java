@@ -58,46 +58,7 @@ public class CollisionsEditorDialog extends JDialog {
         int cols = Collisions.cols;
         int rows = Collisions.rows;
 
-        //Collect the defaults per cell in map grid coords (y = 0 is the bottom row)
-        int[][][] values = new int[numCollLayers][cols][rows];
-        for (int[][] layerValues : values) {
-            for (int[] column : layerValues) {
-                java.util.Arrays.fill(column, -1);
-            }
-        }
-        for (int layer = 0; layer < grid.tileLayers.length; layer++) {
-            for (int x = 0; x < cols; x++) {
-                for (int y = 0; y < rows; y++) {
-                    int tileIndex = grid.tileLayers[layer][x][y];
-                    if (tileIndex < 0 || tileIndex >= tset.size()) {
-                        continue;
-                    }
-                    tileset.Tile tile = tset.get(tileIndex);
-                    if (tile.getCollisionDefaults().isEmpty()) {
-                        continue;
-                    }
-                    for (java.util.Map.Entry<Integer, int[][]> entry : tile.getCollisionDefaults().entrySet()) {
-                        int collLayer = entry.getKey();
-                        if (collLayer < 0 || collLayer >= numCollLayers) {
-                            continue;
-                        }
-                        //The tile is anchored at (x, y) and covers width x height
-                        //map cells upwards; default grid row 0 is the TOP of the
-                        //tile image, i.e. the highest covered map row
-                        int[][] cellValues = entry.getValue();
-                        for (int i = 0; i < tile.getWidth() && x + i < cols; i++) {
-                            for (int j = 0; j < tile.getHeight() && y + j < rows; j++) {
-                                int row = tile.getHeight() - 1 - j;
-                                if (i < cellValues.length && row < cellValues[i].length
-                                        && cellValues[i][row] >= 0) {
-                                    values[collLayer][x + i][y + j] = cellValues[i][row];
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        }
+        int[][][] values = CollisionDefaultsApplier.collectDefaults(tset, grid, numCollLayers);
 
         int changedCells = 0;
         for (int collLayer = 0; collLayer < numCollLayers; collLayer++) {

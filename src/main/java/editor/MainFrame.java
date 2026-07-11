@@ -53,6 +53,8 @@ public class MainFrame extends JFrame {
     private JToggleButton jtbModeLine;
     private JToggleButton jtbModeRectShape;
     private JToggleButton jtbModeEllipseShape;
+    private JToggleButton jtbSmartTools;
+    private JToggleButton jtbAutoCollision;
     private JButton jbCopySelection;
     private JButton jbCutSelection;
     private JButton jbPasteSelection;
@@ -65,6 +67,8 @@ public class MainFrame extends JFrame {
     private JMenuItem jmiDeleteSelection;
     private JMenuItem jmiFillSelection;
     private JMenuItem jmiDeselect;
+    private JMenuItem jmiImportTileMetadata;
+    private JMenuItem jmiExportTileMetadata;
     private JLabel jlCursorCoordsTitle;
     private JLabel jlCursorCoords;
 
@@ -196,6 +200,23 @@ public class MainFrame extends JFrame {
                 "Draw Circle - drag to draw a circle / ellipse outline of tiles",
                 MapDisplay.EditMode.MODE_SHAPE_ELLIPSE, drawModeGroup);
 
+        //A single mode switch makes the existing Wand and shape tools use
+        //the selected Smart Drawing template without widening either sidebar.
+        jtbSmartTools = new JToggleButton("Smart Tools");
+        jtbSmartTools.setFocusable(false);
+        jtbSmartTools.setMargin(new Insets(2, 4, 2, 4));
+        jtbSmartTools.setToolTipText("Use the selected Smart Drawing template with Wand, Line, "
+                + "filled Rectangle/Circle, and selection Rotate/Flip; right-drag draws inverted");
+        jtbSmartTools.addActionListener(e -> mapDisplay.setSmartToolsEnabled(jtbSmartTools.isSelected()));
+        applyToolButtonBackground(jtbSmartTools);
+        jtbAutoCollision = new JToggleButton("Auto Coll.");
+        jtbAutoCollision.setFocusable(false);
+        jtbAutoCollision.setMargin(new Insets(2, 4, 2, 4));
+        jtbAutoCollision.setToolTipText("Apply tile collision defaults while painting");
+        jtbAutoCollision.addActionListener(e ->
+                mapDisplay.setAutoCollisionEnabled(jtbAutoCollision.isSelected()));
+        applyToolButtonBackground(jtbAutoCollision);
+
         //Rebuild the tools toolbar as compact two column groups separated by
         //thin lines: draw / select / clipboard / fill-shape / camera / layer
         toolGroupWidth = 0;
@@ -219,15 +240,18 @@ public class MainFrame extends JFrame {
                 "Paste Selection (Ctrl+V)", () -> mapDisplay.startPaste());
         jbDeleteSelection = createActionButton(new ImageIcon(createTrashIcon()),
                 "Delete Selected Tiles (Delete)", () -> mapDisplay.deleteSelection());
-        jbDeselect = createActionButton(new ImageIcon(createDeselectIcon()),
-                "Deselect (Ctrl+D)", () -> mapDisplay.deselect());
+        jbDeselect = new JButton("Deselect");
+        jbDeselect.setToolTipText("Deselect (Ctrl+D)");
+        jbDeselect.setFocusable(false);
+        jbDeselect.addActionListener(e -> mapDisplay.deselect());
 
         addToolGroup(2, jtbModeEdit, jtbModeClear, jtbModeSmartPaint, jtbModeInvSmartPaint);
         addToolGroup(2, jtbModeSelect, jtbModeLasso, jtbModeWand, jtbModeMoveSelect);
-        addToolGroup(2, jbCopySelection, jbCutSelection, jbPasteSelection, jbDeleteSelection, jbDeselect);
+        addSelectionActionGroup();
         addToolGroup(2, jtbModeBucket, jtbModePicker, jtbModeLine, jtbModeRectShape, jtbModeEllipseShape);
         addToolGroup(2, jtbModeMove, jtbModeZoom, jbFitCameraToMap);
         addToolGroup(1, jbMoveLayerUp, jbMoveLayerDown);
+        addSmartToolsToolbarHeader();
 
         //Edit menu entries for the region selection
         jmiSelectAll = new JMenuItem("Select All");
@@ -259,6 +283,18 @@ public class MainFrame extends JFrame {
         jmiDeselect = new JMenuItem("Deselect");
         jmiDeselect.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_D, InputEvent.CTRL_DOWN_MASK));
         jmiDeselect.addActionListener(e -> mapDisplay.deselect());
+
+        JMenu tileMetadataMenu = new JMenu("Tile Metadata");
+        jmiImportTileMetadata = new JMenuItem("Import Metadata...");
+        jmiImportTileMetadata.addActionListener(e ->
+                mapProjectActions.importTileMetadataWithDialog());
+        jmiExportTileMetadata = new JMenuItem("Export Metadata...");
+        jmiExportTileMetadata.addActionListener(e ->
+                mapProjectActions.exportTileMetadataWithDialog());
+        tileMetadataMenu.add(jmiImportTileMetadata);
+        tileMetadataMenu.add(jmiExportTileMetadata);
+        int exportTilesetIndex = jmFile.getPopupMenu().getComponentIndex(jmiExportTileset);
+        jmFile.insert(tileMetadataMenu, exportTilesetIndex + 1);
 
         //Insert before the separator that precedes the Settings entry
         jmEdit.insertSeparator(10);
@@ -293,6 +329,41 @@ public class MainFrame extends JFrame {
 
     private int toolGroupWidth = 0;
 
+    /** Places the Smart Tools mode above the generated toolbar groups. */
+    private void addSmartToolsToolbarHeader() {
+        int headerWidth = Math.max(toolGroupWidth, Math.max(
+                jtbSmartTools.getPreferredSize().width,
+                jtbAutoCollision.getPreferredSize().width));
+        if (headerWidth > toolGroupWidth) {
+            for (Component component : jtTools.getComponents()) {
+                if (component instanceof JPanel) {
+                    Dimension oldSize = component.getPreferredSize();
+                    Dimension newSize = new Dimension(headerWidth, oldSize.height);
+                    component.setPreferredSize(newSize);
+                    component.setMaximumSize(newSize);
+                }
+            }
+            toolGroupWidth = headerWidth;
+        }
+        JPanel panel = new JPanel(new GridLayout(0, 1, 0, 2));
+        panel.setOpaque(false);
+        panel.add(jtbSmartTools);
+        panel.add(jtbAutoCollision);
+        Dimension pref = new Dimension(toolGroupWidth,
+                jtbSmartTools.getPreferredSize().height + jtbAutoCollision.getPreferredSize().height + 2);
+        panel.setPreferredSize(pref);
+        panel.setMaximumSize(pref);
+        panel.setAlignmentX(0.0f);
+
+        JSeparator separator = new JSeparator();
+        separator.setMaximumSize(new Dimension(Integer.MAX_VALUE, 2));
+        separator.setAlignmentX(0.0f);
+        jtTools.add(panel, 0);
+        jtTools.add(Box.createVerticalStrut(3), 1);
+        jtTools.add(separator, 2);
+        jtTools.add(Box.createVerticalStrut(3), 3);
+    }
+
     /** Adds a group of tool buttons to jtTools as a compact column block. */
     private void addToolGroup(int columns, AbstractButton... buttons) {
         if (jtTools.getComponentCount() > 0) {
@@ -325,6 +396,48 @@ public class MainFrame extends JFrame {
             pref = new Dimension(toolGroupWidth, pref.height);
             panel.setPreferredSize(pref);
         }
+        panel.setMaximumSize(pref);
+        jtTools.add(panel);
+    }
+
+    /** Four clipboard buttons followed by a full-width Deselect command. */
+    private void addSelectionActionGroup() {
+        if (jtTools.getComponentCount() > 0) {
+            jtTools.add(Box.createVerticalStrut(3));
+            JSeparator sep = new JSeparator();
+            sep.setMaximumSize(new Dimension(Integer.MAX_VALUE, 2));
+            sep.setAlignmentX(0.0f);
+            jtTools.add(sep);
+            jtTools.add(Box.createVerticalStrut(3));
+        }
+        JPanel panel = new JPanel(new GridBagLayout());
+        panel.setOpaque(false);
+        GridBagConstraints gbc = new GridBagConstraints();
+        gbc.fill = GridBagConstraints.BOTH;
+        gbc.weightx = 1.0;
+        gbc.weighty = 1.0;
+        gbc.insets = new Insets(1, 1, 1, 1);
+        AbstractButton[] actions = {jbCopySelection, jbCutSelection,
+                jbPasteSelection, jbDeleteSelection};
+        for (int i = 0; i < actions.length; i++) {
+            AbstractButton button = actions[i];
+            button.setMargin(new Insets(1, 1, 1, 1));
+            applyToolButtonBackground(button);
+            gbc.gridx = i % 2;
+            gbc.gridy = i / 2;
+            gbc.gridwidth = 1;
+            panel.add(button, gbc);
+        }
+        jbDeselect.setMargin(new Insets(2, 4, 2, 4));
+        applyToolButtonBackground(jbDeselect);
+        gbc.gridx = 0;
+        gbc.gridy = 2;
+        gbc.gridwidth = 2;
+        panel.add(jbDeselect, gbc);
+        panel.setAlignmentX(0.0f);
+        Dimension pref = panel.getPreferredSize();
+        pref = new Dimension(toolGroupWidth, pref.height);
+        panel.setPreferredSize(pref);
         panel.setMaximumSize(pref);
         jtTools.add(panel);
     }
@@ -621,7 +734,17 @@ public class MainFrame extends JFrame {
         jtbModeLine.setEnabled(enabled);
         jtbModeRectShape.setEnabled(enabled);
         jtbModeEllipseShape.setEnabled(enabled);
+        jtbSmartTools.setEnabled(enabled);
+        jtbAutoCollision.setEnabled(enabled);
         updateSelectionActionButtons();
+    }
+
+    public JToggleButton getJtbSmartTools() {
+        return jtbSmartTools;
+    }
+
+    public JToggleButton getJtbAutoCollision() {
+        return jtbAutoCollision;
     }
 
     public void updateCursorTileCoords(Point tile) {

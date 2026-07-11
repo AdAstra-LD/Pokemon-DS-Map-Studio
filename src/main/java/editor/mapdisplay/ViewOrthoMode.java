@@ -45,8 +45,14 @@ public class ViewOrthoMode extends ViewMode {
         } else {
             //Right click inside a selection opens the edit menu; everywhere
             //else right click keeps its normal behaviour (e.g. tile picker)
+            boolean invertedSmartDrawing = SwingUtilities.isRightMouseButton(e)
+                    && ((d.editMode == MapDisplay.EditMode.MODE_EDIT && d.canStartSmartStroke())
+                    || ((d.editMode == MapDisplay.EditMode.MODE_LINE
+                    || d.editMode == MapDisplay.EditMode.MODE_SHAPE_RECT
+                    || d.editMode == MapDisplay.EditMode.MODE_SHAPE_ELLIPSE)
+                    && d.canUseSmartTools()));
             if (SwingUtilities.isRightMouseButton(e) && !d.isPasting()
-                    && d.isCursorInsideSelection(e)) {
+                    && !invertedSmartDrawing && d.isCursorInsideSelection(e)) {
                 d.showSelectionPopup(e);
                 return;
             }
@@ -56,10 +62,20 @@ public class ViewOrthoMode extends ViewMode {
                     if (d.handler.getTileset().size() > 0) {
                         d.setMapSelected(e);
                         d.handler.setLayerChanged(false);
-                        if (SwingUtilities.isLeftMouseButton(e)) {
+                        boolean left = SwingUtilities.isLeftMouseButton(e);
+                        boolean invertedSmart = SwingUtilities.isRightMouseButton(e)
+                                && d.canStartSmartStroke();
+                        if (left || invertedSmart) {
                             d.dragStart = d.getCoordsInSelectedMap(e);
-                            d.handler.addMapState(new MapLayerState("Draw Tile", d.handler));
-                            d.setTileInGrid(e);
+                            boolean smartStroke = d.canStartSmartStroke();
+                            d.handler.addMapState(new MapLayerState(
+                                    smartStroke ? (invertedSmart ? "Inverted Smart Draw" : "Smart Draw")
+                                            : "Draw Tile", d.handler));
+                            if (smartStroke) {
+                                d.startSmartStroke(e, invertedSmart);
+                            } else {
+                                d.setTileInGrid(e);
+                            }
                             d.updateActiveMapLayerGL();
                             d.repaint();
                         } else if (SwingUtilities.isMiddleMouseButton(e)) {
@@ -198,9 +214,12 @@ public class ViewOrthoMode extends ViewMode {
                 case MODE_LINE:
                 case MODE_SHAPE_RECT:
                 case MODE_SHAPE_ELLIPSE:
-                    if (SwingUtilities.isLeftMouseButton(e)) {
+                    boolean left = SwingUtilities.isLeftMouseButton(e);
+                    boolean invertedSmart = SwingUtilities.isRightMouseButton(e)
+                            && d.canUseSmartTools();
+                    if (left || invertedSmart) {
                         if (d.handler.getTileset().size() > 0) {
-                            d.startShape(e);
+                            d.startShape(e, invertedSmart);
                             d.repaint();
                         }
                     } else if (SwingUtilities.isRightMouseButton(e)) {
@@ -232,6 +251,13 @@ public class ViewOrthoMode extends ViewMode {
     @Override
     public void mouseReleased(MapDisplay d, MouseEvent e) {
         switch (d.editMode) {
+            case MODE_EDIT:
+                if (SwingUtilities.isLeftMouseButton(e)
+                        || SwingUtilities.isRightMouseButton(e)) {
+                    d.finishSmartStroke();
+                }
+                break;
+
             case MODE_CLEAR:
                 d.handler.getMapMatrix().removeUnusedMaps();
                 if (!d.handler.mapSelectedExists()) {
@@ -268,19 +294,22 @@ public class ViewOrthoMode extends ViewMode {
                 break;
 
             case MODE_LINE:
-                if (SwingUtilities.isLeftMouseButton(e)) {
+                if (SwingUtilities.isLeftMouseButton(e)
+                        || (SwingUtilities.isRightMouseButton(e) && d.smartShapeInverted)) {
                     d.commitLine();
                 }
                 break;
 
             case MODE_SHAPE_RECT:
-                if (SwingUtilities.isLeftMouseButton(e)) {
+                if (SwingUtilities.isLeftMouseButton(e)
+                        || (SwingUtilities.isRightMouseButton(e) && d.smartShapeInverted)) {
                     d.commitRectShape();
                 }
                 break;
 
             case MODE_SHAPE_ELLIPSE:
-                if (SwingUtilities.isLeftMouseButton(e)) {
+                if (SwingUtilities.isLeftMouseButton(e)
+                        || (SwingUtilities.isRightMouseButton(e) && d.smartShapeInverted)) {
                     d.commitEllipseShape();
                 }
                 break;
@@ -315,11 +344,17 @@ public class ViewOrthoMode extends ViewMode {
             switch (d.editMode) {
                 case MODE_EDIT:
                     if (d.handler.getTileset().size() > 0) {
-                        d.setMapSelected(e);
-                        if (SwingUtilities.isLeftMouseButton(e)) {
-                            //d.updateLastMapState();
-                            d.editedMapCoords.add(d.getMapCoords(e));
-                            d.dragTileInGrid(e);
+                        if (SwingUtilities.isLeftMouseButton(e)
+                                || (SwingUtilities.isRightMouseButton(e)
+                                && d.smartStrokeMap != null)) {
+                            if (d.smartStrokeMap != null) {
+                                d.editedMapCoords.add(d.smartStrokeMap);
+                                d.extendSmartStroke(e);
+                            } else {
+                                d.setMapSelected(e);
+                                d.editedMapCoords.add(d.getMapCoords(e));
+                                d.dragTileInGrid(e);
+                            }
                             d.updateActiveMapLayerGL();
                             d.repaint();
                         }
@@ -362,7 +397,8 @@ public class ViewOrthoMode extends ViewMode {
                 case MODE_LINE:
                 case MODE_SHAPE_RECT:
                 case MODE_SHAPE_ELLIPSE:
-                    if (SwingUtilities.isLeftMouseButton(e)) {
+                    if (SwingUtilities.isLeftMouseButton(e)
+                            || (SwingUtilities.isRightMouseButton(e) && d.smartShapeInverted)) {
                         d.updateShape(e);
                         d.repaint();
                     }

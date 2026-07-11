@@ -6,6 +6,7 @@ import editor.grid.MapGrid;
 import java.awt.Point;
 import java.awt.Rectangle;
 import java.util.ArrayDeque;
+import java.util.Set;
 
 /**
  * Mask based tile selection inside a single map. Cell coordinates use the
@@ -162,15 +163,28 @@ public class MapSelection {
      * are returned.
      */
     public static boolean[][] computeWandRegion(int[][] tileLayer, int x, int y, boolean contiguous) {
-        boolean[][] region = new boolean[cols][rows];
         if (x < 0 || x >= cols || y < 0 || y >= rows) {
+            return new boolean[cols][rows];
+        }
+        return computeWandRegion(tileLayer, x, y, contiguous,
+                java.util.Collections.singleton(tileLayer[x][y]));
+    }
+
+    /**
+     * Magic wand region matching any tile ID in a Smart Drawing template.
+     * The clicked cell must itself belong to the supplied tile set.
+     */
+    public static boolean[][] computeWandRegion(int[][] tileLayer, int x, int y,
+                                                 boolean contiguous, Set<Integer> targetTiles) {
+        boolean[][] region = new boolean[cols][rows];
+        if (x < 0 || x >= cols || y < 0 || y >= rows
+                || targetTiles == null || !targetTiles.contains(tileLayer[x][y])) {
             return region;
         }
-        int target = tileLayer[x][y];
         if (!contiguous) {
             for (int i = 0; i < cols; i++) {
                 for (int j = 0; j < rows; j++) {
-                    region[i][j] = tileLayer[i][j] == target;
+                    region[i][j] = targetTiles.contains(tileLayer[i][j]);
                 }
             }
             return region;
@@ -185,7 +199,7 @@ public class MapSelection {
                 int nx = p.x + d[0];
                 int ny = p.y + d[1];
                 if (nx >= 0 && nx < cols && ny >= 0 && ny < rows
-                        && !region[nx][ny] && tileLayer[nx][ny] == target) {
+                        && !region[nx][ny] && targetTiles.contains(tileLayer[nx][ny])) {
                     region[nx][ny] = true;
                     stack.push(new Point(nx, ny));
                 }
@@ -246,6 +260,37 @@ public class MapSelection {
             if (e2 < dx) {
                 err += dx;
                 y0 += sy;
+            }
+        }
+        return cells;
+    }
+
+    /**
+     * A four-connected version of a Bresenham line. Smart Drawing paths need
+     * every consecutive cell to share an edge, so diagonal steps receive one
+     * bridging cell along the line's dominant axis.
+     */
+    public static java.util.List<Point> orthogonalLine(Point a, Point b) {
+        java.util.List<Point> diagonalLine = bresenham(a, b);
+        java.util.ArrayList<Point> cells = new java.util.ArrayList<>();
+        if (diagonalLine.isEmpty()) {
+            return cells;
+        }
+        boolean horizontalFirst = Math.abs(b.x - a.x) >= Math.abs(b.y - a.y);
+        cells.add(new Point(diagonalLine.get(0)));
+        for (int i = 1; i < diagonalLine.size(); i++) {
+            Point previous = diagonalLine.get(i - 1);
+            Point next = diagonalLine.get(i);
+            if (previous.x != next.x && previous.y != next.y) {
+                Point bridge = horizontalFirst
+                        ? new Point(next.x, previous.y)
+                        : new Point(previous.x, next.y);
+                if (!cells.get(cells.size() - 1).equals(bridge)) {
+                    cells.add(bridge);
+                }
+            }
+            if (!cells.get(cells.size() - 1).equals(next)) {
+                cells.add(new Point(next));
             }
         }
         return cells;

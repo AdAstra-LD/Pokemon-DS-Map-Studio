@@ -22,12 +22,15 @@ import java.awt.Point;
 import java.awt.Polygon;
 import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
+import java.io.File;
 import java.util.ArrayList;
 import java.util.LinkedHashSet;
 import java.util.Map;
 import javax.swing.SwingUtilities;
+import javax.swing.filechooser.FileNameExtensionFilter;
 
 import tileset.PaletteFolder;
+import tileset.PaletteFolderBundleIO;
 import tileset.Tile;
 import tileset.Tileset;
 
@@ -111,9 +114,22 @@ public class TileSelector extends JPanel {
         }
     }
 
+    private static class PinnedLayout {
+        final Section section;
+        final Rectangle bounds;
+        final int bodyViewportHeight;
+
+        PinnedLayout(Section section, Rectangle bounds, int bodyViewportHeight) {
+            this.section = section;
+            this.bounds = bounds;
+            this.bodyViewportHeight = bodyViewportHeight;
+        }
+    }
+
     public TileSelector() {
         initComponents();
         ToolTipManager.sharedInstance().registerComponent(this);
+        addMouseWheelListener(this::scrollPinnedFolder);
     }
 
     @Override
@@ -492,14 +508,12 @@ public class TileSelector extends JPanel {
 
         for (int i = 0; i < tset.size(); i++) {
             allTiles.tileIndices.add(i);
-            String path = tset.get(i).getPaletteFolder();
-            if (path.isEmpty()) {
-                continue;
-            }
-            for (Section section : newSections) {
-                if (!section.allTiles && section.folder.getPath().equals(path)) {
-                    section.tileIndices.add(i);
-                    break;
+            for (String path : tset.get(i).getPaletteFolderSlots().keySet()) {
+                for (Section section : newSections) {
+                    if (!section.allTiles && section.folder.getPath().equals(path)) {
+                        section.tileIndices.add(i);
+                        break;
+                    }
                 }
             }
         }
@@ -564,7 +578,7 @@ public class TileSelector extends JPanel {
         int gridRows = 0;
         for (int index : section.tileIndices) {
             Tile tile = tset.get(index);
-            int slot = tile.getPaletteSlot();
+            int slot = tile.getPaletteSlot(section.folder.getPath());
             //Slots beyond a sane grid size (e.g. a hand edited sidecar) flow instead
             if (slot < 0 || slot >= section.columns * 512) {
                 flowing.add(index);
@@ -710,38 +724,65 @@ public class TileSelector extends JPanel {
     }
 
     private void drawPinnedFolderSections(Graphics2D g) {
-        Rectangle visible = getVisibleRect();
-        int stickyY = visible.y;
-        for (Section section : sections) {
-            Rectangle sticky = getPinnedSectionBounds(section, stickyY);
-            if (sticky != null) {
-                paintPinnedSection(g, section, sticky);
-                stickyY += sticky.height;
-            }
+        for (PinnedLayout layout : getPinnedLayouts()) {
+            paintPinnedSection(g, layout);
         }
     }
 
-    private void paintPinnedSection(Graphics2D g, Section section, Rectangle sticky) {
+    private void paintPinnedSection(Graphics2D g, PinnedLayout layout) {
+        Section section = layout.section;
+        Rectangle sticky = layout.bounds;
         Graphics2D copy = (Graphics2D) g.create();
         copy.setClip(sticky);
         copy.setColor(getBackground());
         copy.fillRect(sticky.x, sticky.y, sticky.width, sticky.height);
 
-        int dy = sticky.y - section.headerBounds.y;
-        copy.translate(0, dy);
+        copy.translate(sticky.x - section.headerBounds.x, sticky.y - section.headerBounds.y);
         paintSectionHeader(copy, section);
-        if (!section.isCollapsed() && !section.allTiles && section.columns > 0) {
-            paintEmptySlots(copy, section);
-            paintAddRowCell(copy, section);
-        }
-        for (Placement placement : placements) {
-            if (placement.section == section) {
-                copy.drawImage(getDisplayThumbnail(handler.getTileset().get(placement.tileIndex), placement.section),
-                        placement.bounds.x, placement.bounds.y, null);
-            }
-        }
-        paintPinnedSelectionOverlays(copy, section);
         copy.dispose();
+
+        if (layout.bodyViewportHeight > 0) {
+            int bodyTop = sticky.y + headerHeight + 1;
+            Graphics2D body = (Graphics2D) g.create();
+            body.setClip(sticky.x, bodyTop, sticky.width, layout.bodyViewportHeight);
+            body.setColor(getBackground());
+            body.fillRect(sticky.x, bodyTop, sticky.width, layout.bodyViewportHeight);
+            int dx = sticky.x - section.bodyBounds.x;
+            int dy = bodyTop - section.bodyBounds.y - section.folder.getPinnedScrollY();
+            body.translate(dx, dy);
+            if (!section.allTiles && section.columns > 0) {
+                paintEmptySlots(body, section);
+                paintAddRowCell(body, section);
+            }
+            for (Placement placement : placements) {
+                if (placement.section == section) {
+                    body.drawImage(getDisplayThumbnail(handler.getTileset().get(placement.tileIndex), placement.section),
+                            placement.bounds.x, placement.bounds.y, null);
+                }
+            }
+            paintPinnedSelectionOverlays(body, section);
+            body.dispose();
+            paintPinnedScrollIndicator(g, layout, bodyTop);
+        }
+    }
+
+    private void paintPinnedScrollIndicator(Graphics2D g, PinnedLayout layout, int bodyTop) {
+        int contentHeight = layout.section.bodyBounds.height;
+        if (contentHeight <= layout.bodyViewportHeight) {
+            return;
+        }
+        int trackX = layout.bounds.x + layout.bounds.width - 4;
+        g.setColor(new Color(0, 0, 0, 70));
+        g.fillRect(trackX, bodyTop, 4, layout.bodyViewportHeight);
+        int thumbHeight = Math.max(12,
+                layout.bodyViewportHeight * layout.bodyViewportHeight / contentHeight);
+        int maxThumbY = Math.max(0, layout.bodyViewportHeight - thumbHeight);
+        int maxScroll = contentHeight - layout.bodyViewportHeight;
+        int thumbY = bodyTop + (maxScroll == 0 ? 0
+                : layout.section.folder.getPinnedScrollY() * maxThumbY / maxScroll);
+        Color thumb = UIManager.getColor("ScrollBar.thumb");
+        g.setColor(thumb == null ? Color.gray : thumb);
+        g.fillRect(trackX, thumbY, 4, thumbHeight);
     }
 
     private void paintPinnedSelectionOverlays(Graphics2D g, Section section) {
@@ -764,6 +805,9 @@ public class TileSelector extends JPanel {
     }
 
     private void paintEmptySlots(Graphics2D g, Section section) {
+        if (section.folder != null && !section.folder.isGridLinesVisible()) {
+            return;
+        }
         Color line = UIManager.getColor("Label.disabledForeground");
         if (line == null) {
             line = Color.lightGray;
@@ -891,7 +935,8 @@ public class TileSelector extends JPanel {
                 Integer occupant = getSlotOccupant(target, cell.x, cell.y);
                 if (occupant != null && occupant != tileDragIndex) {
                     Tile other = handler.getTileset().get(occupant);
-                    other.setPaletteSlot(tile.getPaletteFolder().equals(targetPath) ? tile.getPaletteSlot() : -1);
+                    other.setPaletteSlot(targetPath,
+                            tile.getPaletteSlot(targetPath));
                 }
                 tile.setPaletteFolder(targetPath);
                 tile.setPaletteSlot(slot);
@@ -970,7 +1015,7 @@ public class TileSelector extends JPanel {
                 continue;
             }
             Tile tile = handler.getTileset().get(index);
-            int otherSlot = tile.getPaletteSlot();
+            int otherSlot = tile.getPaletteSlot(section.folder.getPath());
             if (otherSlot < 0) {
                 continue;
             }
@@ -996,7 +1041,7 @@ public class TileSelector extends JPanel {
     private Integer getSlotOccupant(Section section, int col, int row) {
         for (int index : section.tileIndices) {
             Tile tile = handler.getTileset().get(index);
-            int slot = tile.getPaletteSlot();
+            int slot = tile.getPaletteSlot(section.folder.getPath());
             if (slot < 0) {
                 continue;
             }
@@ -1024,19 +1069,6 @@ public class TileSelector extends JPanel {
             }
         }
         return null;
-    }
-
-    private Rectangle getPinnedSectionBounds(Section section, int stickyY) {
-        if (section.allTiles || section.folder == null || !section.folder.isPinned()
-                || section.headerBounds == null) {
-            return null;
-        }
-        Rectangle visible = getVisibleRect();
-        if (section.headerBounds.y >= visible.y) {
-            return null;
-        }
-        return new Rectangle(visible.x, stickyY,
-                Math.min(section.headerBounds.width, visible.width), getPinnedSectionHeight(section));
     }
 
     private Section getSectionAt(int x, int y) {
@@ -1084,28 +1116,81 @@ public class TileSelector extends JPanel {
         return -1;
     }
 
-    private int getPinnedSectionHeight(Section section) {
-        int height = headerHeight;
-        if (!section.isCollapsed() && section.bodyBounds != null) {
-            height += 1 + section.bodyBounds.height;
-        }
-        return height;
-    }
-
     private Point getSourcePoint(int x, int y) {
-        Rectangle visible = getVisibleRect();
-        int stickyY = visible.y;
-        for (Section section : sections) {
-            Rectangle sticky = getPinnedSectionBounds(section, stickyY);
-            if (sticky != null) {
-                if (sticky.contains(x, y)) {
-                    return new Point(x + section.headerBounds.x - sticky.x,
-                            y + section.headerBounds.y - sticky.y);
+        for (PinnedLayout layout : getPinnedLayouts()) {
+            if (layout.bounds.contains(x, y)) {
+                if (y < layout.bounds.y + headerHeight + 1) {
+                    return new Point(x + layout.section.headerBounds.x - layout.bounds.x,
+                            y + layout.section.headerBounds.y - layout.bounds.y);
                 }
-                stickyY += sticky.height;
+                return new Point(x + layout.section.bodyBounds.x - layout.bounds.x,
+                        y - (layout.bounds.y + headerHeight + 1)
+                                + layout.section.bodyBounds.y
+                                + layout.section.folder.getPinnedScrollY());
             }
         }
         return new Point(x, y);
+    }
+
+    private ArrayList<PinnedLayout> getPinnedLayouts() {
+        Rectangle visible = getVisibleRect();
+        ArrayList<Section> active = new ArrayList<>();
+        int expanded = 0;
+        for (Section section : sections) {
+            if (!section.allTiles && section.folder != null && section.folder.isPinned()
+                    && section.headerBounds != null && section.headerBounds.y < visible.y) {
+                active.add(section);
+                if (!section.isCollapsed() && section.bodyBounds != null
+                        && section.bodyBounds.height > 0) {
+                    expanded++;
+                }
+            }
+        }
+        ArrayList<PinnedLayout> result = new ArrayList<>();
+        if (active.isEmpty()) {
+            return result;
+        }
+        int maxStack = Math.max(headerHeight, (int) (visible.height * 0.55));
+        int headerBudget = active.size() * headerHeight;
+        int bodyBudget = Math.max(0, maxStack - headerBudget - active.size());
+        int bodyShare = expanded == 0 ? 0 : bodyBudget / expanded;
+        int y = visible.y;
+        for (Section section : active) {
+            int bodyHeight = section.isCollapsed() || section.bodyBounds == null
+                    ? 0 : Math.min(section.bodyBounds.height, bodyShare);
+            int maxScroll = Math.max(0, section.bodyBounds == null
+                    ? 0 : section.bodyBounds.height - bodyHeight);
+            section.folder.setPinnedScrollY(Math.min(section.folder.getPinnedScrollY(), maxScroll));
+            int height = headerHeight + (bodyHeight > 0 ? 1 + bodyHeight : 0);
+            Rectangle bounds = new Rectangle(visible.x, y,
+                    Math.min(section.headerBounds.width, visible.width), height);
+            result.add(new PinnedLayout(section, bounds, bodyHeight));
+            y += height;
+        }
+        return result;
+    }
+
+    private void scrollPinnedFolder(MouseWheelEvent evt) {
+        for (PinnedLayout layout : getPinnedLayouts()) {
+            if (layout.bodyViewportHeight <= 0 || !layout.bounds.contains(evt.getPoint())
+                    || evt.getY() < layout.bounds.y + headerHeight + 1) {
+                continue;
+            }
+            int maxScroll = Math.max(0,
+                    layout.section.bodyBounds.height - layout.bodyViewportHeight);
+            if (maxScroll == 0) {
+                return;
+            }
+            int old = layout.section.folder.getPinnedScrollY();
+            int next = Math.max(0, Math.min(maxScroll,
+                    old + evt.getWheelRotation() * tilePixelSize * 3));
+            if (next != old) {
+                layout.section.folder.setPinnedScrollY(next);
+                evt.consume();
+                repaint();
+            }
+            return;
+        }
     }
 
     private Rectangle offsetRect(Rectangle r, int dx, int dy) {
@@ -1116,6 +1201,9 @@ public class TileSelector extends JPanel {
 
     private void showTileMenu(int index, MouseEvent evt) {
         Tile tile = handler.getTileset().get(index);
+        Section occurrence = getSectionAt(evt.getX(), evt.getY());
+        String occurrenceFolder = occurrence != null && !occurrence.allTiles
+                ? occurrence.folder.getPath() : PaletteFolder.UNSORTED;
         JPopupMenu menu = new JPopupMenu();
 
         String name = tile.getPaletteName();
@@ -1130,26 +1218,36 @@ public class TileSelector extends JPanel {
 
         ArrayList<Integer> single = new ArrayList<>();
         single.add(index);
-        menu.add(buildFolderMoveMenu(single, tile.getPaletteFolder()));
+        menu.add(buildFolderMoveMenu(single, occurrenceFolder));
 
         JMenuItem miRemoveFolder = new JMenuItem("Remove from Folder");
-        miRemoveFolder.setEnabled(!tile.getPaletteFolder().isEmpty());
-        miRemoveFolder.addActionListener(e -> moveTilesToFolder(single, PaletteFolder.UNSORTED));
+        miRemoveFolder.setEnabled(!occurrenceFolder.isEmpty());
+        miRemoveFolder.addActionListener(e -> {
+            tile.removePaletteFolder(occurrenceFolder);
+            updateLayout();
+            repaint();
+        });
         menu.add(miRemoveFolder);
 
         JMenuItem miDisplaySize = new JMenuItem("Folder Display Size...");
-        miDisplaySize.setEnabled(!tile.getPaletteFolder().isEmpty());
+        miDisplaySize.setEnabled(!occurrenceFolder.isEmpty());
         miDisplaySize.addActionListener(e -> showFolderDisplaySizeDialog(index));
         menu.add(miDisplaySize);
 
-        JMenuItem miCollision = new JMenuItem("Collision Defaults...");
+        JMenu collisionMenu = new JMenu("Collision Defaults");
+        JMenuItem miCollisionFootprint = new JMenuItem("Set Footprint...");
+        miCollisionFootprint.addActionListener(e -> showCollisionFootprintDialog(index));
+        collisionMenu.add(miCollisionFootprint);
+        JMenuItem miCollision = new JMenuItem("Edit Defaults...");
         miCollision.addActionListener(e -> showCollisionDefaultsDialog(index));
-        menu.add(miCollision);
+        collisionMenu.add(miCollision);
+        menu.add(collisionMenu);
 
         JMenuItem miClearSlot = new JMenuItem("Clear Layout Slot");
-        miClearSlot.setEnabled(tile.getPaletteSlot() >= 0);
+        miClearSlot.setEnabled(!occurrenceFolder.isEmpty()
+                && tile.getPaletteSlot(occurrenceFolder) >= 0);
         miClearSlot.addActionListener(e -> {
-            tile.setPaletteSlot(-1);
+            tile.setPaletteSlot(occurrenceFolder, -1);
             updateLayout();
             repaint();
         });
@@ -1249,6 +1347,10 @@ public class TileSelector extends JPanel {
             });
             menu.add(miRename);
 
+            JMenuItem miExportFolder = new JMenuItem("Export This Folder...");
+            miExportFolder.addActionListener(e -> exportFolder(folder));
+            menu.add(miExportFolder);
+
             JCheckBoxMenuItem miPinned = new JCheckBoxMenuItem("Pin Folder While Scrolling",
                     folder.isPinned());
             miPinned.addActionListener(e -> {
@@ -1257,16 +1359,10 @@ public class TileSelector extends JPanel {
             });
             menu.add(miPinned);
 
-            JCheckBoxMenuItem miUseGrid = new JCheckBoxMenuItem("Use Layout Grid", folder.getColumns() > 0);
+            JCheckBoxMenuItem miUseGrid = new JCheckBoxMenuItem("Show Grid Lines",
+                    folder.isGridLinesVisible());
             miUseGrid.addActionListener(e -> {
-                if (miUseGrid.isSelected()) {
-                    folder.setColumns(Math.min(maxCols, Math.max(1, handler.getTileset().size())));
-                } else {
-                    folder.setColumns(0);
-                    for (int index : section.tileIndices) {
-                        handler.getTileset().get(index).setPaletteSlot(-1);
-                    }
-                }
+                folder.setGridLinesVisible(miUseGrid.isSelected());
                 updateLayout();
                 repaint();
             });
@@ -1276,13 +1372,13 @@ public class TileSelector extends JPanel {
             miColumns.addActionListener(e -> {
                 int maxColumns = Math.max(1, handler.getTileset().size());
                 SpinnerNumberModel columnsModel = new SpinnerNumberModel(
-                        folder.getColumns(), 0, maxColumns, 1);
+                        Math.max(1, folder.getColumns()), 1, maxColumns, 1);
                 SpinnerNumberModel rowsModel = new SpinnerNumberModel(
                         folder.getRows(), 1, Math.max(folder.getRows(), 512), 1);
                 JSpinner columnsSpinner = new JSpinner(columnsModel);
                 JSpinner rowsSpinner = new JSpinner(rowsModel);
                 JPanel panel = new JPanel(new java.awt.GridLayout(0, 2, 6, 4));
-                panel.add(new JLabel("Columns (0 = flow):"));
+                panel.add(new JLabel("Columns:"));
                 panel.add(columnsSpinner);
                 panel.add(new JLabel("Rows:"));
                 panel.add(rowsSpinner);
@@ -1346,6 +1442,10 @@ public class TileSelector extends JPanel {
         miNew.addActionListener(e -> promptNewFolder());
         menu.add(miNew);
 
+        JMenuItem miImport = new JMenuItem("Import Folder...");
+        miImport.addActionListener(e -> importFolder());
+        menu.add(miImport);
+
         if (hasNamedFolders()) {
             JMenuItem miExpand = new JMenuItem("Expand All");
             miExpand.addActionListener(e -> setAllCollapsed(false));
@@ -1355,6 +1455,62 @@ public class TileSelector extends JPanel {
             miCollapse.addActionListener(e -> setAllCollapsed(true));
             menu.add(miCollapse);
         }
+    }
+
+    private void exportFolder(PaletteFolder folder) {
+        JFileChooser chooser = createFolderBundleChooser("Export Palette Folder");
+        chooser.setSelectedFile(new File(folder.getPath().replace('/', '-')
+                + "." + PaletteFolderBundleIO.EXTENSION));
+        if (chooser.showSaveDialog(getDialogParent()) != JFileChooser.APPROVE_OPTION) {
+            return;
+        }
+        File selected = chooser.getSelectedFile();
+        File output = selected.getName().toLowerCase().endsWith(
+                "." + PaletteFolderBundleIO.EXTENSION)
+                ? selected : new File(selected.getPath() + "." + PaletteFolderBundleIO.EXTENSION);
+        try {
+            PaletteFolderBundleIO.write(output, handler.getTileset(), folder);
+            JOptionPane.showMessageDialog(getDialogParent(),
+                    "Folder exported to:\n" + output.getPath(), "Export Palette Folder",
+                    JOptionPane.INFORMATION_MESSAGE);
+        } catch (Exception ex) {
+            JOptionPane.showMessageDialog(getDialogParent(),
+                    "Can't export folder:\n" + ex.getMessage(), "Export Palette Folder",
+                    JOptionPane.ERROR_MESSAGE);
+        }
+    }
+
+    private void importFolder() {
+        JFileChooser chooser = createFolderBundleChooser("Import Palette Folder");
+        if (chooser.showOpenDialog(getDialogParent()) != JFileChooser.APPROVE_OPTION) {
+            return;
+        }
+        try {
+            int added = PaletteFolderBundleIO.read(chooser.getSelectedFile(), handler.getTileset());
+            handler.getMainFrame().renderTilesetThumbnails();
+            updateLayout();
+            repaint();
+            handler.getMainFrame().updateTileSelectorLayout();
+            if (dialog != null) {
+                dialog.updateViewTileIndex();
+            }
+            JOptionPane.showMessageDialog(getDialogParent(),
+                    "Folder imported. " + added + " new tile(s) were added; matching tiles were reused.",
+                    "Import Palette Folder", JOptionPane.INFORMATION_MESSAGE);
+        } catch (Exception ex) {
+            JOptionPane.showMessageDialog(getDialogParent(),
+                    "Can't import folder:\n" + ex.getMessage(), "Import Palette Folder",
+                    JOptionPane.ERROR_MESSAGE);
+        }
+    }
+
+    private JFileChooser createFolderBundleChooser(String title) {
+        JFileChooser chooser = new JFileChooser();
+        chooser.setDialogTitle(title);
+        chooser.setFileFilter(new FileNameExtensionFilter(
+                "PDSMS palette folder (*." + PaletteFolderBundleIO.EXTENSION + ")",
+                PaletteFolderBundleIO.EXTENSION));
+        return chooser;
     }
 
     private java.awt.Component getDialogParent() {
@@ -1482,13 +1638,99 @@ public class TileSelector extends JPanel {
 
     /* -------------------- Smart collision defaults (per cell) -------------------- */
 
+    private void showCollisionFootprintDialog(int index) {
+        Tile tile = handler.getTileset().get(index);
+        SpinnerNumberModel widthModel = new SpinnerNumberModel(
+                tile.getCollisionFootprintWidth(), 1, 32, 1);
+        SpinnerNumberModel heightModel = new SpinnerNumberModel(
+                tile.getCollisionFootprintHeight(), 1, 32, 1);
+        SpinnerNumberModel anchorXModel = new SpinnerNumberModel(
+                tile.getCollisionFootprintAnchorX(), 0,
+                tile.getCollisionFootprintWidth() - 1, 1);
+        SpinnerNumberModel anchorYModel = new SpinnerNumberModel(
+                tile.getCollisionFootprintAnchorY(), 0,
+                tile.getCollisionFootprintHeight() - 1, 1);
+        JSpinner widthSpinner = new JSpinner(widthModel);
+        JSpinner heightSpinner = new JSpinner(heightModel);
+        JSpinner anchorXSpinner = new JSpinner(anchorXModel);
+        JSpinner anchorYSpinner = new JSpinner(anchorYModel);
+        JCheckBox followTileSize = new JCheckBox("Use Folder Display Size ("
+                + tile.getPaletteDisplayWidth() + " x " + tile.getPaletteDisplayHeight() + ")",
+                !tile.hasCustomCollisionFootprint());
+
+        Runnable updateControls = () -> {
+            boolean custom = !followTileSize.isSelected();
+            if (!custom) {
+                widthSpinner.setValue(tile.getPaletteDisplayWidth());
+                heightSpinner.setValue(tile.getPaletteDisplayHeight());
+                anchorXSpinner.setValue(0);
+                anchorYSpinner.setValue(tile.getPaletteDisplayHeight() - 1);
+            }
+            widthSpinner.setEnabled(custom);
+            heightSpinner.setEnabled(custom);
+            anchorXSpinner.setEnabled(custom);
+            anchorYSpinner.setEnabled(custom);
+        };
+        Runnable updateAnchorLimits = () -> {
+            int maxX = (Integer) widthSpinner.getValue() - 1;
+            int maxY = (Integer) heightSpinner.getValue() - 1;
+            if ((Integer) anchorXSpinner.getValue() > maxX) {
+                anchorXSpinner.setValue(maxX);
+            }
+            if ((Integer) anchorYSpinner.getValue() > maxY) {
+                anchorYSpinner.setValue(maxY);
+            }
+            anchorXModel.setMaximum(maxX);
+            anchorYModel.setMaximum(maxY);
+        };
+        followTileSize.addActionListener(e -> {
+            updateControls.run();
+            updateAnchorLimits.run();
+        });
+        widthSpinner.addChangeListener(e -> updateAnchorLimits.run());
+        heightSpinner.addChangeListener(e -> updateAnchorLimits.run());
+        updateControls.run();
+        updateAnchorLimits.run();
+
+        JPanel fields = new JPanel(new java.awt.GridLayout(0, 2, 6, 4));
+        fields.add(new JLabel("Footprint width:"));
+        fields.add(widthSpinner);
+        fields.add(new JLabel("Footprint height:"));
+        fields.add(heightSpinner);
+        fields.add(new JLabel("Anchor column:"));
+        fields.add(anchorXSpinner);
+        fields.add(new JLabel("Anchor row (top = 0):"));
+        fields.add(anchorYSpinner);
+
+        JPanel panel = new JPanel(new BorderLayout(4, 6));
+        panel.add(new JLabel("The anchor cell aligns with the tile's map placement square."),
+                BorderLayout.NORTH);
+        panel.add(fields, BorderLayout.CENTER);
+        panel.add(followTileSize, BorderLayout.SOUTH);
+
+        int result = JOptionPane.showConfirmDialog(getDialogParent(), panel,
+                "Collision Footprint - Tile " + index,
+                JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE);
+        if (result == JOptionPane.OK_OPTION) {
+            if (followTileSize.isSelected()) {
+                tile.resetCollisionFootprint();
+            } else {
+                tile.setCollisionFootprint((Integer) widthSpinner.getValue(),
+                        (Integer) heightSpinner.getValue(),
+                        (Integer) anchorXSpinner.getValue(),
+                        (Integer) anchorYSpinner.getValue());
+            }
+            repaint();
+        }
+    }
+
     private void showCollisionDefaultsDialog(int index) {
         Tile tile = handler.getTileset().get(index);
         int gameIndex = handler.getGameIndex();
         CollisionTypes types = new CollisionTypes(gameIndex);
         int numLayers = CollisionTypes.numLayersPerGame[gameIndex];
-        int w = tile.getWidth();
-        int h = tile.getHeight();
+        int w = tile.getCollisionFootprintWidth();
+        int h = tile.getCollisionFootprintHeight();
 
         //Working copies of the per-cell grids
         int[][][] work = new int[numLayers][w][h];
@@ -1535,13 +1777,20 @@ public class TileSelector extends JPanel {
         });
 
         //Grid painted over the tile's own image; big enough cells to click
-        final int cellPx = Math.max(24, Math.min(64, 192 / Math.max(w, h)));
+        final int cellPx = Math.max(12, Math.min(48, 320 / Math.max(w, h)));
         JPanel gridPanel = new JPanel() {
             @Override
             protected void paintComponent(Graphics g) {
                 super.paintComponent(g);
                 int layer = layerCombo.getSelectedIndex();
-                g.drawImage(tile.getThumbnail(), 0, 0, w * cellPx, h * cellPx, null);
+                int displayWidth = tile.getPaletteDisplayWidth();
+                int displayHeight = tile.getPaletteDisplayHeight();
+                int anchorX = tile.getCollisionFootprintAnchorX();
+                int anchorY = tile.getCollisionFootprintAnchorY();
+                int imageX = anchorX * cellPx;
+                int imageY = (anchorY - displayHeight + 1) * cellPx;
+                g.drawImage(tile.getPaletteThumbnail(), imageX, imageY,
+                        displayWidth * cellPx, displayHeight * cellPx, null);
                 Graphics2D g2d = (Graphics2D) g;
                 for (int i = 0; i < w; i++) {
                     for (int j = 0; j < h; j++) {
@@ -1551,13 +1800,20 @@ public class TileSelector extends JPanel {
                             g2d.setColor(new Color(fill.getRed(), fill.getGreen(), fill.getBlue(), 140));
                             g2d.fillRect(i * cellPx, j * cellPx, cellPx, cellPx);
                             g2d.setColor(CollisionTypes.getContrastColor(fill));
-                            g2d.drawString(String.format("%02X", value),
-                                    i * cellPx + cellPx / 2 - 7, j * cellPx + cellPx / 2 + 5);
+                            if (cellPx >= 22) {
+                                g2d.drawString(String.format("%02X", value),
+                                        i * cellPx + cellPx / 2 - 7, j * cellPx + cellPx / 2 + 5);
+                            }
                         }
                         g2d.setColor(new Color(0, 0, 0, 120));
                         g2d.drawRect(i * cellPx, j * cellPx, cellPx - 1, cellPx - 1);
                     }
                 }
+                g2d.setColor(Color.YELLOW);
+                g2d.drawRect(anchorX * cellPx + 1, anchorY * cellPx + 1,
+                        cellPx - 3, cellPx - 3);
+                g2d.drawRect(anchorX * cellPx + 2, anchorY * cellPx + 2,
+                        cellPx - 5, cellPx - 5);
             }
         };
         gridPanel.setPreferredSize(new Dimension(w * cellPx, h * cellPx));
@@ -1608,6 +1864,7 @@ public class TileSelector extends JPanel {
         JPanel top = new JPanel(new java.awt.GridLayout(0, 1, 4, 2));
         top.add(new JLabel("Left click / drag a cell to stamp the selected collision,"));
         top.add(new JLabel("right click a cell to clear it (no default = untouched):"));
+        top.add(new JLabel("The yellow cell is the tile's map placement anchor."));
         JPanel combos = new JPanel(new FlowLayout(FlowLayout.LEFT, 4, 0));
         combos.add(layerCombo);
         combos.add(valueCombo);
@@ -1626,7 +1883,9 @@ public class TileSelector extends JPanel {
         panel.add(buttons, BorderLayout.SOUTH);
 
         int result = JOptionPane.showConfirmDialog(getDialogParent(), panel,
-                "Collision Defaults - Tile " + index + " (" + w + "x" + h + ")",
+                "Collision Defaults - Tile " + index + " (" + w + "x" + h
+                        + ", anchor " + tile.getCollisionFootprintAnchorX()
+                        + "," + tile.getCollisionFootprintAnchorY() + ")",
                 JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE);
         if (result == JOptionPane.OK_OPTION) {
             for (int layer = 0; layer < numLayers; layer++) {

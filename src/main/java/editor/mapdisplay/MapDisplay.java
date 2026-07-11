@@ -52,7 +52,9 @@ import editor.grid.GeometryGL;
 import editor.grid.MapGrid;
 import editor.grid.MapLayerGL;
 import editor.handler.MapData;
+import editor.smartdrawing.SmartGrid;
 import editor.state.MapLayerState;
+import formats.collisions.CollisionDefaultsApplier;
 import geometry.Generator;
 import graphicslib3D.Matrix3D;
 import graphicslib3D.Vector3D;
@@ -241,6 +243,16 @@ public class MapDisplay extends GLJPanel implements GLEventListener, MouseListen
     protected Point shapeStart = null;
     protected Point shapeEnd = null;
     protected Point shapeMap = null;
+    protected Point smartStrokeMap = null;
+    protected Point smartStrokeLast = null;
+    protected ArrayList<Point> smartStrokeCells = null;
+    protected int[][] smartStrokeBaseLayer = null;
+    protected int smartStrokeLayer = -1;
+    protected int smartStrokeStartTile = -1;
+    protected boolean smartStrokeInverted = false;
+    protected boolean smartShapeInverted = false;
+    protected boolean smartToolsEnabled = false;
+    protected boolean autoCollisionEnabled = false;
 
     //Selection context menu
     protected javax.swing.JPopupMenu selectionPopupMenu = null;
@@ -1341,6 +1353,7 @@ public class MapDisplay extends GLJPanel implements GLEventListener, MouseListen
             if (isPointInsideGrid(p.x, p.y) && handler.getActiveTileLayer()[p.x][p.y] != handler.getTileIndexSelected()) {
                 Tile tile = handler.getTileSelected();
                 handler.getGrid().floodFillTileGrid(p.x, p.y, handler.getTileIndexSelected(), tile.getWidth(), tile.getHeight());
+                applyAutoCollision(handler.getMapSelected());
                 //updateMapThumbnail(e);
             }
         }
@@ -1361,6 +1374,7 @@ public class MapDisplay extends GLJPanel implements GLEventListener, MouseListen
             Point p = getCoordsInSelectedMap(e);
             if (isPointInsideGrid(p.x, p.y)) {
                 handler.getSmartGridSelected().useSmartFill(handler, p.x, p.y, invert);
+                applyAutoCollision(handler.getMapSelected());
                 //updateMapThumbnail(e);
             }
         }
@@ -1384,6 +1398,7 @@ public class MapDisplay extends GLJPanel implements GLEventListener, MouseListen
                 System.out.println("Xg: " + p.x + " Yg: " + p.y);
                 clearAreaUnderTile(tileGrid, p.x, p.y, tile.getWidth(), tile.getHeight());
                 tileGrid[p.x][p.y] = handler.getTileIndexSelected();
+                applyAutoCollision(handler.getMapSelected());
                 //updateMapThumbnail(e);
             }
         }
@@ -1400,6 +1415,7 @@ public class MapDisplay extends GLJPanel implements GLEventListener, MouseListen
             if (isPointInsideGrid(p.x, p.y) /*&& canUseDragging(p.x, p.y, tile.getWidth(), tile.getHeight())*/) {
                 clearAreaUnderTile(tileGrid, p.x, p.y, tile.getWidth(), tile.getHeight());
                 tileGrid[p.x][p.y] = handler.getTileIndexSelected();
+                applyAutoCollision(handler.getMapSelected());
             }
         }
     }
@@ -1662,7 +1678,13 @@ public class MapDisplay extends GLJPanel implements GLEventListener, MouseListen
         Point cell = getCoordsInMap(e, map);
         int[][] tileLayer = handler.getMapMatrix().getMapAndCreate(map)
                 .getGrid().tileLayers[handler.getActiveLayerIndex()];
-        boolean[][] region = MapSelection.computeWandRegion(tileLayer, cell.x, cell.y, !global);
+        boolean[][] region;
+        if (canUseSmartTools()) {
+            region = MapSelection.computeWandRegion(tileLayer, cell.x, cell.y, !global,
+                    handler.getSmartGridSelected().getTileIndices());
+        } else {
+            region = MapSelection.computeWandRegion(tileLayer, cell.x, cell.y, !global);
+        }
 
         boolean combine = (e.isControlDown() || global)
                 && hasSelection() && map.equals(selection.getMapCoords());
@@ -1796,6 +1818,7 @@ public class MapDisplay extends GLJPanel implements GLEventListener, MouseListen
                 }
             }
         }
+        applyAutoCollision(selection.getMapCoords());
         refreshMapLayer(selection.getMapCoords());
     }
 
@@ -1832,6 +1855,7 @@ public class MapDisplay extends GLJPanel implements GLEventListener, MouseListen
 
         handler.addMapState(new MapLayerState("Paste Selection", handler));
         Set<Point> touched = writeRegionGlobal(anchor.x, anchor.y, tiles, heights, mask);
+        applyAutoCollision(touched);
         setSelectionFromGlobalRegion(anchor.x, anchor.y, mask);
         refreshMaps(touched);
         pasting = false;
@@ -1960,12 +1984,17 @@ public class MapDisplay extends GLJPanel implements GLEventListener, MouseListen
         int[][] tiles = new int[w][h];
         int[][] heights = new int[w][h];
         boolean[][] mask = new boolean[w][h];
+        boolean[][] smartMask = new boolean[w][h];
         boolean[][] selMask = selection.getMask();
+        Set<Integer> smartTileIndices = canUseSmartTools()
+                ? handler.getSmartGridSelected().getTileIndices()
+                : java.util.Collections.emptySet();
         for (int i = 0; i < w; i++) {
             for (int j = 0; j < h; j++) {
                 tiles[i][j] = grid.tileLayers[layer][r.x + i][r.y + j];
                 heights[i][j] = grid.heightLayers[layer][r.x + i][r.y + j];
                 mask[i][j] = selMask[r.x + i][r.y + j];
+                smartMask[i][j] = mask[i][j] && smartTileIndices.contains(tiles[i][j]);
             }
         }
 
@@ -1978,6 +2007,7 @@ public class MapDisplay extends GLJPanel implements GLEventListener, MouseListen
         int[][] newTiles = new int[nw][nh];
         int[][] newHeights = new int[nw][nh];
         boolean[][] newMask = new boolean[nw][nh];
+        boolean[][] newSmartMask = new boolean[nw][nh];
         for (int i = 0; i < w; i++) {
             for (int j = 0; j < h; j++) {
                 int ni, nj;
@@ -1994,6 +2024,18 @@ public class MapDisplay extends GLJPanel implements GLEventListener, MouseListen
                 newTiles[ni][nj] = tiles[i][j];
                 newHeights[ni][nj] = heights[i][j];
                 newMask[ni][nj] = mask[i][j];
+                newSmartMask[ni][nj] = smartMask[i][j];
+            }
+        }
+
+        if (!smartTileIndices.isEmpty() && hasCells(newSmartMask)) {
+            int[][] resolved = handler.getSmartGridSelected().resolveMask(newSmartMask, false);
+            for (int i = 0; i < nw; i++) {
+                for (int j = 0; j < nh; j++) {
+                    if (newSmartMask[i][j]) {
+                        newTiles[i][j] = resolved[i][j];
+                    }
+                }
             }
         }
 
@@ -2120,6 +2162,7 @@ public class MapDisplay extends GLJPanel implements GLEventListener, MouseListen
         }
         handler.getGrid().floodFillTileGrid(p.x, p.y, handler.getTileIndexSelected(),
                 tile.getWidth(), tile.getHeight(), restrict);
+        applyAutoCollision(handler.getMapSelected());
         refreshMapLayer(handler.getMapSelected());
     }
 
@@ -2136,11 +2179,12 @@ public class MapDisplay extends GLJPanel implements GLEventListener, MouseListen
         repaint();
     }
 
-    protected void startShape(MouseEvent e) {
+    protected void startShape(MouseEvent e, boolean inverted) {
         setMapSelected(e);
         shapeMap = getMapCoords(e);
         shapeStart = getCoordsInMap(e, shapeMap);
         shapeEnd = new Point(shapeStart);
+        smartShapeInverted = inverted;
     }
 
     protected void updateShape(MouseEvent e) {
@@ -2150,20 +2194,114 @@ public class MapDisplay extends GLJPanel implements GLEventListener, MouseListen
     }
 
     protected void commitLine() {
-        commitShapeCells("Draw Line", MapSelection.bresenham(shapeStart, shapeEnd));
+        java.util.List<Point> cells = canUseSmartTools()
+                ? MapSelection.orthogonalLine(shapeStart, shapeEnd)
+                : MapSelection.bresenham(shapeStart, shapeEnd);
+        commitShapeCells("Draw Line", cells);
     }
 
     protected void commitRectShape() {
-        commitShapeCells("Draw Rectangle", getRectOutlineCells(shapeStart, shapeEnd));
+        commitShapeCells("Draw Rectangle", canUseSmartTools()
+                ? getRectFillCells(shapeStart, shapeEnd)
+                : getRectOutlineCells(shapeStart, shapeEnd));
+    }
+
+    protected boolean canStartSmartStroke() {
+        return canUseSmartTools()
+                && handler.getSmartGridSelected().containsTile(handler.getTileIndexSelected());
+    }
+
+    protected void startSmartStroke(MouseEvent e, boolean inverted) {
+        setMapSelected(e);
+        smartStrokeMap = new Point(handler.getMapSelected());
+        smartStrokeLayer = handler.getActiveLayerIndex();
+        smartStrokeStartTile = handler.getTileIndexSelected();
+        smartStrokeInverted = inverted;
+        smartStrokeCells = new ArrayList<>();
+        smartStrokeLast = getCoordsInMap(e, smartStrokeMap);
+        smartStrokeCells.add(new Point(smartStrokeLast));
+        int[][] source = handler.getMapMatrix().getMapAndCreate(smartStrokeMap)
+                .getGrid().tileLayers[smartStrokeLayer];
+        smartStrokeBaseLayer = cloneIntGrid(source);
+        renderSmartStroke();
+    }
+
+    protected void extendSmartStroke(MouseEvent e) {
+        if (smartStrokeMap == null || smartStrokeCells == null
+                || !smartStrokeMap.equals(getMapCoords(e))) {
+            return;
+        }
+        Point next = getCoordsInMap(e, smartStrokeMap);
+        if (next.equals(smartStrokeLast)) {
+            return;
+        }
+        java.util.List<Point> segment = MapSelection.bresenham(smartStrokeLast, next);
+        for (int i = 1; i < segment.size(); i++) {
+            Point cell = segment.get(i);
+            if (smartStrokeCells.isEmpty()
+                    || !smartStrokeCells.get(smartStrokeCells.size() - 1).equals(cell)) {
+                smartStrokeCells.add(new Point(cell));
+            }
+        }
+        smartStrokeLast = next;
+        renderSmartStroke();
+    }
+
+    protected void finishSmartStroke() {
+        if (smartStrokeMap != null) {
+            applyAutoCollision(smartStrokeMap);
+            refreshMapLayer(smartStrokeMap);
+        }
+        resetSmartStroke();
+    }
+
+    private void renderSmartStroke() {
+        MapGrid grid = handler.getMapMatrix().getMapAndCreate(smartStrokeMap).getGrid();
+        int[][] target = grid.tileLayers[smartStrokeLayer];
+        for (int x = 0; x < target.length; x++) {
+            System.arraycopy(smartStrokeBaseLayer[x], 0, target[x], 0, target[x].length);
+        }
+        int[][] resolved = handler.getSmartGridSelected().resolvePath(
+                smartStrokeCells, smartStrokeStartTile, cols, rows, smartStrokeInverted);
+        for (Point cell : smartStrokeCells) {
+            int tileIndex = resolved[cell.x][cell.y];
+            if (tileIndex >= 0) {
+                target[cell.x][cell.y] = tileIndex;
+            }
+        }
+    }
+
+    private void resetSmartStroke() {
+        smartStrokeMap = null;
+        smartStrokeLast = null;
+        smartStrokeCells = null;
+        smartStrokeBaseLayer = null;
+        smartStrokeLayer = -1;
+        smartStrokeStartTile = -1;
+        smartStrokeInverted = false;
+    }
+
+    private static int[][] cloneIntGrid(int[][] source) {
+        int[][] copy = new int[source.length][];
+        for (int i = 0; i < source.length; i++) {
+            copy[i] = java.util.Arrays.copyOf(source[i], source[i].length);
+        }
+        return copy;
     }
 
     protected void commitEllipseShape() {
-        commitShapeCells("Draw Circle", getEllipseOutlineCells(shapeStart, shapeEnd));
+        commitShapeCells("Draw Circle", canUseSmartTools()
+                ? getEllipseFillCells(shapeStart, shapeEnd)
+                : getEllipseOutlineCells(shapeStart, shapeEnd));
     }
 
     private void commitShapeCells(String stateName, java.util.List<Point> cells) {
         if (shapeMap == null || handler.getTileset().size() == 0) {
             resetShape();
+            return;
+        }
+        if (canUseSmartTools()) {
+            commitSmartShapeCells("Smart " + stateName, cells);
             return;
         }
         handler.addMapState(new MapLayerState(stateName, handler));
@@ -2175,14 +2313,97 @@ public class MapDisplay extends GLJPanel implements GLEventListener, MouseListen
             grid.tileLayers[layer][cell.x][cell.y] = handler.getTileIndexSelected();
         }
         Point map = shapeMap;
+        applyAutoCollision(map);
         resetShape();
         refreshMapLayer(map);
     }
 
+    private void commitSmartShapeCells(String stateName, java.util.List<Point> cells) {
+        Point map = shapeMap;
+        MapGrid grid = handler.getMapMatrix().getMapAndCreate(map).getGrid();
+        int layer = handler.getActiveLayerIndex();
+        boolean[][] mask = buildSmartShapeMask(cells, grid.tileLayers[layer]);
+        if (!hasCells(mask)) {
+            resetShape();
+            return;
+        }
+
+        int[][] resolved = editMode == EditMode.MODE_LINE
+                ? handler.getSmartGridSelected().resolvePath(cells,
+                        handler.getTileIndexSelected(), cols, rows, smartShapeInverted)
+                : handler.getSmartGridSelected().resolveMask(mask, smartShapeInverted);
+        handler.addMapState(new MapLayerState(stateName, handler));
+        for (int x = 0; x < cols; x++) {
+            for (int y = 0; y < rows; y++) {
+                if (mask[x][y] && resolved[x][y] >= 0) {
+                    grid.tileLayers[layer][x][y] = resolved[x][y];
+                }
+            }
+        }
+        applyAutoCollision(map);
+        resetShape();
+        refreshMapLayer(map);
+    }
+
+    /**
+     * Combines the newly drawn footprint with existing connected cells from
+     * the selected template so joins and end caps update together.
+     */
+    private boolean[][] buildSmartShapeMask(java.util.List<Point> cells, int[][] tileLayer) {
+        boolean[][] candidates = new boolean[cols][rows];
+        boolean[][] affected = new boolean[cols][rows];
+        Set<Integer> templateTiles = handler.getSmartGridSelected().getTileIndices();
+        for (int x = 0; x < cols; x++) {
+            for (int y = 0; y < rows; y++) {
+                candidates[x][y] = templateTiles.contains(tileLayer[x][y]);
+            }
+        }
+
+        java.util.ArrayDeque<Point> queue = new java.util.ArrayDeque<>();
+        for (Point cell : cells) {
+            if (!isPointInsideGrid(cell.x, cell.y)) {
+                continue;
+            }
+            candidates[cell.x][cell.y] = true;
+            if (!affected[cell.x][cell.y]) {
+                affected[cell.x][cell.y] = true;
+                queue.addLast(new Point(cell));
+            }
+        }
+
+        int[][] deltas = {{1, 0}, {-1, 0}, {0, 1}, {0, -1}};
+        while (!queue.isEmpty()) {
+            Point cell = queue.removeFirst();
+            for (int[] delta : deltas) {
+                int nx = cell.x + delta[0];
+                int ny = cell.y + delta[1];
+                if (nx >= 0 && nx < cols && ny >= 0 && ny < rows
+                        && candidates[nx][ny] && !affected[nx][ny]) {
+                    affected[nx][ny] = true;
+                    queue.addLast(new Point(nx, ny));
+                }
+            }
+        }
+        return affected;
+    }
+
+    private static boolean hasCells(boolean[][] mask) {
+        for (boolean[] column : mask) {
+            for (boolean value : column) {
+                if (value) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    /** Clears both the shape geometry and its left/right Smart orientation. */
     protected void resetShape() {
         shapeMap = null;
         shapeStart = null;
         shapeEnd = null;
+        smartShapeInverted = false;
     }
 
     protected java.util.List<Point> getRectOutlineCells(Point a, Point b) {
@@ -2199,6 +2420,38 @@ public class MapDisplay extends GLJPanel implements GLEventListener, MouseListen
             cells.add(new Point(minX, j));
             if (maxX != minX) {
                 cells.add(new Point(maxX, j));
+            }
+        }
+        return cells;
+    }
+
+    protected java.util.List<Point> getRectFillCells(Point a, Point b) {
+        java.util.ArrayList<Point> cells = new java.util.ArrayList<>();
+        int minX = Math.min(a.x, b.x), maxX = Math.max(a.x, b.x);
+        int minY = Math.min(a.y, b.y), maxY = Math.max(a.y, b.y);
+        for (int x = minX; x <= maxX; x++) {
+            for (int y = minY; y <= maxY; y++) {
+                cells.add(new Point(x, y));
+            }
+        }
+        return cells;
+    }
+
+    protected java.util.List<Point> getEllipseFillCells(Point a, Point b) {
+        java.util.ArrayList<Point> cells = new java.util.ArrayList<>();
+        int minX = Math.min(a.x, b.x), maxX = Math.max(a.x, b.x);
+        int minY = Math.min(a.y, b.y), maxY = Math.max(a.y, b.y);
+        double cx = (minX + maxX + 1) / 2.0;
+        double cy = (minY + maxY + 1) / 2.0;
+        double rx = (maxX - minX + 1) / 2.0;
+        double ry = (maxY - minY + 1) / 2.0;
+        for (int x = minX; x <= maxX; x++) {
+            for (int y = minY; y <= maxY; y++) {
+                double dx = (x + 0.5 - cx) / rx;
+                double dy = (y + 0.5 - cy) / ry;
+                if (dx * dx + dy * dy <= 1.0) {
+                    cells.add(new Point(x, y));
+                }
             }
         }
         return cells;
@@ -2364,21 +2617,13 @@ public class MapDisplay extends GLJPanel implements GLEventListener, MouseListen
         }
         int xOffset = (shapeMap.x * cols + borderSize) * tileSize;
         int yOffset = (shapeMap.y * rows + borderSize) * tileSize;
-        Tile tile = handler.getTileSelected();
-
-        java.util.List<Point> cells;
-        switch (editMode) {
-            case MODE_SHAPE_RECT:
-                cells = getRectOutlineCells(shapeStart, shapeEnd);
-                break;
-            case MODE_SHAPE_ELLIPSE:
-                cells = getEllipseOutlineCells(shapeStart, shapeEnd);
-                break;
-            default:
-                cells = MapSelection.bresenham(shapeStart, shapeEnd);
-                break;
+        java.util.List<Point> cells = getCurrentShapeCells();
+        if (canUseSmartTools()) {
+            drawSmartShapePreview(g, cells, xOffset, yOffset);
+            return;
         }
 
+        Tile tile = handler.getTileSelected();
         Graphics2D g2d = (Graphics2D) g;
         java.awt.Composite oldComposite = g2d.getComposite();
         g2d.setComposite(AlphaComposite.SrcOver.derive(0.6f));
@@ -2392,6 +2637,60 @@ public class MapDisplay extends GLJPanel implements GLEventListener, MouseListen
         for (Point cell : cells) {
             g2d.drawRect(xOffset + cell.x * tileSize,
                     yOffset + (rows - 1 - cell.y) * tileSize, tileSize, tileSize);
+        }
+    }
+
+    private java.util.List<Point> getCurrentShapeCells() {
+        switch (editMode) {
+            case MODE_SHAPE_RECT:
+                return canUseSmartTools()
+                        ? getRectFillCells(shapeStart, shapeEnd)
+                        : getRectOutlineCells(shapeStart, shapeEnd);
+            case MODE_SHAPE_ELLIPSE:
+                return canUseSmartTools()
+                        ? getEllipseFillCells(shapeStart, shapeEnd)
+                        : getEllipseOutlineCells(shapeStart, shapeEnd);
+            default:
+                return canUseSmartTools()
+                        ? MapSelection.orthogonalLine(shapeStart, shapeEnd)
+                        : MapSelection.bresenham(shapeStart, shapeEnd);
+        }
+    }
+
+    private void drawSmartShapePreview(Graphics g, java.util.List<Point> cells,
+                                       int xOffset, int yOffset) {
+        MapGrid grid = handler.getMapMatrix().getMapAndCreate(shapeMap).getGrid();
+        int[][] tileLayer = grid.tileLayers[handler.getActiveLayerIndex()];
+        boolean[][] mask = buildSmartShapeMask(cells, tileLayer);
+        int[][] resolved = editMode == EditMode.MODE_LINE
+                ? handler.getSmartGridSelected().resolvePath(cells,
+                        handler.getTileIndexSelected(), cols, rows, smartShapeInverted)
+                : handler.getSmartGridSelected().resolveMask(mask, smartShapeInverted);
+        Graphics2D g2d = (Graphics2D) g;
+        java.awt.Composite oldComposite = g2d.getComposite();
+        g2d.setComposite(AlphaComposite.SrcOver.derive(0.6f));
+        for (int x = 0; x < cols; x++) {
+            for (int y = 0; y < rows; y++) {
+                if (!mask[x][y] || resolved[x][y] < 0) {
+                    continue;
+                }
+                int tileIndex = resolved[x][y];
+                if (tileIndex >= 0 && tileIndex < handler.getTileset().size()) {
+                    Tile tile = handler.getTileset().get(tileIndex);
+                    g.drawImage(tile.getThumbnail(), xOffset + x * tileSize,
+                            yOffset + (rows - 1 - y - (tile.getHeight() - 1)) * tileSize, null);
+                }
+            }
+        }
+        g2d.setComposite(oldComposite);
+        g2d.setColor(Color.red);
+        for (int x = 0; x < cols; x++) {
+            for (int y = 0; y < rows; y++) {
+                if (mask[x][y] && resolved[x][y] >= 0) {
+                    g2d.drawRect(xOffset + x * tileSize,
+                            yOffset + (rows - 1 - y) * tileSize, tileSize, tileSize);
+                }
+            }
         }
     }
 
@@ -2971,12 +3270,53 @@ public class MapDisplay extends GLJPanel implements GLEventListener, MouseListen
         this.backImageAlpha = alpha;
     }
 
+    public void setSmartToolsEnabled(boolean enabled) {
+        smartToolsEnabled = enabled;
+        repaint();
+    }
+
+    public boolean isSmartToolsEnabled() {
+        return smartToolsEnabled;
+    }
+
+    public void setAutoCollisionEnabled(boolean enabled) {
+        autoCollisionEnabled = enabled;
+    }
+
+    public boolean isAutoCollisionEnabled() {
+        return autoCollisionEnabled;
+    }
+
+    private void applyAutoCollision(Point mapCoords) {
+        if (!autoCollisionEnabled) {
+            return;
+        }
+        MapData mapData = handler.getMapMatrix().getMapAndCreate(mapCoords);
+        CollisionDefaultsApplier.apply(handler.getTileset(), mapData.getGrid(), mapData.getCollisions());
+    }
+
+    private void applyAutoCollision(Set<Point> mapCoords) {
+        if (!autoCollisionEnabled) {
+            return;
+        }
+        for (Point point : mapCoords) {
+            applyAutoCollision(point);
+        }
+    }
+
+    protected boolean canUseSmartTools() {
+        return smartToolsEnabled && handler != null
+                && !handler.getSmartGridArray().isEmpty()
+                && !handler.getSmartGridSelected().getTileIndices().isEmpty();
+    }
+
     public void setEditMode(EditMode mode) {
         if (editMode != mode) {
             if (floatingMove) {
                 cancelFloatingMove();
             }
             resetShape();
+            resetSmartStroke();
         }
         editMode = mode;
         if (mode != EditMode.MODE_SELECT) {
