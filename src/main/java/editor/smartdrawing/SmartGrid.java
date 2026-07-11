@@ -23,6 +23,7 @@ public class SmartGrid {
     public static final int width = 5;
     public static final int height = 3;
     public int[][] sgrid = new int[width][height];
+    private String paletteFolder = "";
 
     private static final List<SmartUnit> smartUnits = new ArrayList<SmartUnit>() {
         {
@@ -115,6 +116,14 @@ public class SmartGrid {
             System.arraycopy(sgrid[i], 0, copy[i], 0, height);
         }
         return copy;
+    }
+
+    public String getPaletteFolder() {
+        return paletteFolder;
+    }
+
+    public void setPaletteFolder(String paletteFolder) {
+        this.paletteFolder = paletteFolder == null ? "" : paletteFolder;
     }
 
     /** Returns every tile ID used by this Smart Drawing template. */

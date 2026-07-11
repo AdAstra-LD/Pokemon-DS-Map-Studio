@@ -23,6 +23,7 @@ import javax.swing.JPopupMenu;
 import javax.swing.SwingUtilities;
 
 import utils.Utils;
+import tileset.PaletteFolder;
 
 /**
  * @author Trifindo, JackHack96
@@ -33,6 +34,7 @@ public class SmartGridDisplay extends JPanel {
 
     private MapEditorHandler handler;
     private boolean editable = true;
+    private static final int FOLDER_HEADER_HEIGHT = 16;
 
     public SmartGridDisplay() {
         initComponents();
@@ -47,9 +49,9 @@ public class SmartGridDisplay extends JPanel {
         if (editable) {
             if (handler.getTileset().size() > 0) {
                 int x = evt.getX() / MapGrid.tileSize;
-                int y = evt.getY() / MapGrid.tileSize;
-                int gridIndex = y / SmartGrid.height;
-                y %= SmartGrid.height;
+                int gridIndex = getGridIndexAt(evt.getY());
+                int y = gridIndex < 0 ? -1
+                        : (evt.getY() - getGridY(gridIndex)) / MapGrid.tileSize;
                 ;
                 System.out.println(x + "  " + y);
                 if (gridIndex < handler.getSmartGridArray().size() && gridIndex >= 0) {
@@ -72,9 +74,9 @@ public class SmartGridDisplay extends JPanel {
         if (editable) {
             if (handler.getTileset().size() > 0) {
                 int x = evt.getX() / MapGrid.tileSize;
-                int y = evt.getY() / MapGrid.tileSize;
-                int gridIndex = y / SmartGrid.height;
-                y %= SmartGrid.height;
+                int gridIndex = getGridIndexAt(evt.getY());
+                int y = gridIndex < 0 ? -1
+                        : (evt.getY() - getGridY(gridIndex)) / MapGrid.tileSize;
                 //System.out.println(x + "  " + y);
                 if (gridIndex < handler.getSmartGridArray().size() && gridIndex >= 0) {
                     if (!((y == 2) && (x == 4 || x == 3))) {
@@ -133,14 +135,16 @@ public class SmartGridDisplay extends JPanel {
                     });
                     menu.add(item1);
                     menu.add(item2);
+                    if (gridIndex >= 0) {
+                        menu.add(buildFolderMenu(gridIndex));
+                    }
 
                     menu.show(this, evt.getX(), evt.getY());
                 }
             }
         } else {
             if (handler.getTileset().size() > 0) {
-                int y = evt.getY() / MapGrid.tileSize;
-                int gridIndex = y / SmartGrid.height;
+                int gridIndex = getGridIndexAt(evt.getY());
                 if (gridIndex < handler.getSmartGridArray().size() && gridIndex >= 0) {
                     handler.setSmartGridIndexSelected(gridIndex);
                     repaint();
@@ -164,8 +168,9 @@ public class SmartGridDisplay extends JPanel {
 
         if (gridImage != null && handler != null) {
             for (int k = 0; k < handler.getSmartGridArray().size(); k++) {
+                paintFolderHeader(g, k);
                 g.drawImage(gridImage, 0,
-                        SmartGrid.height * k * MapGrid.tileSize, null);
+                        getGridY(k), null);
             }
 
         }
@@ -183,7 +188,7 @@ public class SmartGridDisplay extends JPanel {
                                 g.drawImage(
                                         img,
                                         i * MapGrid.tileSize,
-                                        (j + SmartGrid.height * k) * MapGrid.tileSize,
+                                        getGridY(k) + j * MapGrid.tileSize,
                                         null);
                             } catch (Exception ex) {
                                 ex.printStackTrace();
@@ -197,12 +202,12 @@ public class SmartGridDisplay extends JPanel {
             g.setColor(Color.red);
             g.drawRect(
                     0,
-                    index * SmartGrid.height * MapGrid.tileSize,
+                    getGridY(index),
                     SmartGrid.width * MapGrid.tileSize - 1,
                     SmartGrid.height * MapGrid.tileSize - 1);
             g.setColor(new Color(255, 100, 100, 50));
             g.fillRect(0,
-                    index * SmartGrid.height * MapGrid.tileSize,
+                    getGridY(index),
                     SmartGrid.width * MapGrid.tileSize - 1,
                     SmartGrid.height * MapGrid.tileSize - 1);
         }
@@ -211,13 +216,13 @@ public class SmartGridDisplay extends JPanel {
 
     public void updateSize() {
         int numSmartGrids = handler.getSmartGridArray().size();
-        System.out.println("Smart grid size: " + numSmartGrids);
         this.setPreferredSize(new Dimension(
                 SmartGrid.width * MapGrid.tileSize,
-                SmartGrid.height * MapGrid.tileSize * numSmartGrids));
+                getDisplayHeight()));
         this.setSize(new Dimension(
                 SmartGrid.width * MapGrid.tileSize,
-                SmartGrid.height * MapGrid.tileSize * numSmartGrids));
+                getDisplayHeight()));
+        revalidate();
     }
 
     public void init(MapEditorHandler handler, boolean editable) {
@@ -226,7 +231,97 @@ public class SmartGridDisplay extends JPanel {
 
         this.setPreferredSize(new Dimension(
                 SmartGrid.width * MapGrid.tileSize,
-                SmartGrid.height * MapGrid.tileSize * handler.getSmartGridArray().size()));
+                getDisplayHeight()));
+    }
+
+    private int getGridY(int index) {
+        int y = 0;
+        String previous = null;
+        for (int i = 0; i <= index && i < handler.getSmartGridArray().size(); i++) {
+            String folder = handler.getSmartGrid(i).getPaletteFolder();
+            if (previous == null || !previous.equals(folder)) {
+                y += FOLDER_HEADER_HEIGHT;
+            }
+            if (i == index) {
+                return y;
+            }
+            y += SmartGrid.height * MapGrid.tileSize;
+            previous = folder;
+        }
+        return y;
+    }
+
+    private int getDisplayHeight() {
+        if (handler == null) {
+            return SmartGrid.height * MapGrid.tileSize;
+        }
+        int height = 0;
+        String previous = null;
+        for (SmartGrid grid : handler.getSmartGridArray()) {
+            String folder = grid.getPaletteFolder();
+            if (previous == null || !previous.equals(folder)) {
+                height += FOLDER_HEADER_HEIGHT;
+            }
+            height += SmartGrid.height * MapGrid.tileSize;
+            previous = folder;
+        }
+        return Math.max(1, height);
+    }
+
+    private int getGridIndexAt(int y) {
+        for (int i = 0; i < handler.getSmartGridArray().size(); i++) {
+            int top = getGridY(i);
+            if (y >= top && y < top + SmartGrid.height * MapGrid.tileSize) {
+                return i;
+            }
+        }
+        return -1;
+    }
+
+    private void paintFolderHeader(Graphics g, int index) {
+        String folder = handler.getSmartGrid(index).getPaletteFolder();
+        if (index > 0 && folder.equals(handler.getSmartGrid(index - 1).getPaletteFolder())) {
+            return;
+        }
+        int y = getGridY(index) - FOLDER_HEADER_HEIGHT;
+        Color bg = UIManager.getColor("Panel.background");
+        Color fg = UIManager.getColor("Label.foreground");
+        g.setColor(bg == null ? Color.darkGray : bg.darker());
+        g.fillRect(0, y, getWidth(), FOLDER_HEADER_HEIGHT);
+        g.setColor(fg == null ? Color.white : fg);
+        String text = folder.isEmpty() ? "All Smart" : folder.substring(folder.lastIndexOf('/') + 1);
+        g.drawString(text, 3, y + 12);
+    }
+
+    private JMenu buildFolderMenu(int gridIndex) {
+        JMenu menu = new JMenu("Move to Folder");
+        JMenuItem none = new JMenuItem("All Smart Drawings");
+        none.addActionListener(e -> moveGridToFolder(gridIndex, ""));
+        menu.add(none);
+        for (PaletteFolder folder : handler.getTileset().getPaletteFolders()) {
+            if (folder.getPath().isEmpty()) {
+                continue;
+            }
+            JMenuItem item = new JMenuItem(folder.getPath());
+            item.addActionListener(e -> moveGridToFolder(gridIndex, folder.getPath()));
+            menu.add(item);
+        }
+        return menu;
+    }
+
+    private void moveGridToFolder(int gridIndex, String folderPath) {
+        SmartGrid grid = handler.getSmartGridArray().remove(gridIndex);
+        grid.setPaletteFolder(folderPath);
+        int insertIndex = handler.getSmartGridArray().size();
+        for (int i = 0; i < handler.getSmartGridArray().size(); i++) {
+            if (folderPath.equals(handler.getSmartGrid(i).getPaletteFolder())) {
+                insertIndex = i + 1;
+            }
+        }
+        handler.getSmartGridArray().add(insertIndex, grid);
+        handler.setSmartGridIndexSelected(insertIndex);
+        updateSize();
+        repaint();
     }
 
     private void initComponents() {

@@ -8,6 +8,7 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.util.List;
 import java.util.Map;
+import editor.smartdrawing.SmartGrid;
 
 /**
  * Reads and writes the tileset metadata sidecar file: palette folders, tile
@@ -103,6 +104,12 @@ public class TileMetadataIO {
                             + "|" + membership.getValue());
                 }
             }
+            for (int i = 0; i < tset.getSmartGridArray().size(); i++) {
+                SmartGrid grid = tset.getSmartGridArray().get(i);
+                if (!grid.getPaletteFolder().isEmpty()) {
+                    out.println("smart|" + i + "|" + escape(grid.getPaletteFolder()));
+                }
+            }
             if (out.checkError()) {
                 throw new IOException("Could not finish writing the metadata file.");
             }
@@ -147,7 +154,7 @@ public class TileMetadataIO {
         for (String line : lines) {
             if (line.startsWith("# Pokemon DS Map Studio tile metadata v")
                     || line.startsWith("folder|") || line.startsWith("tile|")
-                    || line.startsWith("membership|")) {
+                    || line.startsWith("membership|") || line.startsWith("smart|")) {
                 recognized = true;
                 break;
             }
@@ -177,6 +184,9 @@ public class TileMetadataIO {
             tile.setPaletteSlot(-1);
             tile.setPaletteDisplayWidth(0);
             tile.setPaletteDisplayHeight(0);
+        }
+        for (SmartGrid grid : tset.getSmartGridArray()) {
+            grid.setPaletteFolder("");
         }
     }
 
@@ -208,6 +218,13 @@ public class TileMetadataIO {
             } else {
                 folder.setRows(PaletteFolder.DEFAULT_ROWS);
                 folder.setCollapsed(fields[3].equals("1"));
+            }
+        } else if (fields.length >= 3 && fields[0].equals("smart")) {
+            int index = Integer.parseInt(fields[1]);
+            if (index >= 0 && index < tset.getSmartGridArray().size()) {
+                String folderPath = unescape(fields[2]);
+                tset.getOrCreatePaletteFolderWithParents(folderPath);
+                tset.getSmartGridArray().get(index).setPaletteFolder(folderPath);
             }
         } else if (fields.length >= 4 && fields[0].equals("membership")) {
             int index = Integer.parseInt(fields[1]);

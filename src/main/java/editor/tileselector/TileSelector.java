@@ -1150,7 +1150,7 @@ public class TileSelector extends JPanel {
         if (active.isEmpty()) {
             return result;
         }
-        int maxStack = Math.max(headerHeight, (int) (visible.height * 0.55));
+        int maxStack = Math.max(headerHeight, (int) (visible.height * 0.28));
         int headerBudget = active.size() * headerHeight;
         int bodyBudget = Math.max(0, maxStack - headerBudget - active.size());
         int bodyShare = expanded == 0 ? 0 : bodyBudget / expanded;
@@ -1171,6 +1171,9 @@ public class TileSelector extends JPanel {
     }
 
     private void scrollPinnedFolder(MouseWheelEvent evt) {
+        if (!evt.isShiftDown()) {
+            return;
+        }
         for (PinnedLayout layout : getPinnedLayouts()) {
             if (layout.bodyViewportHeight <= 0 || !layout.bounds.contains(evt.getPoint())
                     || evt.getY() < layout.bounds.y + headerHeight + 1) {
@@ -1971,6 +1974,36 @@ public class TileSelector extends JPanel {
             indices.add(handler.getTileIndexSelected());
         }
         return indices;
+    }
+
+    /** The named folder containing the most visibly selected tile occurrences. */
+    public String getSelectedLayoutFolderPath() {
+        ArrayList<Integer> selected = getIndicesSelected();
+        Section best = null;
+        int bestCount = 0;
+        for (Section section : sections) {
+            if (section.allTiles || section.folder == null) {
+                continue;
+            }
+            int count = 0;
+            for (int index : selected) {
+                if (section.tileIndices.contains(index)) {
+                    count++;
+                }
+            }
+            if (count > bestCount) {
+                best = section;
+                bestCount = count;
+            }
+        }
+        return best == null ? null : best.folder.getPath();
+    }
+
+    /** Filters the numeric Tileset Editor range to occurrences visible in one folder. */
+    public ArrayList<Integer> getSelectedIndicesInFolder(String folderPath) {
+        ArrayList<Integer> selected = getIndicesSelected();
+        selected.removeIf(index -> !handler.getTileset().get(index).isInPaletteFolder(folderPath));
+        return selected;
     }
 
     private void drawTileBounds(Graphics g, int tileIndex) {

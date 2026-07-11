@@ -13,9 +13,11 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.LinkedHashSet;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 import java.util.zip.ZipOutputStream;
+import editor.smartdrawing.SmartGrid;
 
 /** Portable, additive palette-folder bundles. */
 public final class PaletteFolderBundleIO {
@@ -56,7 +58,9 @@ public final class PaletteFolderBundleIO {
             Map<String, String> folderPaths = importFolders(imported, target, sourceRoot, targetRoot);
 
             int added = 0;
-            for (Tile sourceTile : imported.getTiles()) {
+            Map<Integer, Integer> importedTileIndices = new HashMap<>();
+            for (int sourceIndex = 0; sourceIndex < imported.size(); sourceIndex++) {
+                Tile sourceTile = imported.get(sourceIndex);
                 int existingIndex = target.indexOfTileVisualData(sourceTile);
                 Tile targetTile;
                 if (existingIndex >= 0) {
@@ -65,8 +69,10 @@ public final class PaletteFolderBundleIO {
                     targetTile = sourceTile.clone();
                     targetTile.setPaletteFolder(PaletteFolder.UNSORTED);
                     target.importTile(targetTile);
+                    existingIndex = target.size() - 1;
                     added++;
                 }
+                importedTileIndices.put(sourceIndex, existingIndex);
                 for (Map.Entry<String, Integer> membership
                         : sourceTile.getPaletteFolderSlots().entrySet()) {
                     String mapped = folderPaths.get(membership.getKey());
@@ -74,6 +80,26 @@ public final class PaletteFolderBundleIO {
                         targetTile.addPaletteFolder(mapped, membership.getValue());
                     }
                 }
+            }
+            for (SmartGrid sourceGrid : imported.getSmartGridArray()) {
+                int[][] mapped = new int[SmartGrid.width][SmartGrid.height];
+                for (int x = 0; x < SmartGrid.width; x++) {
+                    for (int y = 0; y < SmartGrid.height; y++) {
+                        Integer targetIndex = importedTileIndices.get(sourceGrid.sgrid[x][y]);
+                        mapped[x][y] = targetIndex == null ? -1 : targetIndex;
+                    }
+                }
+                SmartGrid targetGrid = new SmartGrid(mapped);
+                String mappedFolder = folderPaths.get(sourceGrid.getPaletteFolder());
+                targetGrid.setPaletteFolder(mappedFolder == null ? "" : mappedFolder);
+                int insert = target.getSmartGridArray().size();
+                for (int i = 0; i < target.getSmartGridArray().size(); i++) {
+                    if (targetGrid.getPaletteFolder().equals(
+                            target.getSmartGridArray().get(i).getPaletteFolder())) {
+                        insert = i + 1;
+                    }
+                }
+                target.getSmartGridArray().add(insert, targetGrid);
             }
             return added;
         } finally {
@@ -89,17 +115,33 @@ public final class PaletteFolderBundleIO {
                 subset.getPaletteFolders().add(copyFolder(folder));
             }
         }
-        for (Tile sourceTile : source.getTiles()) {
-            boolean included = false;
+        LinkedHashSet<Integer> includedTiles = new LinkedHashSet<>();
+        ArrayList<SmartGrid> includedGrids = new ArrayList<>();
+        for (SmartGrid grid : source.getSmartGridArray()) {
+            String path = grid.getPaletteFolder();
+            if (path.equals(root.getPath()) || path.startsWith(prefix)) {
+                includedGrids.add(grid);
+                for (int x = 0; x < SmartGrid.width; x++) {
+                    for (int y = 0; y < SmartGrid.height; y++) {
+                        if (grid.sgrid[x][y] >= 0 && grid.sgrid[x][y] < source.size()) {
+                            includedTiles.add(grid.sgrid[x][y]);
+                        }
+                    }
+                }
+            }
+        }
+        for (int sourceIndex = 0; sourceIndex < source.size(); sourceIndex++) {
+            Tile sourceTile = source.get(sourceIndex);
             for (String path : sourceTile.getPaletteFolderSlots().keySet()) {
                 if (path.equals(root.getPath()) || path.startsWith(prefix)) {
-                    included = true;
+                    includedTiles.add(sourceIndex);
                     break;
                 }
             }
-            if (!included) {
-                continue;
-            }
+        }
+        Map<Integer, Integer> tileIndices = new HashMap<>();
+        for (int sourceIndex : includedTiles) {
+            Tile sourceTile = source.get(sourceIndex);
             Tile copy = sourceTile.clone();
             copy.setPaletteFolder(PaletteFolder.UNSORTED);
             for (Map.Entry<String, Integer> membership
@@ -110,6 +152,19 @@ public final class PaletteFolderBundleIO {
                 }
             }
             subset.importTile(copy);
+            tileIndices.put(sourceIndex, subset.size() - 1);
+        }
+        for (SmartGrid sourceGrid : includedGrids) {
+            int[][] mapped = new int[SmartGrid.width][SmartGrid.height];
+            for (int x = 0; x < SmartGrid.width; x++) {
+                for (int y = 0; y < SmartGrid.height; y++) {
+                    Integer subsetIndex = tileIndices.get(sourceGrid.sgrid[x][y]);
+                    mapped[x][y] = subsetIndex == null ? -1 : subsetIndex;
+                }
+            }
+            SmartGrid copy = new SmartGrid(mapped);
+            copy.setPaletteFolder(sourceGrid.getPaletteFolder());
+            subset.getSmartGridArray().add(copy);
         }
         return subset;
     }

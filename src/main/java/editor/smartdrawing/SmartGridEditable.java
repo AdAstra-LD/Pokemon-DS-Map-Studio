@@ -13,6 +13,7 @@ import tileset.Tileset;
 public class SmartGridEditable {
 
     public Tile[][] sgrid = new Tile[width][height];
+    private String paletteFolder = "";
 
     public SmartGridEditable(int[][] data, Tileset tset) {
         for (int i = 0; i < data.length; i++) {
@@ -42,5 +43,13 @@ public class SmartGridEditable {
             }
         }
         return indices;
+    }
+
+    public String getPaletteFolder() {
+        return paletteFolder;
+    }
+
+    public void setPaletteFolder(String paletteFolder) {
+        this.paletteFolder = paletteFolder == null ? "" : paletteFolder;
     }
 }

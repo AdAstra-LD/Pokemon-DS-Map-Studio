@@ -148,6 +148,12 @@ public class Tileset {
                 }
             }
         }
+        for (SmartGrid grid : sgridArray) {
+            String path = grid.getPaletteFolder();
+            if (path.equals(folder.getPath()) || path.startsWith(prefix)) {
+                grid.setPaletteFolder("");
+            }
+        }
     }
 
     /**
@@ -166,6 +172,14 @@ public class Tileset {
         }
         for (Tile tile : tiles) {
             tile.renamePaletteFolder(oldPath, newPath);
+        }
+        for (SmartGrid grid : sgridArray) {
+            String path = grid.getPaletteFolder();
+            if (path.equals(oldPath)) {
+                grid.setPaletteFolder(newPath);
+            } else if (path.startsWith(oldPrefix)) {
+                grid.setPaletteFolder(newPath + "/" + path.substring(oldPrefix.length()));
+            }
         }
     }
 
