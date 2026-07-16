@@ -81,6 +81,7 @@ public class TilesetEditorDialog extends JDialog {
     private JButton jbMoveToFolder;
     private JButton jbRemoveFromFolder;
     private JButton jbCreateSmartDrawing;
+    private CollisionDefaultsEditorPanel collisionDefaultsPanel;
 
     public TilesetEditorDialog(Window owner) {
         super(owner);
@@ -88,6 +89,16 @@ public class TilesetEditorDialog extends JDialog {
 
         jTabbedPane1.setIconAt(0, new ImageIcon(getClass().getResource("/icons/TileIcon.png")));
         jTabbedPane1.setIconAt(1, new ImageIcon(getClass().getResource("/icons/MaterialIcon2.png")));
+
+        collisionDefaultsPanel = new CollisionDefaultsEditorPanel();
+        jTabbedPane1.addTab("Collision Defaults",
+                new ImageIcon(getClass().getResource("/icons/collisionEditorIcon.png")),
+                collisionDefaultsPanel);
+        jTabbedPane1.addChangeListener(e -> {
+            if (jTabbedPane1.getSelectedComponent() == collisionDefaultsPanel) {
+                collisionDefaultsPanel.refreshSelectedTile();
+            }
+        });
 
         jScrollPane2.getVerticalScrollBar().setUnitIncrement(16);
         jScrollPaneSmartGrid.getVerticalScrollBar().setUnitIncrement(16);
@@ -1195,6 +1206,11 @@ public class TilesetEditorDialog extends JDialog {
         tileSelector.init(handler, this);
         tileSelector.updateLayout();
 
+        collisionDefaultsPanel.init(handler, () -> {
+            tileSelector.repaint();
+            handler.getMainFrame().updateTileSelectedID();
+        });
+
         smartGridEditableDisplay.init(handler);
 
         textureDisplay.init(tileHandler, this);
@@ -1278,6 +1294,8 @@ public class TilesetEditorDialog extends JDialog {
             updateViewMaterialProperties();
 
             textureDisplayMaterial.repaint();
+
+            collisionDefaultsPanel.refreshSelectedTile();
 
             //updateViewTextNames();
         }

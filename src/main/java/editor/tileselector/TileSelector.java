@@ -571,23 +571,53 @@ public class TileSelector extends JPanel {
         int y = 0;
         int width = widthUnits * tilePixelSize;
         for (Section section : newSections) {
-            section.headerBounds = new Rectangle(0, y, width, headerHeight);
-            y += headerHeight + 1;
-            if (section.isCollapsed()) {
-                section.bodyBounds = new Rectangle(0, y, width, 0);
-                continue;
+            if (!section.allTiles && section.depth == 0) {
+                y = layoutFolderSection(section, newSections, y, width);
             }
+        }
+        allTiles.headerBounds = new Rectangle(0, y, width, headerHeight);
+        y += headerHeight + 1;
+        if (allTiles.isCollapsed()) {
+            allTiles.bodyBounds = new Rectangle(0, y, width, 0);
+        } else {
             int bodyStart = y;
-            if (!section.allTiles && section.columns > 0) {
-                y = layoutSlotGrid(section, y);
-            } else {
-                y = flowTiles(section, section.tileIndices, y, maxCols);
-            }
-            section.bodyBounds = new Rectangle(0, bodyStart, width, y - bodyStart);
+            y = flowTiles(allTiles, allTiles.tileIndices, y, maxCols);
+            allTiles.bodyBounds = new Rectangle(0, bodyStart, width, y - bodyStart);
             y += 3;
         }
         sections = newSections;
         return y;
+    }
+
+    /** Parent header, child folder trees, then the parent's own tile body. */
+    private int layoutFolderSection(Section section, ArrayList<Section> allSections,
+            int y, int width) {
+        section.headerBounds = new Rectangle(0, y, width, headerHeight);
+        y += headerHeight + 1;
+        if (section.isCollapsed()) {
+            section.bodyBounds = new Rectangle(0, y, width, 0);
+            return y;
+        }
+
+        String sectionPath = section.folder.getPath();
+        for (Section child : allSections) {
+            if (child.allTiles || child.depth != section.depth + 1 || child.folder == null) {
+                continue;
+            }
+            String parentPath = Tileset.getParentFolderPath(child.folder.getPath());
+            if (sectionPath.equals(parentPath)) {
+                y = layoutFolderSection(child, allSections, y, width);
+            }
+        }
+
+        int bodyStart = y;
+        if (section.columns > 0) {
+            y = layoutSlotGrid(section, y);
+        } else {
+            y = flowTiles(section, section.tileIndices, y, maxCols);
+        }
+        section.bodyBounds = new Rectangle(0, bodyStart, width, y - bodyStart);
+        return y + 3;
     }
 
     /** Adds the folder's section followed by its subfolder subtrees. */
@@ -1450,6 +1480,14 @@ public class TileSelector extends JPanel {
         JMenuItem miCollision = new JMenuItem("Edit Defaults...");
         miCollision.addActionListener(e -> showCollisionDefaultsDialog(index));
         collisionMenu.add(miCollision);
+        collisionMenu.addSeparator();
+        JMenuItem miCopyCollision = new JMenuItem("Copy Defaults");
+        miCopyCollision.addActionListener(e -> copyCollisionDefaults(tile));
+        collisionMenu.add(miCopyCollision);
+        JMenuItem miPasteCollision = new JMenuItem("Paste Defaults");
+        miPasteCollision.setEnabled(CollisionDefaultsClipboard.hasAllLayers());
+        miPasteCollision.addActionListener(e -> pasteCollisionDefaults(tile));
+        collisionMenu.add(miPasteCollision);
         menu.add(collisionMenu);
 
         JMenuItem miClearSlot = new JMenuItem("Clear Layout Slot");
@@ -1966,201 +2004,163 @@ public class TileSelector extends JPanel {
             }
         }
 
-        JComboBox<String> layerCombo = new JComboBox<>();
+        int[] selectedCollisionValues = new int[numLayers];
+
+        final int cellPx = Math.max(12, Math.min(48, 280 / Math.max(w, h)));
+        JPanel[] gridPanels = new JPanel[numLayers];
+        JPanel layersPanel = new JPanel(new java.awt.GridLayout(0,
+                Math.min(2, numLayers), 8, 8));
         for (int layer = 0; layer < numLayers; layer++) {
-            layerCombo.addItem("Layer " + layer);
-        }
-        final int[] selectedCollisionValue = {0x00};
-        JTextField valueField = new JTextField("00", 3);
-        valueField.setHorizontalAlignment(JTextField.CENTER);
-        JLabel collisionNameLabel = new JLabel();
-        java.util.function.Function<String, Integer> parseCollisionValue = text -> {
-            String value = text == null ? "" : text.trim();
-            if (value.startsWith("0x") || value.startsWith("0X")) {
-                value = value.substring(2);
+            final int layerIndex = layer;
+            JComboBox<String> valueCombo = new JComboBox<>();
+            for (int value = 0; value < CollisionTypes.numCollisions; value++) {
+                String collisionName = types.getCollisionName(layerIndex, value);
+                valueCombo.addItem(String.format("%02X", value)
+                        + (collisionName == null || collisionName.isEmpty()
+                                ? "" : "  " + collisionName));
             }
-            if (value.isEmpty()) {
-                return null;
-            }
-            try {
-                int parsed = Integer.parseInt(value, 16);
-                return parsed >= 0 && parsed < CollisionTypes.numCollisions ? parsed : null;
-            } catch (NumberFormatException ex) {
-                return null;
-            }
-        };
-        Runnable updateCollisionName = () -> {
-            int layer = Math.max(0, layerCombo.getSelectedIndex());
-            Integer value = parseCollisionValue.apply(valueField.getText());
-            if (value == null) {
-                collisionNameLabel.setText("");
-            } else {
-                selectedCollisionValue[0] = value;
-                String name = types.getCollisionName(layer, value);
-                collisionNameLabel.setText(name == null ? "" : name);
-            }
-        };
-        valueField.getDocument().addDocumentListener(new javax.swing.event.DocumentListener() {
-            @Override
-            public void insertUpdate(javax.swing.event.DocumentEvent e) {
-                updateCollisionName.run();
-            }
-
-            @Override
-            public void removeUpdate(javax.swing.event.DocumentEvent e) {
-                updateCollisionName.run();
-            }
-
-            @Override
-            public void changedUpdate(javax.swing.event.DocumentEvent e) {
-                updateCollisionName.run();
-            }
-        });
-        JButton valueUp = new JButton("\u25B2");
-        JButton valueDown = new JButton("\u25BC");
-        valueUp.setMargin(new java.awt.Insets(0, 3, 0, 3));
-        valueDown.setMargin(new java.awt.Insets(0, 3, 0, 3));
-        valueUp.setFocusable(false);
-        valueDown.setFocusable(false);
-        java.util.function.IntConsumer stepCollisionValue = amount -> {
-            Integer parsed = parseCollisionValue.apply(valueField.getText());
-            int current = parsed == null ? selectedCollisionValue[0] : parsed;
-            int next = Math.max(0, Math.min(CollisionTypes.numCollisions - 1,
-                    current + amount));
-            valueField.setText(String.format("%02X", next));
-        };
-        valueUp.addActionListener(e -> stepCollisionValue.accept(1));
-        valueDown.addActionListener(e -> stepCollisionValue.accept(-1));
-        JPanel valueArrows = new JPanel(new java.awt.GridLayout(2, 1, 0, 0));
-        valueArrows.add(valueUp);
-        valueArrows.add(valueDown);
-        JPanel valueControl = new JPanel(new BorderLayout(0, 0));
-        valueControl.add(valueField, BorderLayout.CENTER);
-        valueControl.add(valueArrows, BorderLayout.EAST);
-        layerCombo.addActionListener(e -> updateCollisionName.run());
-        updateCollisionName.run();
-        java.util.function.IntSupplier readCollisionValue = () -> {
-            Integer value = parseCollisionValue.apply(valueField.getText());
-            if (value == null) {
-                java.awt.Toolkit.getDefaultToolkit().beep();
-                valueField.requestFocusInWindow();
-                return -1;
-            }
-            selectedCollisionValue[0] = value;
-            return value;
-        };
-
-        //Grid painted over the tile's own image; big enough cells to click
-        final int cellPx = Math.max(12, Math.min(48, 320 / Math.max(w, h)));
-        JPanel gridPanel = new JPanel() {
-            @Override
-            protected void paintComponent(Graphics g) {
-                super.paintComponent(g);
-                int layer = layerCombo.getSelectedIndex();
-                int displayWidth = tile.getPaletteDisplayWidth();
-                int displayHeight = tile.getPaletteDisplayHeight();
-                int anchorX = tile.getCollisionFootprintAnchorX();
-                int anchorY = tile.getCollisionFootprintAnchorY();
-                int imageX = anchorX * cellPx;
-                int imageY = (anchorY - displayHeight + 1) * cellPx;
-                g.drawImage(tile.getPaletteThumbnail(), imageX, imageY,
-                        displayWidth * cellPx, displayHeight * cellPx, null);
-                Graphics2D g2d = (Graphics2D) g;
-                for (int i = 0; i < w; i++) {
-                    for (int j = 0; j < h; j++) {
-                        int value = work[layer][i][j];
-                        if (value >= 0) {
-                            Color fill = types.getFillColor(layer, value);
-                            g2d.setColor(new Color(fill.getRed(), fill.getGreen(), fill.getBlue(), 140));
-                            g2d.fillRect(i * cellPx, j * cellPx, cellPx, cellPx);
-                            g2d.setColor(CollisionTypes.getContrastColor(fill));
-                            if (cellPx >= 22) {
-                                g2d.drawString(String.format("%02X", value),
-                                        i * cellPx + cellPx / 2 - 7, j * cellPx + cellPx / 2 + 5);
+            valueCombo.setSelectedIndex(0);
+            valueCombo.addActionListener(e ->
+                    selectedCollisionValues[layerIndex] = valueCombo.getSelectedIndex());
+            JPanel gridPanel = new JPanel() {
+                @Override
+                protected void paintComponent(Graphics g) {
+                    super.paintComponent(g);
+                    int displayWidth = tile.getPaletteDisplayWidth();
+                    int displayHeight = tile.getPaletteDisplayHeight();
+                    int anchorX = tile.getCollisionFootprintAnchorX();
+                    int anchorY = tile.getCollisionFootprintAnchorY();
+                    int imageX = anchorX * cellPx;
+                    int imageY = (anchorY - displayHeight + 1) * cellPx;
+                    g.drawImage(tile.getPaletteThumbnail(), imageX, imageY,
+                            displayWidth * cellPx, displayHeight * cellPx, null);
+                    Graphics2D g2d = (Graphics2D) g;
+                    for (int i = 0; i < w; i++) {
+                        for (int j = 0; j < h; j++) {
+                            int value = work[layerIndex][i][j];
+                            if (value >= 0) {
+                                Color fill = types.getFillColor(layerIndex, value);
+                                g2d.setColor(new Color(fill.getRed(), fill.getGreen(),
+                                        fill.getBlue(), 140));
+                                g2d.fillRect(i * cellPx, j * cellPx, cellPx, cellPx);
+                                g2d.setColor(CollisionTypes.getContrastColor(fill));
+                                if (cellPx >= 22) {
+                                    g2d.drawString(String.format("%02X", value),
+                                            i * cellPx + cellPx / 2 - 7,
+                                            j * cellPx + cellPx / 2 + 5);
+                                }
                             }
+                            g2d.setColor(new Color(0, 0, 0, 120));
+                            g2d.drawRect(i * cellPx, j * cellPx,
+                                    cellPx - 1, cellPx - 1);
                         }
-                        g2d.setColor(new Color(0, 0, 0, 120));
-                        g2d.drawRect(i * cellPx, j * cellPx, cellPx - 1, cellPx - 1);
                     }
+                    g2d.setColor(Color.YELLOW);
+                    g2d.drawRect(anchorX * cellPx + 1, anchorY * cellPx + 1,
+                            cellPx - 3, cellPx - 3);
+                    g2d.drawRect(anchorX * cellPx + 2, anchorY * cellPx + 2,
+                            cellPx - 5, cellPx - 5);
                 }
-                g2d.setColor(Color.YELLOW);
-                g2d.drawRect(anchorX * cellPx + 1, anchorY * cellPx + 1,
-                        cellPx - 3, cellPx - 3);
-                g2d.drawRect(anchorX * cellPx + 2, anchorY * cellPx + 2,
-                        cellPx - 5, cellPx - 5);
-            }
-        };
-        gridPanel.setPreferredSize(new Dimension(w * cellPx, h * cellPx));
-        MouseAdapter painter = new MouseAdapter() {
-            private void paintCell(MouseEvent e) {
-                if (readCollisionValue.getAsInt() < 0) {
-                    return;
+            };
+            gridPanel.setPreferredSize(new Dimension(w * cellPx, h * cellPx));
+            MouseAdapter painter = new MouseAdapter() {
+                private void paintCell(MouseEvent e) {
+                    int i = e.getX() / cellPx;
+                    int j = e.getY() / cellPx;
+                    if (i < 0 || i >= w || j < 0 || j >= h) {
+                        return;
+                    }
+                    work[layerIndex][i][j] = SwingUtilities.isRightMouseButton(e)
+                            ? -1 : selectedCollisionValues[layerIndex];
+                    gridPanel.repaint();
                 }
-                int i = e.getX() / cellPx;
-                int j = e.getY() / cellPx;
-                if (i < 0 || i >= w || j < 0 || j >= h) {
-                    return;
+
+                @Override
+                public void mousePressed(MouseEvent e) {
+                    paintCell(e);
                 }
-                int layer = layerCombo.getSelectedIndex();
-                work[layer][i][j] = SwingUtilities.isRightMouseButton(e)
-                        ? -1 : selectedCollisionValue[0];
+
+                @Override
+                public void mouseDragged(MouseEvent e) {
+                    paintCell(e);
+                }
+            };
+            gridPanel.addMouseListener(painter);
+            gridPanel.addMouseMotionListener(painter);
+            gridPanels[layer] = gridPanel;
+
+            JButton fillAll = new JButton("Fill Layer");
+            fillAll.addActionListener(e -> {
+                for (int[] column : work[layerIndex]) {
+                    java.util.Arrays.fill(column, selectedCollisionValues[layerIndex]);
+                }
                 gridPanel.repaint();
-            }
+            });
+            JButton clearAll = new JButton("Clear Layer");
+            clearAll.addActionListener(e -> {
+                for (int[] column : work[layerIndex]) {
+                    java.util.Arrays.fill(column, -1);
+                }
+                gridPanel.repaint();
+            });
+            JPanel layerButtons = new JPanel(new FlowLayout(FlowLayout.CENTER, 4, 0));
+            layerButtons.add(fillAll);
+            layerButtons.add(clearAll);
+            JPanel layerPanel = new JPanel(new BorderLayout(2, 4));
+            layerPanel.setBorder(BorderFactory.createEtchedBorder());
+            JPanel layerHeader = new JPanel(new BorderLayout(4, 2));
+            layerHeader.add(new JLabel("Layer " + layer, SwingConstants.CENTER),
+                    BorderLayout.NORTH);
+            layerHeader.add(valueCombo, BorderLayout.CENTER);
+            layerPanel.add(layerHeader, BorderLayout.NORTH);
+            JPanel centeredGrid = new JPanel(new FlowLayout(FlowLayout.CENTER, 0, 0));
+            centeredGrid.add(gridPanel);
+            layerPanel.add(centeredGrid, BorderLayout.CENTER);
+            layerPanel.add(layerButtons, BorderLayout.SOUTH);
+            layersPanel.add(layerPanel);
+        }
 
-            @Override
-            public void mousePressed(MouseEvent e) {
-                paintCell(e);
-            }
-
-            @Override
-            public void mouseDragged(MouseEvent e) {
-                paintCell(e);
-            }
-        };
-        gridPanel.addMouseListener(painter);
-        gridPanel.addMouseMotionListener(painter);
-        layerCombo.addActionListener(e -> gridPanel.repaint());
-
-        JButton fillAll = new JButton("Fill All");
-        fillAll.addActionListener(e -> {
-            if (readCollisionValue.getAsInt() < 0) {
+        JButton pasteDefaults = new JButton("Paste Defaults");
+        pasteDefaults.setEnabled(CollisionDefaultsClipboard.hasAllLayers());
+        JButton copyDefaults = new JButton("Copy Defaults");
+        copyDefaults.addActionListener(e -> {
+            CollisionDefaultsClipboard.copyAll(work, w, h,
+                    tile.getCollisionFootprintAnchorX(),
+                    tile.getCollisionFootprintAnchorY());
+            pasteDefaults.setEnabled(true);
+        });
+        pasteDefaults.addActionListener(e -> {
+            if (!CollisionDefaultsClipboard.hasAllLayers()) {
                 return;
             }
-            int layer = layerCombo.getSelectedIndex();
-            for (int[] column : work[layer]) {
-                java.util.Arrays.fill(column, selectedCollisionValue[0]);
+            CollisionDefaultsClipboard.pasteAll(work, w, h,
+                    tile.getCollisionFootprintAnchorX(),
+                    tile.getCollisionFootprintAnchorY());
+            for (JPanel gridPanel : gridPanels) {
+                gridPanel.repaint();
             }
-            gridPanel.repaint();
-        });
-        JButton clearAll = new JButton("Clear All");
-        clearAll.addActionListener(e -> {
-            int layer = layerCombo.getSelectedIndex();
-            for (int[] column : work[layer]) {
-                java.util.Arrays.fill(column, -1);
-            }
-            gridPanel.repaint();
         });
 
         JPanel top = new JPanel(new java.awt.GridLayout(0, 1, 4, 2));
         top.add(new JLabel("Left click / drag a cell to stamp the selected collision,"));
         top.add(new JLabel("right click a cell to clear it (no default = untouched):"));
         top.add(new JLabel("The yellow cell is the tile's map placement anchor."));
-        JPanel combos = new JPanel(new FlowLayout(FlowLayout.LEFT, 4, 0));
-        combos.add(layerCombo);
-        combos.add(valueControl);
-        combos.add(collisionNameLabel);
-        top.add(combos);
-
-        JPanel gridWrapper = new JPanel(new FlowLayout(FlowLayout.CENTER, 0, 6));
-        gridWrapper.add(gridPanel);
 
         JPanel buttons = new JPanel(new FlowLayout(FlowLayout.LEFT, 4, 0));
-        buttons.add(fillAll);
-        buttons.add(clearAll);
+        buttons.add(copyDefaults);
+        buttons.add(pasteDefaults);
 
-        JPanel panel = new JPanel(new BorderLayout(4, 4));
+        JPanel panel = new JPanel(new BorderLayout(8, 8));
         panel.add(top, BorderLayout.NORTH);
-        panel.add(gridWrapper, BorderLayout.CENTER);
+        if (numLayers > 2) {
+            JScrollPane layerScroll = new JScrollPane(layersPanel);
+            layerScroll.setPreferredSize(new Dimension(
+                    Math.min(700, layersPanel.getPreferredSize().width + 24), 560));
+            layerScroll.getVerticalScrollBar().setUnitIncrement(16);
+            panel.add(layerScroll, BorderLayout.CENTER);
+        } else {
+            panel.add(layersPanel, BorderLayout.CENTER);
+        }
         panel.add(buttons, BorderLayout.SOUTH);
 
         int result = JOptionPane.showConfirmDialog(getDialogParent(), panel,
@@ -2174,6 +2174,17 @@ public class TileSelector extends JPanel {
             }
             tile.pruneEmptyCollisionDefaults();
         }
+    }
+
+    private void copyCollisionDefaults(Tile tile) {
+        CollisionDefaultsClipboard.copyAll(tile,
+                CollisionTypes.numLayersPerGame[handler.getGameIndex()]);
+    }
+
+    private void pasteCollisionDefaults(Tile tile) {
+        CollisionDefaultsClipboard.pasteAll(tile,
+                CollisionTypes.numLayersPerGame[handler.getGameIndex()]);
+        repaint();
     }
 
     /* -------------------- Tooltips -------------------- */
