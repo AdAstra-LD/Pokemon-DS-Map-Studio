@@ -13,10 +13,14 @@ public class CollisionLayerState extends State {
     private byte[][] layer;
 
     public CollisionLayerState(String name, CollisionHandler collisionHandler) {
+        this(name, collisionHandler, collisionHandler.getIndexLayerSelected());
+    }
+
+    public CollisionLayerState(String name, CollisionHandler collisionHandler, int layerIndex) {
         super(name);
         this.collisionHandler = collisionHandler;
 
-        layerIndex = collisionHandler.getIndexLayerSelected();
+        this.layerIndex = layerIndex;
         layer = collisionHandler.cloneLayer(layerIndex);
     }
 

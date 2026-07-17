@@ -74,10 +74,28 @@ public class Tile {
 
     private BufferedImage thumbnail;
     private BufferedImage smallThumbnail;
+    private BufferedImage paletteThumbnail;
 
     //Bounds
     private float[] boundsPos;
     private float[] boundsSca;
+
+    //Palette metadata (saved in the tileset .meta sidecar file, not the .pdsts)
+    private String paletteName = "";
+    private String paletteFolder = PaletteFolder.UNSORTED;
+    private int paletteSlot = -1;   //Cell index inside the folder's layout grid; -1 = flow
+    private java.util.LinkedHashMap<String, Integer> paletteFolderSlots
+            = new java.util.LinkedHashMap<>();
+    private int paletteDisplayWidth = 0;    //0 = use real tile width
+    private int paletteDisplayHeight = 0;   //0 = use real tile height
+    //Collision layer -> per-cell default values indexed [column][row]
+    //(row 0 = top of the tile image); -1 = no default for that cell
+    private java.util.TreeMap<Integer, int[][]> collisionDefaults = new java.util.TreeMap<>();
+    //0 sizes follow the real tile dimensions; anchor row 0 is the top.
+    private int collisionFootprintWidth = 0;
+    private int collisionFootprintHeight = 0;
+    private int collisionFootprintAnchorX = 0;
+    private int collisionFootprintAnchorY = -1;
 
     public Tile(Tileset tileset, String folderPath, String objFilename,
                 int width, int height, boolean xTileable, boolean yTileable,
@@ -188,6 +206,18 @@ public class Tile {
 
         tile.thumbnail = thumbnail;
         tile.smallThumbnail = smallThumbnail;
+        tile.paletteThumbnail = paletteThumbnail;
+        tile.paletteName = paletteName;
+        tile.paletteFolder = paletteFolder;
+        tile.paletteSlot = paletteSlot;
+        tile.paletteFolderSlots = new java.util.LinkedHashMap<>(getPaletteFolderSlots());
+        tile.paletteDisplayWidth = paletteDisplayWidth;
+        tile.paletteDisplayHeight = paletteDisplayHeight;
+        tile.collisionFootprintWidth = collisionFootprintWidth;
+        tile.collisionFootprintHeight = collisionFootprintHeight;
+        tile.collisionFootprintAnchorX = collisionFootprintAnchorX;
+        tile.collisionFootprintAnchorY = collisionFootprintAnchorY;
+        tile.collisionDefaults = cloneCollisionDefaults();
 
         return tile;
     }
@@ -1142,11 +1172,31 @@ public class Tile {
     }
 
     public void setWidth(int width) {
+        int oldW = getCollisionFootprintWidth();
+        int oldH = getCollisionFootprintHeight();
+        int oldAnchorX = getCollisionFootprintAnchorX();
+        int oldAnchorY = getCollisionFootprintAnchorY();
+        boolean followsTileSize = !hasCustomCollisionFootprint();
         this.width = width;
+        if (followsTileSize) {
+            resizeCollisionDefaults(oldW, oldH, oldAnchorX, oldAnchorY,
+                    getCollisionFootprintWidth(), getCollisionFootprintHeight(),
+                    getCollisionFootprintAnchorX(), getCollisionFootprintAnchorY());
+        }
     }
 
     public void setHeight(int height) {
+        int oldW = getCollisionFootprintWidth();
+        int oldH = getCollisionFootprintHeight();
+        int oldAnchorX = getCollisionFootprintAnchorX();
+        int oldAnchorY = getCollisionFootprintAnchorY();
+        boolean followsTileSize = !hasCustomCollisionFootprint();
         this.height = height;
+        if (followsTileSize) {
+            resizeCollisionDefaults(oldW, oldH, oldAnchorX, oldAnchorY,
+                    getCollisionFootprintWidth(), getCollisionFootprintHeight(),
+                    getCollisionFootprintAnchorX(), getCollisionFootprintAnchorY());
+        }
     }
 
     public String getFolderPath() {
@@ -1263,6 +1313,345 @@ public class Tile {
 
     public void setObjFilename(String objFilename) {
         this.objFilename = objFilename;
+    }
+
+    /** Human readable palette name; empty when the tile has not been named. */
+    public String getPaletteName() {
+        return paletteName;
+    }
+
+    public void setPaletteName(String paletteName) {
+        this.paletteName = paletteName == null ? "" : paletteName;
+    }
+
+    /** Palette folder path; PaletteFolder.UNSORTED when not in a folder. */
+    public String getPaletteFolder() {
+        return paletteFolder;
+    }
+
+    public void setPaletteFolder(String paletteFolder) {
+        this.paletteFolder = paletteFolder == null ? PaletteFolder.UNSORTED : paletteFolder;
+        paletteFolderSlots.clear();
+        if (!this.paletteFolder.isEmpty()) {
+            paletteFolderSlots.put(this.paletteFolder, paletteSlot);
+        }
+    }
+
+    /** Cell index inside the folder's layout template grid; -1 = flow layout. */
+    public int getPaletteSlot() {
+        return paletteSlot;
+    }
+
+    public void setPaletteSlot(int paletteSlot) {
+        this.paletteSlot = paletteSlot < 0 ? -1 : paletteSlot;
+        if (!paletteFolder.isEmpty()) {
+            paletteFolderSlots.put(paletteFolder, this.paletteSlot);
+        }
+    }
+
+    public java.util.Map<String, Integer> getPaletteFolderSlots() {
+        if (paletteFolderSlots.isEmpty() && !paletteFolder.isEmpty()) {
+            paletteFolderSlots.put(paletteFolder, paletteSlot);
+        }
+        return java.util.Collections.unmodifiableMap(paletteFolderSlots);
+    }
+
+    public boolean isInPaletteFolder(String folderPath) {
+        return folderPath != null && !folderPath.isEmpty()
+                && getPaletteFolderSlots().containsKey(folderPath);
+    }
+
+    public int getPaletteSlot(String folderPath) {
+        Integer slot = getPaletteFolderSlots().get(folderPath);
+        return slot == null ? -1 : slot;
+    }
+
+    /** Adds another palette occurrence without duplicating the game tile. */
+    public void addPaletteFolder(String folderPath, int slot) {
+        if (folderPath == null || folderPath.isEmpty()) {
+            return;
+        }
+        paletteFolderSlots.put(folderPath, Math.max(-1, slot));
+        if (paletteFolder.isEmpty()) {
+            paletteFolder = folderPath;
+            paletteSlot = Math.max(-1, slot);
+        }
+    }
+
+    public void setPaletteSlot(String folderPath, int slot) {
+        if (!isInPaletteFolder(folderPath)) {
+            addPaletteFolder(folderPath, slot);
+        } else {
+            paletteFolderSlots.put(folderPath, Math.max(-1, slot));
+        }
+        if (folderPath.equals(paletteFolder)) {
+            paletteSlot = Math.max(-1, slot);
+        }
+    }
+
+    public void removePaletteFolder(String folderPath) {
+        paletteFolderSlots.remove(folderPath);
+        if (folderPath != null && folderPath.equals(paletteFolder)) {
+            if (paletteFolderSlots.isEmpty()) {
+                paletteFolder = PaletteFolder.UNSORTED;
+                paletteSlot = -1;
+            } else {
+                java.util.Map.Entry<String, Integer> first
+                        = paletteFolderSlots.entrySet().iterator().next();
+                paletteFolder = first.getKey();
+                paletteSlot = first.getValue();
+            }
+        }
+    }
+
+    public void renamePaletteFolder(String oldPath, String newPath) {
+        java.util.LinkedHashMap<String, Integer> renamed = new java.util.LinkedHashMap<>();
+        String prefix = oldPath + "/";
+        for (java.util.Map.Entry<String, Integer> entry : getPaletteFolderSlots().entrySet()) {
+            String path = entry.getKey();
+            if (path.equals(oldPath)) {
+                path = newPath;
+            } else if (path.startsWith(prefix)) {
+                path = newPath + "/" + path.substring(prefix.length());
+            }
+            renamed.put(path, entry.getValue());
+        }
+        paletteFolderSlots = renamed;
+        if (paletteFolder.equals(oldPath)) {
+            paletteFolder = newPath;
+        } else if (paletteFolder.startsWith(prefix)) {
+            paletteFolder = newPath + "/" + paletteFolder.substring(prefix.length());
+        }
+    }
+
+    public int getPaletteDisplayWidth() {
+        return paletteDisplayWidth > 0 ? paletteDisplayWidth : width;
+    }
+
+    public void setPaletteDisplayWidth(int paletteDisplayWidth) {
+        int oldW = getCollisionFootprintWidth();
+        int oldH = getCollisionFootprintHeight();
+        int oldAnchorX = getCollisionFootprintAnchorX();
+        int oldAnchorY = getCollisionFootprintAnchorY();
+        boolean followsDisplaySize = !hasCustomCollisionFootprint();
+        this.paletteDisplayWidth = paletteDisplayWidth <= 0 || paletteDisplayWidth == width
+                ? 0 : Math.min(maxTileSize, paletteDisplayWidth);
+        if (followsDisplaySize) {
+            resizeCollisionDefaults(oldW, oldH, oldAnchorX, oldAnchorY,
+                    getCollisionFootprintWidth(), getCollisionFootprintHeight(),
+                    getCollisionFootprintAnchorX(), getCollisionFootprintAnchorY());
+        }
+    }
+
+    public int getPaletteDisplayHeight() {
+        return paletteDisplayHeight > 0 ? paletteDisplayHeight : height;
+    }
+
+    public void setPaletteDisplayHeight(int paletteDisplayHeight) {
+        int oldW = getCollisionFootprintWidth();
+        int oldH = getCollisionFootprintHeight();
+        int oldAnchorX = getCollisionFootprintAnchorX();
+        int oldAnchorY = getCollisionFootprintAnchorY();
+        boolean followsDisplaySize = !hasCustomCollisionFootprint();
+        this.paletteDisplayHeight = paletteDisplayHeight <= 0 || paletteDisplayHeight == height
+                ? 0 : Math.min(maxTileSize, paletteDisplayHeight);
+        if (followsDisplaySize) {
+            resizeCollisionDefaults(oldW, oldH, oldAnchorX, oldAnchorY,
+                    getCollisionFootprintWidth(), getCollisionFootprintHeight(),
+                    getCollisionFootprintAnchorX(), getCollisionFootprintAnchorY());
+        }
+    }
+
+    public boolean hasPaletteDisplaySize() {
+        return paletteDisplayWidth > 0 || paletteDisplayHeight > 0;
+    }
+
+    public BufferedImage getPaletteThumbnail() {
+        return paletteThumbnail == null ? thumbnail : paletteThumbnail;
+    }
+
+    public void setPaletteThumbnail(BufferedImage paletteThumbnail) {
+        this.paletteThumbnail = paletteThumbnail;
+    }
+
+    /**
+     * Default collision values applied where this tile is placed on a map:
+     * collision layer index to a per-cell value grid indexed [column][row]
+     * where row 0 is the top of the tile image. -1 = no default for the cell.
+     */
+    public java.util.TreeMap<Integer, int[][]> getCollisionDefaults() {
+        return collisionDefaults;
+    }
+
+    /**
+     * The default grid of a collision layer, sized to the collision footprint
+     * rather than necessarily to the tile's map dimensions.
+     */
+    public int[][] getOrCreateCollisionDefaultGrid(int layer) {
+        int[][] grid = collisionDefaults.get(layer);
+        int footprintWidth = getCollisionFootprintWidth();
+        int footprintHeight = getCollisionFootprintHeight();
+        if (grid == null || grid.length != footprintWidth || grid[0].length != footprintHeight) {
+            int[][] resized = createEmptyCollisionGrid(footprintWidth, footprintHeight);
+            for (int i = 0; i < footprintWidth; i++) {
+                for (int j = 0; j < footprintHeight; j++) {
+                    resized[i][j] = grid != null && i < grid.length && j < grid[0].length
+                            ? grid[i][j] : -1;
+                }
+            }
+            grid = resized;
+            collisionDefaults.put(layer, grid);
+        }
+        return grid;
+    }
+
+    public int getCollisionFootprintWidth() {
+        return collisionFootprintWidth > 0 ? collisionFootprintWidth : getPaletteDisplayWidth();
+    }
+
+    public int getCollisionFootprintHeight() {
+        return collisionFootprintHeight > 0 ? collisionFootprintHeight : getPaletteDisplayHeight();
+    }
+
+    public int getCollisionFootprintAnchorX() {
+        return Math.max(0, Math.min(getCollisionFootprintWidth() - 1, collisionFootprintAnchorX));
+    }
+
+    public int getCollisionFootprintAnchorY() {
+        int anchor = collisionFootprintAnchorY >= 0
+                ? collisionFootprintAnchorY : getCollisionFootprintHeight() - 1;
+        return Math.max(0, Math.min(getCollisionFootprintHeight() - 1, anchor));
+    }
+
+    public int getStoredCollisionFootprintWidth() {
+        return collisionFootprintWidth;
+    }
+
+    public int getStoredCollisionFootprintHeight() {
+        return collisionFootprintHeight;
+    }
+
+    public int getStoredCollisionFootprintAnchorX() {
+        return collisionFootprintAnchorX;
+    }
+
+    public int getStoredCollisionFootprintAnchorY() {
+        return collisionFootprintAnchorY;
+    }
+
+    public boolean hasCustomCollisionFootprint() {
+        return collisionFootprintWidth > 0 && collisionFootprintHeight > 0;
+    }
+
+    public void setCollisionFootprint(int footprintWidth, int footprintHeight,
+                                      int anchorX, int anchorY) {
+        int oldW = getCollisionFootprintWidth();
+        int oldH = getCollisionFootprintHeight();
+        int oldAnchorX = getCollisionFootprintAnchorX();
+        int oldAnchorY = getCollisionFootprintAnchorY();
+
+        collisionFootprintWidth = Math.max(1, Math.min(32, footprintWidth));
+        collisionFootprintHeight = Math.max(1, Math.min(32, footprintHeight));
+        collisionFootprintAnchorX = Math.max(0, Math.min(collisionFootprintWidth - 1, anchorX));
+        collisionFootprintAnchorY = Math.max(0, Math.min(collisionFootprintHeight - 1, anchorY));
+        resizeCollisionDefaults(oldW, oldH, oldAnchorX, oldAnchorY,
+                getCollisionFootprintWidth(), getCollisionFootprintHeight(),
+                getCollisionFootprintAnchorX(), getCollisionFootprintAnchorY());
+    }
+
+    public void resetCollisionFootprint() {
+        int oldW = getCollisionFootprintWidth();
+        int oldH = getCollisionFootprintHeight();
+        int oldAnchorX = getCollisionFootprintAnchorX();
+        int oldAnchorY = getCollisionFootprintAnchorY();
+        collisionFootprintWidth = 0;
+        collisionFootprintHeight = 0;
+        collisionFootprintAnchorX = 0;
+        collisionFootprintAnchorY = -1;
+        resizeCollisionDefaults(oldW, oldH, oldAnchorX, oldAnchorY,
+                getCollisionFootprintWidth(), getCollisionFootprintHeight(),
+                getCollisionFootprintAnchorX(), getCollisionFootprintAnchorY());
+    }
+
+    private void resizeCollisionDefaults(int oldW, int oldH, int oldAnchorX, int oldAnchorY,
+                                         int newW, int newH, int newAnchorX, int newAnchorY) {
+        for (java.util.Map.Entry<Integer, int[][]> entry : collisionDefaults.entrySet()) {
+            int[][] oldGrid = entry.getValue();
+            int[][] resized = createEmptyCollisionGrid(newW, newH);
+            for (int x = 0; x < Math.min(oldW, oldGrid.length); x++) {
+                for (int y = 0; y < Math.min(oldH, oldGrid[x].length); y++) {
+                    //Changing only the anchor intentionally moves the grid
+                    //relative to map placement. During an actual resize,
+                    //keep painted defaults aligned around the old anchor.
+                    int newX = x;
+                    int newY = y;
+                    if (oldW != newW || oldH != newH) {
+                        int mapOffsetX = x - oldAnchorX;
+                        int mapOffsetY = oldAnchorY - y;
+                        newX = newAnchorX + mapOffsetX;
+                        newY = newAnchorY - mapOffsetY;
+                    }
+                    if (newX >= 0 && newX < newW && newY >= 0 && newY < newH) {
+                        resized[newX][newY] = oldGrid[x][y];
+                    }
+                }
+            }
+            entry.setValue(resized);
+        }
+    }
+
+    private static int[][] createEmptyCollisionGrid(int width, int height) {
+        int[][] grid = new int[width][height];
+        for (int[] column : grid) {
+            java.util.Arrays.fill(column, -1);
+        }
+        return grid;
+    }
+
+    private java.util.TreeMap<Integer, int[][]> cloneCollisionDefaults() {
+        java.util.TreeMap<Integer, int[][]> copy = new java.util.TreeMap<>();
+        for (java.util.Map.Entry<Integer, int[][]> entry : collisionDefaults.entrySet()) {
+            int[][] source = entry.getValue();
+            int[][] gridCopy = new int[source.length][];
+            for (int i = 0; i < source.length; i++) {
+                gridCopy[i] = java.util.Arrays.copyOf(source[i], source[i].length);
+            }
+            copy.put(entry.getKey(), gridCopy);
+        }
+        return copy;
+    }
+
+    /** Removes layers whose grid has no cell values left. */
+    public void pruneEmptyCollisionDefaults() {
+        collisionDefaults.values().removeIf(grid -> {
+            for (int[] column : grid) {
+                for (int value : column) {
+                    if (value >= 0) {
+                        return false;
+                    }
+                }
+            }
+            return true;
+        });
+    }
+
+    public boolean hasCollisionDefaults() {
+        for (int[][] grid : collisionDefaults.values()) {
+            for (int[] column : grid) {
+                for (int value : column) {
+                    if (value >= 0) {
+                        return true;
+                    }
+                }
+            }
+        }
+        return false;
+    }
+
+    public boolean hasPaletteMetadata() {
+        return !paletteName.isEmpty() || !getPaletteFolderSlots().isEmpty()
+                || paletteSlot >= 0 || hasPaletteDisplaySize()
+                || hasCustomCollisionFootprint() || hasCollisionDefaults();
     }
 
     public void setTexOffsetsQuad(ArrayList<Integer> textureOffsets) {

@@ -7,6 +7,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import editor.converter.ConverterLocator;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.TransformerException;
 
@@ -49,7 +50,7 @@ public class NsbtxWriter {
             System.out.println("File exists!");
             String filename = new File(imdPath).getName();
             filename = Utils.removeExtensionFromPath(filename);
-            String converterPath = "converter/g3dcvtr.exe";
+            String converterPath = ConverterLocator.getConverterPath();
             String[] cmd;
             if (System.getProperty("os.name").toLowerCase().startsWith("windows")) {
                 cmd = new String[]{converterPath, imdPath, "-etex", "-o", filename};

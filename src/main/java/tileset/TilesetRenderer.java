@@ -37,6 +37,7 @@ import com.jogamp.opengl.util.awt.AWTGLReadBufferUtil;
 
 import java.awt.Color;
 import java.awt.image.BufferedImage;
+import java.util.ArrayList;
 
 import tileset.Tile;
 import tileset.Tileset;
@@ -58,6 +59,7 @@ public class TilesetRenderer {
 
     private GLAutoDrawable drawable;
     private GL2 gl;
+    private ArrayList<com.jogamp.opengl.util.texture.Texture> previousTextures;
 
     public TilesetRenderer(Tileset tileset) {
         this.tileset = tileset;
@@ -92,6 +94,7 @@ public class TilesetRenderer {
             //gl.glClearColor(0.0f, 0.5f, 0.5f, 0.0f); //Use this for transparent background
             gl.glClearColor(0.0f, 0.5f, 0.5f, 1.0f);
 
+            previousTextures = new ArrayList<>(tileset.getTextures());
             tileset.loadTexturesGL();
         } catch (GLException ex) {
             ex.printStackTrace();
@@ -113,26 +116,36 @@ public class TilesetRenderer {
     public void renderTileThumbnail(int tileIndex) {
         Tile tile = tileset.get(tileIndex);
         try {
-
-            gl.glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
-            setupVAOsVBOs(tile);
-
-            drawOpaqueTile(tile); //NEW CODE REMOVED Remove this for transparent background
-            drawTransparentTile(tile);
-
-            //BufferedImage img = new AWTGLReadBufferUtil(drawable.getGLProfile(), false).readPixelsToBufferedImage(drawable.getGL(), 0, 0, tile.getWidth() * tileSize, tile.getHeight() * tileSize, true /* awtOrientation */);
-            //BufferedImage img = new AWTGLReadBufferUtil(drawable.getGLProfile(), true).readPixelsToBufferedImage(drawable.getGL(), true /* awtOrientation */); //Use this for transparent background
-            BufferedImage img = new AWTGLReadBufferUtil(drawable.getGLProfile(), false).readPixelsToBufferedImage(drawable.getGL(), true /* awtOrientation */);
-            img = img.getSubimage(0, 0, tile.getWidth() * tileSize, tile.getHeight() * tileSize);
+            BufferedImage img = renderTileImage(tile, tile.getWidth(), tile.getHeight());
 
             //tile.setThumbnail(Utils.addBackgroundColor(new Color(0.0f, 0.5f, 0.5f, 1.0f), img));//Use this for transparent background
             tile.setThumbnail(img);
             tile.setSmallThumbnail(Utils.resize(
                     img, smallTileSize * tile.getWidth(), smallTileSize * tile.getHeight()));
+
+            if (tile.hasPaletteDisplaySize()) {
+                tile.setPaletteThumbnail(renderTileImage(tile,
+                        tile.getPaletteDisplayWidth(), tile.getPaletteDisplayHeight()));
+            } else {
+                tile.setPaletteThumbnail(null);
+            }
         } catch (GLException ex) {
             ex.printStackTrace();
         }
+    }
+
+    private BufferedImage renderTileImage(Tile tile, int width, int height) {
+            gl.glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+            setupVAOsVBOs(tile);
+
+            drawOpaqueTile(tile, height); //NEW CODE REMOVED Remove this for transparent background
+            drawTransparentTile(tile, height);
+
+            //BufferedImage img = new AWTGLReadBufferUtil(drawable.getGLProfile(), false).readPixelsToBufferedImage(drawable.getGL(), 0, 0, tile.getWidth() * tileSize, tile.getHeight() * tileSize, true /* awtOrientation */);
+            //BufferedImage img = new AWTGLReadBufferUtil(drawable.getGLProfile(), true).readPixelsToBufferedImage(drawable.getGL(), true /* awtOrientation */); //Use this for transparent background
+            BufferedImage img = new AWTGLReadBufferUtil(drawable.getGLProfile(), false).readPixelsToBufferedImage(drawable.getGL(), true /* awtOrientation */);
+            return img.getSubimage(0, 0, width * tileSize, height * tileSize);
     }
 
     private void setupVAOsVBOs(Tile tile) {
@@ -142,16 +155,19 @@ public class TilesetRenderer {
         renderVboTile[3] = tile.getTCoordsTri().length > 0;
     }
 
-    private void drawTile(Tile tile) {
-        gl.glLoadIdentity();
-
+    private void drawTile(Tile tile, int renderHeight) {
         float v = 0.5f * Tile.maxTileSize;
+        gl.glMatrixMode(GL2.GL_PROJECTION);
+        gl.glLoadIdentity();
         gl.glOrtho(-v, v, -v, v, -100.0f, 100.0f);
+
+        gl.glMatrixMode(GL2.GL_MODELVIEW);
+        gl.glLoadIdentity();
 
         //gl.glTranslatef(-cameraX, -cameraY, -cameraZ);
         gl.glTranslatef(
                 ((float) (-Tile.maxTileSize)) / 2,
-                ((float) (Tile.maxTileSize)) / 2 - tile.getHeight(),
+                ((float) (Tile.maxTileSize)) / 2 - renderHeight,
                 -cameraZ);
         /*
         gl.glTranslatef(
@@ -245,7 +261,7 @@ public class TilesetRenderer {
         }
     }
 
-    private void drawOpaqueTile(Tile tile) {
+    private void drawOpaqueTile(Tile tile, int renderHeight) {
         GL2 gl = (GL2) GLContext.getCurrentGL();
 
         //Use program
@@ -259,10 +275,10 @@ public class TilesetRenderer {
         gl.glEnable(GL_ALPHA_TEST);
         gl.glAlphaFunc(GL_GREATER, 0.9f);
 
-        drawTile(tile);
+        drawTile(tile, renderHeight);
     }
 
-    private void drawTransparentTile(Tile tile) {
+    private void drawTransparentTile(Tile tile, int renderHeight) {
         GL2 gl = (GL2) GLContext.getCurrentGL();
 
         //Use program
@@ -276,10 +292,15 @@ public class TilesetRenderer {
         gl.glEnable(GL_ALPHA_TEST);
         gl.glAlphaFunc(GL_NOTEQUAL, 0.0f);
 
-        drawTile(tile);
+        drawTile(tile, renderHeight);
     }
 
     public void destroy() {
+        if (previousTextures != null && !previousTextures.isEmpty()) {
+            tileset.getTextures().clear();
+            tileset.getTextures().addAll(previousTextures);
+        }
+        previousTextures = null;
         drawable.getContext().destroy();
         /*try {
             drawable.destroy();

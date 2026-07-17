@@ -296,6 +296,15 @@ public class MapGrid {
     }
 
     public void floodFillTileGrid(int x, int y, int value, int tileWidth, int tileHeight) {
+        floodFillTileGrid(x, y, value, tileWidth, tileHeight, null);
+    }
+
+    /**
+     * Flood fill that can additionally be restricted to a selection mask
+     * (cells where restrictMask is false are never filled).
+     */
+    public void floodFillTileGrid(int x, int y, int value, int tileWidth, int tileHeight,
+                                  boolean[][] restrictMask) {
         final int prevC = handler.getActiveTileLayer()[x][y];
 
         //Generate mask
@@ -322,6 +331,14 @@ public class MapGrid {
                     } catch (Exception ex) {
                         mask[i][j] = false;
                     }
+                }
+            }
+        }
+
+        if (restrictMask != null) {
+            for (int i = 0; i < MapGrid.cols; i++) {
+                for (int j = 0; j < MapGrid.rows; j++) {
+                    mask[i][j] &= restrictMask[i][j];
                 }
             }
         }
