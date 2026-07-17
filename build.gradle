@@ -12,12 +12,16 @@ repositories {
 }
 
 dependencies {
-    implementation fileTree(include: ['*.jar'], dir: 'libs')
+    implementation files(
+            'libs/NitroSystemTool.jar',
+            'libs/graphicslib3D.jar',
+            'libs/jogamp-fat.jar'
+    )
     implementation group: 'com.formdev', name: 'flatlaf', version: '0.39'
     implementation group: 'com.miglayout', name: 'miglayout-swing', version: '5.0'
 }
 
-version '2.2.2'
+version '2.3.0'
 
 java {
     sourceCompatibility = JavaVersion.VERSION_11
@@ -38,7 +42,10 @@ jar {
     duplicatesStrategy = DuplicatesStrategy.EXCLUDE
 
     manifest {
-        attributes "Main-Class": application.mainClass.get()
+        attributes(
+                "Main-Class": application.mainClass.get(),
+                "Implementation-Version": project.version
+        )
     }
 
     from {
