@@ -21,6 +21,7 @@ public class PaletteFolder {
     private boolean gridLinesVisible = true;
     private boolean smartDrawingsCollapsed = false;
     private transient int pinnedScrollY = 0;
+    private int pinnedViewportHeight = 0; //0 = automatic
 
     public PaletteFolder(String path) {
         this.path = path;
@@ -94,5 +95,13 @@ public class PaletteFolder {
 
     public void setPinnedScrollY(int pinnedScrollY) {
         this.pinnedScrollY = Math.max(0, pinnedScrollY);
+    }
+
+    public int getPinnedViewportHeight() {
+        return pinnedViewportHeight;
+    }
+
+    public void setPinnedViewportHeight(int pinnedViewportHeight) {
+        this.pinnedViewportHeight = Math.max(0, pinnedViewportHeight);
     }
 }

@@ -17,7 +17,7 @@ import editor.smartdrawing.SmartGrid;
  * fully compatible with stock Pokemon DS Map Studio.
  *
  * Line based text format (fields separated by '|'):
- *   folder|path|columns|rows|collapsed|pinned
+ *   folder|path|columns|rows|collapsed|pinned|gridLines|smartCollapsed|pinnedHeight
  *   tile|index|name|folder|slot|displayWidth|displayHeight|
  *        footprintWidth|footprintHeight|anchorX|anchorY|collisionDefaults
  *
@@ -29,7 +29,7 @@ import editor.smartdrawing.SmartGrid;
 public class TileMetadataIO {
 
     public static final String fileExtension = "meta";
-    private static final String HEADER = "# Pokemon DS Map Studio tile metadata v6";
+    private static final String HEADER = "# Pokemon DS Map Studio tile metadata v7";
 
     public static String getMetadataPath(String tilesetPath) {
         return tilesetPath + "." + fileExtension;
@@ -65,7 +65,8 @@ public class TileMetadataIO {
                         + "|" + (folder.isCollapsed() ? 1 : 0)
                         + "|" + (folder.isPinned() ? 1 : 0)
                         + "|" + (folder.isGridLinesVisible() ? 1 : 0)
-                        + "|" + (folder.areSmartDrawingsCollapsed() ? 1 : 0));
+                        + "|" + (folder.areSmartDrawingsCollapsed() ? 1 : 0)
+                        + "|" + folder.getPinnedViewportHeight());
             }
             for (int i = 0; i < tset.size(); i++) {
                 Tile tile = tset.get(i);
@@ -152,8 +153,7 @@ public class TileMetadataIO {
         List<String> lines = Files.readAllLines(new File(metadataPath).toPath(),
                 StandardCharsets.UTF_8);
         boolean legacyAllTilesPin = lines.stream().noneMatch(line ->
-                line.equals("# Pokemon DS Map Studio tile metadata v5")
-                || line.equals(HEADER));
+                line.matches("# Pokemon DS Map Studio tile metadata v(?:[5-9]|[1-9][0-9]+)"));
         boolean recognized = false;
         for (String line : lines) {
             if (line.startsWith("# Pokemon DS Map Studio tile metadata v")
@@ -227,6 +227,9 @@ public class TileMetadataIO {
                 }
                 if (fields.length >= 8) {
                     folder.setSmartDrawingsCollapsed(fields[7].equals("1"));
+                }
+                if (fields.length >= 9) {
+                    folder.setPinnedViewportHeight(Integer.parseInt(fields[8]));
                 }
             } else {
                 folder.setRows(PaletteFolder.DEFAULT_ROWS);

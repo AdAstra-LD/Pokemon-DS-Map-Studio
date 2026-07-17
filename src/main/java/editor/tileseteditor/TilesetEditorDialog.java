@@ -25,6 +25,10 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.LinkedHashMap;
+import java.util.Map;
+import java.util.Set;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.DefaultListCellRenderer;
 import javax.swing.DefaultListModel;
@@ -91,8 +95,11 @@ public class TilesetEditorDialog extends JDialog {
         jTabbedPane1.setIconAt(1, new ImageIcon(getClass().getResource("/icons/MaterialIcon2.png")));
 
         collisionDefaultsPanel = new CollisionDefaultsEditorPanel();
+        Image collisionDefaultsIcon = new ImageIcon(
+                getClass().getResource("/icons/collisionEditorIcon.png"))
+                .getImage().getScaledInstance(16, 16, Image.SCALE_SMOOTH);
         jTabbedPane1.addTab("Collision Defaults",
-                new ImageIcon(getClass().getResource("/icons/collisionEditorIcon.png")),
+                new ImageIcon(collisionDefaultsIcon),
                 collisionDefaultsPanel);
         jTabbedPane1.addChangeListener(e -> {
             if (jTabbedPane1.getSelectedComponent() == collisionDefaultsPanel) {
@@ -695,18 +702,145 @@ public class TilesetEditorDialog extends JDialog {
     private void jbDuplicateTileActionPerformed(ActionEvent evt) {
         if (handler.getTileset().size() > 0) {
             ArrayList<Integer> indices = tileSelector.getIndicesSelected();
+            ArrayList<Tile> sources = new ArrayList<>();
+            int insertionIndex = 0;
+            for (int index : indices) {
+                sources.add(handler.getTileset().get(index));
+                insertionIndex = Math.max(insertionIndex, index + 1);
+            }
+            Map<String, FolderDuplicationPlan> folderPlans
+                    = buildFolderDuplicationPlans(sources);
 
-            handler.getTileset().duplicateTiles(indices);
-            //int index = handler.getTileIndexSelected();
-            //handler.getTileset().duplicateTile(index);
+            ArrayList<Tile> duplicates = new ArrayList<>();
+            for (Tile source : sources) {
+                Tile duplicate = source.clone();
+                duplicates.add(duplicate);
+                handler.getTileset().getTiles().add(insertionIndex++, duplicate);
+            }
+            applyFolderDuplicationPlans(folderPlans, sources, duplicates);
+
             tileDisplay.requestUpdate();
-            //tileDisplay.swapVBOs(handler.getTileIndexSelected(), newIndex);
-            //handler.setIndexTileSelected(indices.get(indices.get(0)));
             tileSelector.updateLayout();
             tileSelector.repaint();
+            handler.getMainFrame().updateTileSelectorLayout();
             updateViewTileIndex();
         }
 
+    }
+
+    private Map<String, FolderDuplicationPlan> buildFolderDuplicationPlans(
+            ArrayList<Tile> sources) {
+        Map<String, FolderDuplicationPlan> plans = new LinkedHashMap<>();
+        for (Tile source : sources) {
+            for (Map.Entry<String, Integer> membership
+                    : source.getPaletteFolderSlots().entrySet()) {
+                String path = membership.getKey();
+                int slot = membership.getValue();
+                PaletteFolder folder = handler.getTileset().getPaletteFolder(path);
+                if (folder == null || folder.getColumns() <= 0 || slot < 0) {
+                    continue;
+                }
+                plans.computeIfAbsent(path,
+                        ignored -> new FolderDuplicationPlan(folder)).add(source, slot);
+            }
+        }
+        for (FolderDuplicationPlan plan : plans.values()) {
+            plan.finish(sources);
+        }
+        return plans;
+    }
+
+    private void applyFolderDuplicationPlans(Map<String, FolderDuplicationPlan> plans,
+            ArrayList<Tile> sources, ArrayList<Tile> duplicates) {
+        Set<Tile> sourceSet = new HashSet<>(sources);
+        Set<Tile> duplicateSet = new HashSet<>(duplicates);
+        for (Map.Entry<String, FolderDuplicationPlan> entry : plans.entrySet()) {
+            String path = entry.getKey();
+            FolderDuplicationPlan plan = entry.getValue();
+            int columns = plan.folder.getColumns();
+            int oldRows = plan.folder.getRows();
+
+            for (Tile tile : handler.getTileset().getTiles()) {
+                if (sourceSet.contains(tile) || duplicateSet.contains(tile)) {
+                    continue;
+                }
+                int slot = tile.getPaletteSlot(path);
+                if (slot < 0) {
+                    continue;
+                }
+                int row = slot / columns;
+                if (row >= plan.insertionRow) {
+                    tile.setPaletteSlot(path, slot + plan.blockHeight * columns);
+                }
+            }
+
+            for (int i = 0; i < sources.size(); i++) {
+                Integer sourceSlot = plan.sourceSlots.get(sources.get(i));
+                if (sourceSlot == null) {
+                    continue;
+                }
+                int sourceRow = sourceSlot / columns;
+                int sourceColumn = sourceSlot % columns;
+                int duplicateRow = plan.insertionRow + sourceRow - plan.minRow;
+                duplicates.get(i).setPaletteSlot(path,
+                        duplicateRow * columns + sourceColumn);
+            }
+
+            int requiredRows = oldRows + plan.blockHeight;
+            for (Tile tile : handler.getTileset().getTiles()) {
+                int slot = tile.getPaletteSlot(path);
+                if (slot >= 0) {
+                    requiredRows = Math.max(requiredRows, slot / columns
+                            + Math.max(1, tile.getPaletteDisplayHeight()));
+                }
+            }
+            plan.folder.setRows(requiredRows);
+            plan.folder.setCollapsed(false);
+        }
+    }
+
+    private class FolderDuplicationPlan {
+        final PaletteFolder folder;
+        final Map<Tile, Integer> sourceSlots = new LinkedHashMap<>();
+        int minRow = Integer.MAX_VALUE;
+        int insertionRow;
+        int blockHeight;
+
+        FolderDuplicationPlan(PaletteFolder folder) {
+            this.folder = folder;
+        }
+
+        void add(Tile tile, int slot) {
+            sourceSlots.put(tile, slot);
+            int row = slot / folder.getColumns();
+            minRow = Math.min(minRow, row);
+            insertionRow = Math.max(insertionRow,
+                    row + Math.max(1, tile.getPaletteDisplayHeight()));
+        }
+
+        void finish(ArrayList<Tile> sources) {
+            blockHeight = Math.max(1, insertionRow - minRow);
+            Set<Tile> sourceSet = new HashSet<>(sources);
+            boolean movedBoundary;
+            do {
+                movedBoundary = false;
+                for (Tile tile : handler.getTileset().getTiles()) {
+                    if (sourceSet.contains(tile)) {
+                        continue;
+                    }
+                    int slot = tile.getPaletteSlot(folder.getPath());
+                    if (slot < 0) {
+                        continue;
+                    }
+                    int row = slot / folder.getColumns();
+                    int bottom = row + Math.max(1, tile.getPaletteDisplayHeight());
+                    if (row < insertionRow && bottom > insertionRow) {
+                        insertionRow = bottom;
+                        movedBoundary = true;
+                    }
+                }
+            } while (movedBoundary);
+        }
     }
 
     private void jbFlipModelActionPerformed(ActionEvent evt) {

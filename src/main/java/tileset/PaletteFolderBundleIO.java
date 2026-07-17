@@ -175,6 +175,7 @@ public final class PaletteFolderBundleIO {
         copy.setRows(source.getRows());
         copy.setCollapsed(source.isCollapsed());
         copy.setPinned(false);
+        copy.setPinnedViewportHeight(source.getPinnedViewportHeight());
         copy.setGridLinesVisible(source.isGridLinesVisible());
         copy.setSmartDrawingsCollapsed(source.areSmartDrawingsCollapsed());
         return copy;
@@ -194,6 +195,7 @@ public final class PaletteFolderBundleIO {
             added.setColumns(folder.getColumns());
             added.setRows(folder.getRows());
             added.setCollapsed(folder.isCollapsed());
+            added.setPinnedViewportHeight(folder.getPinnedViewportHeight());
             added.setGridLinesVisible(folder.isGridLinesVisible());
             added.setSmartDrawingsCollapsed(folder.areSmartDrawingsCollapsed());
             paths.put(folder.getPath(), path);
