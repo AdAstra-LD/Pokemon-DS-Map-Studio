@@ -34,8 +34,14 @@ import utils.Utils;
  */
 public class MapEditorHandler {
 
-    //Version name
-    public static final String versionName = "Pokemon DS Map Studio 2.2.2 [AdAstra]";
+    private static final String FALLBACK_VERSION = "2.3.0";
+    public static final String versionName = "Pokemon DS Map Studio v"
+            + getApplicationVersion() + " [AdAstra]";
+
+    private static String getApplicationVersion() {
+        String version = MapEditorHandler.class.getPackage().getImplementationVersion();
+        return version == null || version.isBlank() ? FALLBACK_VERSION : version;
+    }
 
     //Main frame
     private final MainFrame mainFrame;
