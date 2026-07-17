@@ -19,6 +19,13 @@ dependencies {
     )
     implementation group: 'com.formdev', name: 'flatlaf', version: '0.39'
     implementation group: 'com.miglayout', name: 'miglayout-swing', version: '5.0'
+    testImplementation platform('org.junit:junit-bom:5.10.3')
+    testImplementation 'org.junit.jupiter:junit-jupiter'
+    testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+}
+
+test {
+    useJUnitPlatform()
 }
 
 version '2.3.0'

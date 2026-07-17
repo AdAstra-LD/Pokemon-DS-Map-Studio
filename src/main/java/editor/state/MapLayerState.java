@@ -12,10 +12,11 @@ import java.util.Set;
 /**
  * @author Trifindo
  */
-public class MapLayerState extends State {
+public class MapLayerState extends MapState {
 
     private final MapEditorHandler handler;
     private final int layerIndex;
+    private final boolean fullState;
 
     private final HashMap<Point, int[][]> mapTileLayers;
     private final HashMap<Point, int[][]> mapHeightLayers;
@@ -28,10 +29,15 @@ public class MapLayerState extends State {
     }
 
     public MapLayerState(String name, MapEditorHandler handler, boolean fullState) {
+        this(name, handler, handler.getActiveLayerIndex(), fullState);
+    }
+
+    private MapLayerState(String name, MapEditorHandler handler, int layerIndex, boolean fullState) {
         super(name);
 
         this.handler = handler;
-        this.layerIndex = handler.getActiveLayerIndex();
+        this.layerIndex = layerIndex;
+        this.fullState = fullState;
 
         mapTileLayers = new HashMap<>();
         mapHeightLayers = new HashMap<>();
@@ -93,6 +99,11 @@ public class MapLayerState extends State {
 
     }
 
+    @Override
+    public MapState captureCurrentState() {
+        return new MapLayerState("Map Edit", handler, layerIndex, fullState);
+    }
+
     private static byte[][][] cloneCollisionLayers(MapData mapData) {
         int numLayers = mapData.getCollisions().getNumLayers();
         byte[][][] copy = new byte[numLayers][][];
@@ -116,6 +127,21 @@ public class MapLayerState extends State {
 
     public Set<Point> getKeySet() {
         return mapTileLayers.keySet();
+    }
+
+    @Override
+    public Set<Point> getAffectedMaps() {
+        return getKeySet();
+    }
+
+    @Override
+    public Set<Integer> getAffectedLayers() {
+        return java.util.Collections.singleton(layerIndex);
+    }
+
+    @Override
+    public boolean shouldPruneUnusedMaps() {
+        return true;
     }
 
 }

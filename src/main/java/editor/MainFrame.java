@@ -69,6 +69,7 @@ public class MainFrame extends JFrame {
     private JMenuItem jmiDeselect;
     private JMenuItem jmiImportTileMetadata;
     private JMenuItem jmiExportTileMetadata;
+    private JMenuItem jmiReplaceRemap;
     private JLabel jlCursorCoordsTitle;
     private JLabel jlCursorCoords;
 
@@ -305,6 +306,14 @@ public class MainFrame extends JFrame {
         jmEdit.insert(jmiDeleteSelection, 15);
         jmEdit.insert(jmiFillSelection, 16);
         jmEdit.insert(jmiDeselect, 17);
+
+        jmiReplaceRemap = new JMenuItem("Replace and Remap...");
+        jmiReplaceRemap.setIcon(new ImageIcon(getClass().getResource("/icons/ReplaceIcon.png")));
+        jmiReplaceRemap.setToolTipText("Preview and replace tile IDs across maps and layers");
+        jmiReplaceRemap.addActionListener(e -> toolDialogLauncher.openReplaceRemap());
+        int settingsIndex = jmEdit.getPopupMenu().getComponentIndex(menuItem1);
+        jmEdit.insertSeparator(settingsIndex);
+        jmEdit.insert(jmiReplaceRemap, settingsIndex + 1);
 
         //Status bar: rename the selected map readout and add the cursor tile
         //coordinates next to it

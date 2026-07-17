@@ -6,6 +6,7 @@ import editor.handler.MapEditorHandler;
 import editor.layerselector.ThumbnailLayerSelector;
 import editor.mapdisplay.MapDisplay;
 import editor.state.MapLayerState;
+import editor.state.MapState;
 import editor.state.StateHandler;
 import java.awt.Point;
 
@@ -63,20 +64,28 @@ final class MapEditActions {
     void undoMapState() {
         StateHandler mapStateHandler = handler.getMapStateHandler();
         if (mapStateHandler.canGetPreviousState()) {
-            MapLayerState state = (MapLayerState) mapStateHandler.getPreviousState(
-                    new MapLayerState("Map Edit", handler, true));
+            MapState pendingState = (MapState) mapStateHandler.getLastState();
+            MapState state = (MapState) mapStateHandler.getPreviousState(
+                    pendingState.captureCurrentState());
             state.revertState();
             frame.getRedoButton().setEnabled(true);
             if (!mapStateHandler.canGetPreviousState()) {
                 frame.getUndoButton().setEnabled(false);
             }
-            for (Point mapCoord : state.getKeySet()) {
+            for (Point mapCoord : state.getAffectedMaps()) {
                 MapData mapData = handler.getMapMatrix().getMap(mapCoord);
-                mapData.getGrid().updateMapLayerGL(state.getLayerIndex(), handler.useRealTimePostProcessing());
+                if (mapData == null) {
+                    continue;
+                }
+                for (Integer layer : state.getAffectedLayers()) {
+                    mapData.getGrid().updateMapLayerGL(layer, handler.useRealTimePostProcessing());
+                }
                 mapData.updateMapThumbnail();
             }
 
-            handler.getMapMatrix().removeUnusedMaps();
+            if (state.shouldPruneUnusedMaps()) {
+                handler.getMapMatrix().removeUnusedMaps();
+            }
             if (!handler.mapSelectedExists()) {
                 handler.setDefaultMapSelected();
 
@@ -86,7 +95,7 @@ final class MapEditActions {
 
             mapDisplay.repaint();
             viewUpdater.updateMapMatrixDisplay();
-            thumbnailLayerSelector.drawLayerThumbnail(state.getLayerIndex());
+            thumbnailLayerSelector.drawAllLayerThumbnails();
             thumbnailLayerSelector.repaint();
             viewUpdater.updateViewMapInfo();
         }
@@ -95,19 +104,26 @@ final class MapEditActions {
     void redoMapState() {
         StateHandler mapStateHandler = handler.getMapStateHandler();
         if (mapStateHandler.canGetNextState()) {
-            MapLayerState state = (MapLayerState) mapStateHandler.getNextState();
+            MapState state = (MapState) mapStateHandler.getNextState();
             state.revertState();
             frame.getUndoButton().setEnabled(true);
-            for (Point mapCoord : state.getKeySet()) {
+            for (Point mapCoord : state.getAffectedMaps()) {
                 MapData mapData = handler.getMapMatrix().getMap(mapCoord);
-                mapData.getGrid().updateMapLayerGL(state.getLayerIndex(), handler.useRealTimePostProcessing());
+                if (mapData == null) {
+                    continue;
+                }
+                for (Integer layer : state.getAffectedLayers()) {
+                    mapData.getGrid().updateMapLayerGL(layer, handler.useRealTimePostProcessing());
+                }
                 mapData.updateMapThumbnail();
             }
-            handler.getMapMatrix().removeUnusedMaps();
+            if (state.shouldPruneUnusedMaps()) {
+                handler.getMapMatrix().removeUnusedMaps();
+            }
 
             mapDisplay.repaint();
             viewUpdater.updateMapMatrixDisplay();
-            thumbnailLayerSelector.drawLayerThumbnail(state.getLayerIndex());
+            thumbnailLayerSelector.drawAllLayerThumbnails();
             thumbnailLayerSelector.repaint();
             if (!mapStateHandler.canGetNextState()) {
                 frame.getRedoButton().setEnabled(false);

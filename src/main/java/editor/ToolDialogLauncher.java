@@ -8,6 +8,7 @@ import editor.layerselector.ThumbnailLayerSelector;
 import editor.mapdisplay.MapDisplay;
 import editor.mapgroups.VisualizeExportGroupsDialog;
 import editor.mapmatrix.MapMatrixDisplay;
+import editor.remap.ReplaceRemapDialog;
 import editor.settings.SettingsDialog;
 import editor.smartdrawing.SmartGridDisplay;
 import editor.tileselector.TileSelector;
@@ -76,6 +77,11 @@ final class ToolDialogLauncher {
         }
 
         frame.repaint();
+    }
+
+    void openReplaceRemap() {
+        ReplaceRemapDialog dialog = new ReplaceRemapDialog(frame, handler);
+        dialog.setVisible(true);
     }
 
     void openExportGroupsList() {
