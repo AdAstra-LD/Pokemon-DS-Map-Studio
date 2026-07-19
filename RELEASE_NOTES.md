@@ -1,4 +1,13 @@
-# Pokemon DS Map Studio - Enhanced Tools Release
+# Pokemon DS Map Studio 2.3.1 - Enhanced Tools Release
+
+## Download and Packaging Improvements
+
+- Added a ready-to-run Windows package with its own Java runtime and `.exe` launcher.
+- Added a portable ZIP with Windows and Linux/macOS launch scripts.
+- Included the expected root-level `converter` folder, supporting DLL, and setup instructions.
+- Included README and release notes inside each distribution.
+- Added automated tagged releases and SHA-256 checksum generation.
+- `g3dcvtr.exe` remains user-supplied and is not redistributed.
 
 This release expands Pokemon DS Map Studio with new map-selection tools, Smart Drawing workflows, tile organization, portable metadata, and collision-default editing.
 

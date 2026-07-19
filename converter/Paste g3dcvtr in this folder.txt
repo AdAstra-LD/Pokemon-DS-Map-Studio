@@ -1,3 +1,5 @@
-Paste the following programs in this folder:
-- g3dcvtr.exe
-- xerces-c_2_5_0.dll
+Place your legally obtained Nintendo g3dcvtr executable in this folder.
+It must be named exactly: g3dcvtr.exe
+
+The supporting DLL is already included. g3dcvtr.exe is not distributed with
+Pokemon DS Map Studio.
