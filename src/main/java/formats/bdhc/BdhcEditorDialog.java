@@ -1,5 +1,6 @@
 package formats.bdhc;
 
+import com.formdev.flatlaf.util.SystemFileChooser;
 import editor.game.Game;
 import editor.handler.MapEditorHandler;
 import net.miginfocom.swing.*;
@@ -14,7 +15,6 @@ import java.text.DecimalFormat;
 import javax.swing.*;
 import javax.swing.border.*;
 import javax.swing.event.*;
-import javax.swing.filechooser.FileNameExtensionFilter;
 
 /**
  * @author Trifindo, JackHack96
@@ -337,15 +337,15 @@ public class BdhcEditorDialog extends JDialog {
     }
 
     public void openBdhcWithDialog() {
-        final JFileChooser fc = new JFileChooser();
+        final SystemFileChooser fc = new SystemFileChooser();
         if (handler.getLastBdhcDirectoryUsed() != null) {
             fc.setCurrentDirectory(new File(handler.getLastBdhcDirectoryUsed()));
         }
-        fc.setFileFilter(new FileNameExtensionFilter("Terrain File (*.bdhc)", Bdhc.fileExtension));
+        fc.setFileFilter(new SystemFileChooser.FileNameExtensionFilter("Terrain File (*.bdhc)", Bdhc.fileExtension));
         fc.setApproveButtonText("Open");
         fc.setDialogTitle("Open");
         final int returnVal = fc.showOpenDialog(this);
-        if (returnVal == JFileChooser.APPROVE_OPTION) {
+        if (returnVal == SystemFileChooser.APPROVE_OPTION) {
             try {
                 String path = fc.getSelectedFile().getPath();
                 handler.setLastBdhcDirectoryUsed(fc.getSelectedFile().getParent());
@@ -369,15 +369,15 @@ public class BdhcEditorDialog extends JDialog {
     }
 
     public void saveBdhcWithDialog() {
-        final JFileChooser fc = new JFileChooser();
+        final SystemFileChooser fc = new SystemFileChooser();
         if (handler.getLastBdhcDirectoryUsed() != null) {
             fc.setCurrentDirectory(new File(handler.getLastBdhcDirectoryUsed()));
         }
-        fc.setFileFilter(new FileNameExtensionFilter("Terrain File (*.bdhc)", Bdhc.fileExtension));
+        fc.setFileFilter(new SystemFileChooser.FileNameExtensionFilter("Terrain File (*.bdhc)", Bdhc.fileExtension));
         fc.setApproveButtonText("Save");
         fc.setDialogTitle("Save");
-        final int returnVal = fc.showOpenDialog(this);
-        if (returnVal == JFileChooser.APPROVE_OPTION) {
+        final int returnVal = fc.showSaveDialog(this);
+        if (returnVal == SystemFileChooser.APPROVE_OPTION) {
             try {
                 String path = fc.getSelectedFile().getPath();
                 handler.setLastBdhcDirectoryUsed(fc.getSelectedFile().getParent());

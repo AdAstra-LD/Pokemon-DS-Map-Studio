@@ -4,6 +4,7 @@
 
 package formats.bdhcam;
 
+import com.formdev.flatlaf.util.SystemFileChooser;
 import java.awt.event.*;
 import javax.swing.border.*;
 import javax.swing.event.*;
@@ -19,7 +20,6 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
 import javax.swing.*;
-import javax.swing.filechooser.FileNameExtensionFilter;
 import javax.swing.plaf.basic.BasicComboBoxRenderer;
 
 import net.miginfocom.swing.*;
@@ -260,15 +260,15 @@ public class BdhcamEditorDialog extends JDialog {
 
 
     private void jbImportBdhcamActionPerformed(ActionEvent e) {
-        final JFileChooser fc = new JFileChooser();
+        final SystemFileChooser fc = new SystemFileChooser();
         if (handler.getLastBdhcDirectoryUsed() != null) {
             fc.setCurrentDirectory(new File(handler.getLastBdhcDirectoryUsed()));
         }
-        fc.setFileFilter(new FileNameExtensionFilter("Terrain File (*.bdhcam)", Bdhcam.fileExtension));
+        fc.setFileFilter(new SystemFileChooser.FileNameExtensionFilter("Terrain File (*.bdhcam)", Bdhcam.fileExtension));
         fc.setApproveButtonText("Open");
         fc.setDialogTitle("Open BDHCAM");
         final int returnVal = fc.showOpenDialog(this);
-        if (returnVal == JFileChooser.APPROVE_OPTION) {
+        if (returnVal == SystemFileChooser.APPROVE_OPTION) {
             try {
                 String path = fc.getSelectedFile().getPath();
                 handler.setLastBdhcDirectoryUsed(fc.getSelectedFile().getParent());
@@ -286,15 +286,15 @@ public class BdhcamEditorDialog extends JDialog {
     }
 
     private void jbExportBdhcamActionPerformed(ActionEvent e) {
-        final JFileChooser fc = new JFileChooser();
+        final SystemFileChooser fc = new SystemFileChooser();
         if (handler.getLastBdhcDirectoryUsed() != null) {
             fc.setCurrentDirectory(new File(handler.getLastBdhcDirectoryUsed()));
         }
-        fc.setFileFilter(new FileNameExtensionFilter("Camera File (*.bdhcam)", Bdhcam.fileExtension));
+        fc.setFileFilter(new SystemFileChooser.FileNameExtensionFilter("Camera File (*.bdhcam)", Bdhcam.fileExtension));
         fc.setApproveButtonText("Save");
         fc.setDialogTitle("Save BDHCAM");
-        final int returnVal = fc.showOpenDialog(this);
-        if (returnVal == JFileChooser.APPROVE_OPTION) {
+        final int returnVal = fc.showSaveDialog(this);
+        if (returnVal == SystemFileChooser.APPROVE_OPTION) {
             try {
                 String path = fc.getSelectedFile().getPath();
                 handler.setLastBdhcDirectoryUsed(fc.getSelectedFile().getParent());

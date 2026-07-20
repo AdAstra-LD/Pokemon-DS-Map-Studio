@@ -1,5 +1,6 @@
 package formats.collisions;
 
+import com.formdev.flatlaf.util.SystemFileChooser;
 import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;
@@ -16,9 +17,7 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import javax.swing.JButton;
-import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
-import javax.swing.filechooser.FileNameExtensionFilter;
 
 import net.miginfocom.swing.*;
 import utils.Utils;
@@ -103,15 +102,15 @@ public class CollisionsEditorDialog extends JDialog {
     }
 
     public void openCollisionWithDialog() {
-        final JFileChooser fc = new JFileChooser();
+        final SystemFileChooser fc = new SystemFileChooser();
         if (handler.getLastCollisionsDirectoryUsed() != null) {
             fc.setCurrentDirectory(new File(handler.getLastCollisionsDirectoryUsed()));
         }
-        fc.setFileFilter(new FileNameExtensionFilter("Collision File (*.per)", Collisions.fileExtension));
+        fc.setFileFilter(new SystemFileChooser.FileNameExtensionFilter("Collision File (*.per)", Collisions.fileExtension));
         fc.setApproveButtonText("Open");
         fc.setDialogTitle("Open");
         final int returnVal = fc.showOpenDialog(this);
-        if (returnVal == JFileChooser.APPROVE_OPTION) {
+        if (returnVal == SystemFileChooser.APPROVE_OPTION) {
             try {
                 String path = fc.getSelectedFile().getPath();
                 handler.setLastCollisionsDirectoryUsed(fc.getSelectedFile().getParent());
@@ -132,15 +131,15 @@ public class CollisionsEditorDialog extends JDialog {
     }
 
     private void saveCollisionWithDialog() {
-        final JFileChooser fc = new JFileChooser();
+        final SystemFileChooser fc = new SystemFileChooser();
         if (handler.getLastCollisionsDirectoryUsed() != null) {
             fc.setCurrentDirectory(new File(handler.getLastCollisionsDirectoryUsed()));
         }
-        fc.setFileFilter(new FileNameExtensionFilter("Collision File (*.per)", Collisions.fileExtension));
+        fc.setFileFilter(new SystemFileChooser.FileNameExtensionFilter("Collision File (*.per)", Collisions.fileExtension));
         fc.setApproveButtonText("Save");
         fc.setDialogTitle("Save");
-        final int returnVal = fc.showOpenDialog(this);
-        if (returnVal == JFileChooser.APPROVE_OPTION) {
+        final int returnVal = fc.showSaveDialog(this);
+        if (returnVal == SystemFileChooser.APPROVE_OPTION) {
             handler.setLastMapDirectoryUsed(fc.getSelectedFile().getParent());
             try {
                 String path = fc.getSelectedFile().getPath();

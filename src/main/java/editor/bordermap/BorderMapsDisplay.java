@@ -1,5 +1,6 @@
 package editor.bordermap;
 
+import com.formdev.flatlaf.util.SystemFileChooser;
 import editor.handler.MapEditorHandler;
 import tileset.NormalsNotFoundException;
 import tileset.TextureNotFoundException;
@@ -11,7 +12,6 @@ import java.io.File;
 import java.io.IOException;
 import javax.swing.*;
 import javax.swing.GroupLayout;
-import javax.swing.filechooser.FileNameExtensionFilter;
 
 /**
  * @author Trifindo, JackHack96
@@ -46,15 +46,15 @@ public class BorderMapsDisplay extends JPanel {
 
         if (new Rectangle(BorderMapsGrid.cols, BorderMapsGrid.rows).contains(x, y) && !(x == 1 && y == 1)) {
             if (SwingUtilities.isLeftMouseButton(evt)) {
-                final JFileChooser fc = new JFileChooser();
+                final SystemFileChooser fc = new SystemFileChooser();
                 if (handler.getLastTilesetDirectoryUsed() != null) {
                     fc.setCurrentDirectory(new File(handler.getLastTilesetDirectoryUsed()));
                 }
-                fc.setFileFilter(new FileNameExtensionFilter("OBJ (*.obj)", "obj"));
+                fc.setFileFilter(new SystemFileChooser.FileNameExtensionFilter("OBJ (*.obj)", "obj"));
                 fc.setApproveButtonText("Open");
                 fc.setDialogTitle("Open");
                 final int returnVal = fc.showOpenDialog(handler.getMainFrame());
-                if (returnVal == JFileChooser.APPROVE_OPTION) {
+                if (returnVal == SystemFileChooser.APPROVE_OPTION) {
                     try {
                         handler.setLastTilesetDirectoryUsed(fc.getSelectedFile().getParent());
                         File file = fc.getSelectedFile();

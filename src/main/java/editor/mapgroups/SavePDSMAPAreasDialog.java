@@ -1,6 +1,7 @@
 
 package editor.mapgroups;
 
+import com.formdev.flatlaf.util.SystemFileChooser;
 import java.awt.*;
 import javax.swing.*;
 import javax.swing.GroupLayout;
@@ -14,7 +15,6 @@ import java.util.ArrayList;
 import java.util.TreeMap;
 import javax.swing.DefaultListModel;
 import javax.swing.JCheckBox;
-import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 
 import utils.Utils;
@@ -251,15 +251,15 @@ public class SavePDSMAPAreasDialog extends JDialog {
     }//GEN-LAST:event_jbDeselectAllActionPerformed
 
     private void jbNsbBrowseActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jbNsbBrowseActionPerformed
-        final JFileChooser fc = new JFileChooser();
+        final SystemFileChooser fc = new SystemFileChooser();
         File folder = new File(Utils.removeExtensionFromPath(handler.getMapMatrix().filePath)).getParentFile();
         fc.setCurrentDirectory(folder);
-        fc.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+        fc.setFileSelectionMode(SystemFileChooser.DIRECTORIES_ONLY);
         fc.setApproveButtonText("Select folder");
         fc.setDialogTitle("Select the folder for exporting the IMD files");
 
         final int returnValOpen = fc.showOpenDialog(this);
-        if (returnValOpen == JFileChooser.APPROVE_OPTION) {
+        if (returnValOpen == SystemFileChooser.APPROVE_OPTION) {
             File file = fc.getSelectedFile();
             if (file.exists() && file.isDirectory()) {
                 areaFolderPath = file.getPath();

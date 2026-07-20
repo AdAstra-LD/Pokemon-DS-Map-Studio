@@ -1,5 +1,6 @@
 package formats.nsbtx2;
 
+import com.formdev.flatlaf.util.SystemFileChooser;
 import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;
@@ -23,14 +24,11 @@ import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import javax.imageio.ImageIO;
 import javax.swing.DefaultListModel;
-import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
-import javax.swing.filechooser.FileNameExtensionFilter;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.TransformerException;
 import net.miginfocom.swing.*;
 
-import utils.swing.ThumbnailFileChooser;
 import utils.Utils;
 import utils.Utils.MutableBoolean;
 
@@ -324,15 +322,15 @@ public class NsbtxEditorDialog2 extends JDialog {
     }
 
     private void openNsbtxWithDialog() {
-        final JFileChooser fc = new JFileChooser();
+        final SystemFileChooser fc = new SystemFileChooser();
         if (handler.getLastNsbtxDirectoryUsed() != null) {
             fc.setCurrentDirectory(new File(handler.getLastNsbtxDirectoryUsed()));
         }
-        fc.setFileFilter(new FileNameExtensionFilter("NSBTX (*.nsbtx)", "nsbtx"));
+        fc.setFileFilter(new SystemFileChooser.FileNameExtensionFilter("NSBTX (*.nsbtx)", "nsbtx"));
         fc.setApproveButtonText("Open");
         fc.setDialogTitle("Open NSBTX File");
         final int returnVal = fc.showOpenDialog(this);
-        if (returnVal == JFileChooser.APPROVE_OPTION) {
+        if (returnVal == SystemFileChooser.APPROVE_OPTION) {
             handler.setLastNsbtxDirectoryUsed(fc.getSelectedFile().getParent());
             try {
                 nsbtxHandler.loadNsbtx(fc.getSelectedFile().getPath());
@@ -358,15 +356,15 @@ public class NsbtxEditorDialog2 extends JDialog {
 
     private void saveTextureWithDialog() {
         if (nsbtxHandler.getNsbtx().hasTextures() && nsbtxHandler.getNsbtx().hasPalettes()) {
-            final ThumbnailFileChooser fc = new ThumbnailFileChooser();
+            final SystemFileChooser fc = new SystemFileChooser();
             if (handler.getLastNsbtxDirectoryUsed() != null) {
                 fc.setCurrentDirectory(new File(handler.getLastNsbtxDirectoryUsed()));
             }
-            fc.setFileFilter(new FileNameExtensionFilter("PNG (*.png)", "png"));
+            fc.setFileFilter(new SystemFileChooser.FileNameExtensionFilter("PNG (*.png)", "png"));
             fc.setApproveButtonText("Save");
             fc.setDialogTitle("Save Texture as PNG");
-            final int returnVal = fc.showOpenDialog(this);
-            if (returnVal == JFileChooser.APPROVE_OPTION) {
+            final int returnVal = fc.showSaveDialog(this);
+            if (returnVal == SystemFileChooser.APPROVE_OPTION) {
                 handler.setLastNsbtxDirectoryUsed(fc.getSelectedFile().getParent());
                 try {
                     String path = fc.getSelectedFile().getPath();
@@ -397,15 +395,15 @@ public class NsbtxEditorDialog2 extends JDialog {
                 int colorFormat = dialog.getFormat();
                 boolean isTransparent = dialog.getIsTransparent();
 
-                final ThumbnailFileChooser fc = new ThumbnailFileChooser();
+                final SystemFileChooser fc = new SystemFileChooser();
                 if (handler.getLastNsbtxDirectoryUsed() != null) {
                     fc.setCurrentDirectory(new File(handler.getLastNsbtxDirectoryUsed()));
                 }
-                fc.setFileFilter(new FileNameExtensionFilter("png (*.png)", "png"));
+                fc.setFileFilter(new SystemFileChooser.FileNameExtensionFilter("png (*.png)", "png"));
                 fc.setApproveButtonText("Open");
                 fc.setDialogTitle("Open PNG Image");
                 final int returnVal = fc.showOpenDialog(this);
-                if (returnVal == JFileChooser.APPROVE_OPTION) {
+                if (returnVal == SystemFileChooser.APPROVE_OPTION) {
                     handler.setLastNsbtxDirectoryUsed(fc.getSelectedFile().getParent());
                     try {
                         BufferedImage img = ImageIO.read(fc.getSelectedFile());
@@ -442,16 +440,16 @@ public class NsbtxEditorDialog2 extends JDialog {
                 int colorFormat = dialog.getFormat();
                 boolean isTransparent = dialog.getIsTransparent();
 
-                final ThumbnailFileChooser fc = new ThumbnailFileChooser();
+                final SystemFileChooser fc = new SystemFileChooser();
                 if (handler.getLastNsbtxDirectoryUsed() != null) {
                     fc.setCurrentDirectory(new File(handler.getLastNsbtxDirectoryUsed()));
                 }
-                fc.setFileFilter(new FileNameExtensionFilter("png (*.png)", "png"));
+                fc.setFileFilter(new SystemFileChooser.FileNameExtensionFilter("png (*.png)", "png"));
                 fc.setApproveButtonText("Open");
                 fc.setDialogTitle("Open PNG Image");
                 fc.setMultiSelectionEnabled(true);
                 final int returnVal = fc.showOpenDialog(this);
-                if (returnVal == JFileChooser.APPROVE_OPTION) {
+                if (returnVal == SystemFileChooser.APPROVE_OPTION) {
                     handler.setLastNsbtxDirectoryUsed(fc.getSelectedFile().getParent());
 
                     File[] files = fc.getSelectedFiles();
@@ -501,15 +499,15 @@ public class NsbtxEditorDialog2 extends JDialog {
 
     private void replacePalette() {
         if (nsbtxHandler.getNsbtx().hasTextures() && nsbtxHandler.getNsbtx().hasPalettes()) {
-            final ThumbnailFileChooser fc = new ThumbnailFileChooser();
+            final SystemFileChooser fc = new SystemFileChooser();
             if (handler.getLastNsbtxDirectoryUsed() != null) {
                 fc.setCurrentDirectory(new File(handler.getLastNsbtxDirectoryUsed()));
             }
-            fc.setFileFilter(new FileNameExtensionFilter("png (*.png)", "png"));
+            fc.setFileFilter(new SystemFileChooser.FileNameExtensionFilter("png (*.png)", "png"));
             fc.setApproveButtonText("Open");
             fc.setDialogTitle("Open PNG Image");
             final int returnVal = fc.showOpenDialog(this);
-            if (returnVal == JFileChooser.APPROVE_OPTION) {
+            if (returnVal == SystemFileChooser.APPROVE_OPTION) {
                 handler.setLastNsbtxDirectoryUsed(fc.getSelectedFile().getParent());
                 try {
                     BufferedImage img = ImageIO.read(fc.getSelectedFile());
@@ -538,16 +536,16 @@ public class NsbtxEditorDialog2 extends JDialog {
 
     private void addPalettes() {
         if (nsbtxHandler.getNsbtx().hasTextures() && nsbtxHandler.getNsbtx().hasPalettes()) {
-            final ThumbnailFileChooser fc = new ThumbnailFileChooser();
+            final SystemFileChooser fc = new SystemFileChooser();
             if (handler.getLastNsbtxDirectoryUsed() != null) {
                 fc.setCurrentDirectory(new File(handler.getLastNsbtxDirectoryUsed()));
             }
-            fc.setFileFilter(new FileNameExtensionFilter("png (*.png)", "png"));
+            fc.setFileFilter(new SystemFileChooser.FileNameExtensionFilter("png (*.png)", "png"));
             fc.setApproveButtonText("Open");
             fc.setDialogTitle("Open PNG Image");
             fc.setMultiSelectionEnabled(true);
             final int returnVal = fc.showOpenDialog(this);
-            if (returnVal == JFileChooser.APPROVE_OPTION) {
+            if (returnVal == SystemFileChooser.APPROVE_OPTION) {
                 handler.setLastNsbtxDirectoryUsed(fc.getSelectedFile().getParent());
 
                 File[] files = fc.getSelectedFiles();
@@ -625,15 +623,15 @@ public class NsbtxEditorDialog2 extends JDialog {
                 int colorFormat = dialog.getFormat();
                 boolean isTransparent = dialog.getIsTransparent();
 
-                final ThumbnailFileChooser fc = new ThumbnailFileChooser();
+                final SystemFileChooser fc = new SystemFileChooser();
                 if (handler.getLastNsbtxDirectoryUsed() != null) {
                     fc.setCurrentDirectory(new File(handler.getLastNsbtxDirectoryUsed()));
                 }
-                fc.setFileFilter(new FileNameExtensionFilter("png (*.png)", "png"));
+                fc.setFileFilter(new SystemFileChooser.FileNameExtensionFilter("png (*.png)", "png"));
                 fc.setApproveButtonText("Open");
                 fc.setDialogTitle("Open PNG Image");
                 final int returnVal = fc.showOpenDialog(this);
-                if (returnVal == JFileChooser.APPROVE_OPTION) {
+                if (returnVal == SystemFileChooser.APPROVE_OPTION) {
                     handler.setLastNsbtxDirectoryUsed(fc.getSelectedFile().getParent());
                     try {
                         BufferedImage img = ImageIO.read(fc.getSelectedFile());
@@ -667,16 +665,16 @@ public class NsbtxEditorDialog2 extends JDialog {
             int colorFormat = dialog.getFormat();
             boolean isTransparent = dialog.getIsTransparent();
 
-            final ThumbnailFileChooser fc = new ThumbnailFileChooser();
+            final SystemFileChooser fc = new SystemFileChooser();
             if (handler.getLastNsbtxDirectoryUsed() != null) {
                 fc.setCurrentDirectory(new File(handler.getLastNsbtxDirectoryUsed()));
             }
-            fc.setFileFilter(new FileNameExtensionFilter("png (*.png)", "png"));
+            fc.setFileFilter(new SystemFileChooser.FileNameExtensionFilter("png (*.png)", "png"));
             fc.setApproveButtonText("Open");
             fc.setDialogTitle("Open PNG Image");
             fc.setMultiSelectionEnabled(true);
             final int returnVal = fc.showOpenDialog(this);
-            if (returnVal == JFileChooser.APPROVE_OPTION) {
+            if (returnVal == SystemFileChooser.APPROVE_OPTION) {
                 handler.setLastNsbtxDirectoryUsed(fc.getSelectedFile().getParent());
 
                 boolean errorLoadingFiles = false;
@@ -729,15 +727,15 @@ public class NsbtxEditorDialog2 extends JDialog {
     }
 
     private void importTexturesAndPalettesWithDialog() {
-        final JFileChooser fc = new JFileChooser();
+        final SystemFileChooser fc = new SystemFileChooser();
         if (handler.getLastNsbtxDirectoryUsed() != null) {
             fc.setCurrentDirectory(new File(handler.getLastNsbtxDirectoryUsed()));
         }
-        fc.setFileFilter(new FileNameExtensionFilter("NSBTX (*.nsbtx)", "nsbtx"));
+        fc.setFileFilter(new SystemFileChooser.FileNameExtensionFilter("NSBTX (*.nsbtx)", "nsbtx"));
         fc.setApproveButtonText("Open");
         fc.setDialogTitle("Choose the NSBTX to import data from");
         final int returnVal = fc.showOpenDialog(this);
-        if (returnVal == JFileChooser.APPROVE_OPTION) {
+        if (returnVal == SystemFileChooser.APPROVE_OPTION) {
             handler.setLastNsbtxDirectoryUsed(fc.getSelectedFile().getParent());
             try {
 
@@ -841,15 +839,15 @@ public class NsbtxEditorDialog2 extends JDialog {
     private void saveNsbtxWithDialog() {
         if (nsbtxHandler.getNsbtx().hasTextures() && nsbtxHandler.getNsbtx().hasPalettes()) {
             if (!hasRepeatedTextures()) {
-                final JFileChooser fc = new JFileChooser();
+                final SystemFileChooser fc = new SystemFileChooser();
                 if (handler.getLastNsbtxDirectoryUsed() != null) {
                     fc.setCurrentDirectory(new File(handler.getLastNsbtxDirectoryUsed()));
                 }
-                fc.setFileFilter(new FileNameExtensionFilter("NSBTX (*.nsbtx)", "nsbtx"));
+                fc.setFileFilter(new SystemFileChooser.FileNameExtensionFilter("NSBTX (*.nsbtx)", "nsbtx"));
                 fc.setApproveButtonText("Save");
                 fc.setDialogTitle("Save NSBTX");
-                final int returnVal = fc.showOpenDialog(this);
-                if (returnVal == JFileChooser.APPROVE_OPTION) {
+                final int returnVal = fc.showSaveDialog(this);
+                if (returnVal == SystemFileChooser.APPROVE_OPTION) {
                     handler.setLastNsbtxDirectoryUsed(fc.getSelectedFile().getParent());
                     try {
                         String path = fc.getSelectedFile().getPath();

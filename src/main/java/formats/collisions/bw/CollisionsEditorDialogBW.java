@@ -4,6 +4,7 @@
 
 package formats.collisions.bw;
 
+import com.formdev.flatlaf.util.SystemFileChooser;
 import java.awt.*;
 import java.awt.event.*;
 import java.io.File;
@@ -11,7 +12,6 @@ import java.text.DecimalFormat;
 import javax.swing.*;
 import javax.swing.border.*;
 import javax.swing.event.*;
-import javax.swing.filechooser.FileNameExtensionFilter;
 
 import editor.handler.MapEditorHandler;
 import net.miginfocom.swing.*;
@@ -173,15 +173,15 @@ public class CollisionsEditorDialogBW extends JDialog {
     }
 
     private void saveCollisionsWithDialog() {
-        final JFileChooser fc = new JFileChooser();
+        final SystemFileChooser fc = new SystemFileChooser();
         if (handler.getLastCollisionsDirectoryUsed() != null) {
             fc.setCurrentDirectory(new File(handler.getLastCollisionsDirectoryUsed()));
         }
-        fc.setFileFilter(new FileNameExtensionFilter("Terrain File (*.per)", CollisionsBW3D.fileExtension));
+        fc.setFileFilter(new SystemFileChooser.FileNameExtensionFilter("Terrain File (*.per)", CollisionsBW3D.fileExtension));
         fc.setApproveButtonText("Save");
         fc.setDialogTitle("Save Permissions File");
-        final int returnVal = fc.showOpenDialog(this);
-        if (returnVal == JFileChooser.APPROVE_OPTION) {
+        final int returnVal = fc.showSaveDialog(this);
+        if (returnVal == SystemFileChooser.APPROVE_OPTION) {
             try {
                 String path = fc.getSelectedFile().getPath();
                 handler.setLastCollisionsDirectoryUsed(fc.getSelectedFile().getParent());
@@ -196,15 +196,15 @@ public class CollisionsEditorDialogBW extends JDialog {
     }
 
     private void openCollisionsWithDialog(){
-        final JFileChooser fc = new JFileChooser();
+        final SystemFileChooser fc = new SystemFileChooser();
         if (handler.getLastCollisionsDirectoryUsed() != null) {
             fc.setCurrentDirectory(new File(handler.getLastCollisionsDirectoryUsed()));
         }
-        fc.setFileFilter(new FileNameExtensionFilter("Terrain File (*.per)", CollisionsBW3D.fileExtension));
+        fc.setFileFilter(new SystemFileChooser.FileNameExtensionFilter("Terrain File (*.per)", CollisionsBW3D.fileExtension));
         fc.setApproveButtonText("Open");
         fc.setDialogTitle("Open Permissions File");
         final int returnVal = fc.showOpenDialog(this);
-        if (returnVal == JFileChooser.APPROVE_OPTION) {
+        if (returnVal == SystemFileChooser.APPROVE_OPTION) {
             try {
                 String path = fc.getSelectedFile().getPath();
                 handler.setLastCollisionsDirectoryUsed(fc.getSelectedFile().getParent());
