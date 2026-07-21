@@ -162,6 +162,7 @@ public class MapDisplay extends GLJPanel implements GLEventListener, MouseListen
     //Keyboard events
     protected boolean CONTROL_PRESSED = false;
     protected boolean SHIFT_PRESSED = false;
+    protected boolean CTRL_PRESSED = false;
 
     //Height map
     protected float heightMapOpacity = 1.0f;
@@ -471,6 +472,9 @@ public class MapDisplay extends GLJPanel implements GLEventListener, MouseListen
             case KeyEvent.VK_SHIFT:
                 SHIFT_PRESSED = true;
                 break;
+            case KeyEvent.VK_CONTROL:
+                CTRL_PRESSED = true;
+                break;
             case KeyEvent.VK_E:
                 setEditMode(EditMode.MODE_EDIT);
                 break;
@@ -575,6 +579,9 @@ public class MapDisplay extends GLJPanel implements GLEventListener, MouseListen
         if (e.getKeyCode() == KeyEvent.VK_SHIFT) {
             SHIFT_PRESSED = false;
             //disableCameraMove();
+            repaint();
+        } else if (e.getKeyCode() == KeyEvent.VK_CONTROL) {
+            CTRL_PRESSED = false;
             repaint();
         }
 

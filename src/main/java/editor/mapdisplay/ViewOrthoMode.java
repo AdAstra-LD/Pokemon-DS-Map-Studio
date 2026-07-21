@@ -21,6 +21,13 @@ import javax.swing.SwingUtilities;
  */
 public class ViewOrthoMode extends ViewMode {
 
+    private static boolean isSelectionMode(MapDisplay.EditMode mode) {
+        return mode == MapDisplay.EditMode.MODE_SELECT
+                || mode == MapDisplay.EditMode.MODE_SELECT_LASSO
+                || mode == MapDisplay.EditMode.MODE_SELECT_WAND
+                || mode == MapDisplay.EditMode.MODE_MOVE_SELECT;
+    }
+
     @Override
     public void mousePressed(MapDisplay d, MouseEvent e) {
         if (d.SHIFT_PRESSED) {
@@ -31,13 +38,17 @@ public class ViewOrthoMode extends ViewMode {
                 d.wandSelect(e, true);
                 d.repaint();
             }
-            //Shift + Click / drag with rectangle select adds to the selection
-            if (SwingUtilities.isLeftMouseButton(e)
-                    && d.editMode == MapDisplay.EditMode.MODE_SELECT && !d.isPasting()) {
+            //Shift + drag starts a rectangle selection from any tool,
+            //adding to the current selection like the rectangle select tool does
+            else if (SwingUtilities.isLeftMouseButton(e) && !d.isPasting()
+                    && !d.isFloatingMove()) {
                 d.setMapSelected(e);
                 d.startSelection(e, true);
                 d.repaint();
             }
+        } else if (d.CTRL_PRESSED && !isSelectionMode(d.editMode)) {
+            //Ctrl + drag moves the camera (selection tools keep Ctrl for
+            //adding to / removing from the selection)
             if (SwingUtilities.isLeftMouseButton(e) || SwingUtilities.isMiddleMouseButton(e)) {
                 d.lastMouseX = e.getX();
                 d.lastMouseY = e.getY();
@@ -250,6 +261,13 @@ public class ViewOrthoMode extends ViewMode {
 
     @Override
     public void mouseReleased(MapDisplay d, MouseEvent e) {
+        //Finish a Shift-started rectangle selection made outside the select tool
+        if (d.selDragActive && d.editMode != MapDisplay.EditMode.MODE_SELECT
+                && SwingUtilities.isLeftMouseButton(e)) {
+            d.endSelectionDrag();
+            d.repaint();
+            return;
+        }
         switch (d.editMode) {
             case MODE_EDIT:
                 if (SwingUtilities.isLeftMouseButton(e)
@@ -330,17 +348,25 @@ public class ViewOrthoMode extends ViewMode {
     public void mouseDragged(MapDisplay d, MouseEvent e) {
         d.updateMousePostion(e);
         if (d.SHIFT_PRESSED) {
-            //An additive selection drag keeps extending the selection instead of panning
+            //A Shift selection drag keeps extending the selection
             if (SwingUtilities.isLeftMouseButton(e)
-                    && d.editMode == MapDisplay.EditMode.MODE_SELECT
                     && d.selDragActive && !d.isPasting()) {
                 d.updateSelection(e);
                 d.repaint();
-            } else if (SwingUtilities.isLeftMouseButton(e) || SwingUtilities.isMiddleMouseButton(e)) {
+            }
+        } else if (d.CTRL_PRESSED && !isSelectionMode(d.editMode) && !d.selDragActive) {
+            if (SwingUtilities.isLeftMouseButton(e) || SwingUtilities.isMiddleMouseButton(e)) {
                 d.moveCamera(e);
                 d.repaint();
             }
         } else {
+            //Keep extending a Shift-started selection even if Shift was released mid-drag
+            if (SwingUtilities.isLeftMouseButton(e) && d.selDragActive
+                    && d.editMode != MapDisplay.EditMode.MODE_SELECT && !d.isPasting()) {
+                d.updateSelection(e);
+                d.repaint();
+                return;
+            }
             switch (d.editMode) {
                 case MODE_EDIT:
                     if (d.handler.getTileset().size() > 0) {
@@ -473,7 +499,7 @@ public class ViewOrthoMode extends ViewMode {
 
     @Override
     public void mouseWheelMoved(MapDisplay d, MouseWheelEvent e) {
-        if (d.SHIFT_PRESSED) {
+        if (d.CTRL_PRESSED) {
             d.zoomCameraOrtho(e);
             d.repaint();
         } else {

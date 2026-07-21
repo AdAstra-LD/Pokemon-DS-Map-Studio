@@ -237,7 +237,7 @@ public class MainFrame extends JFrame {
         applyToolButtonBackground(jtbAutoCollision);
 
         //Rebuild the tools toolbar as compact two column groups separated by
-        //thin lines: draw / select / clipboard / fill-shape / camera / layer
+        //thin lines: draw / select / clipboard / fill-shape
         toolGroupWidth = 0;
         jtTools.removeAll();
         jtTools.setLayout(new BoxLayout(jtTools, BoxLayout.Y_AXIS));
@@ -268,9 +268,22 @@ public class MainFrame extends JFrame {
         addToolGroup(2, jtbModeSelect, jtbModeLasso, jtbModeWand, jtbModeMoveSelect);
         addSelectionActionGroup();
         addToolGroup(2, jtbModeBucket, jtbModePicker, jtbModeLine, jtbModeRectShape, jtbModeEllipseShape);
-        addToolGroup(2, jtbModeMove, jtbModeZoom, jbFitCameraToMap);
-        addToolGroup(1, jbMoveLayerUp, jbMoveLayerDown);
         addSmartToolsToolbarHeader();
+
+        //Camera controls live in the View group next to the view toggles
+        jtView.addSeparator();
+        jtView.add(jtbModeMove);
+        jtView.add(jtbModeZoom);
+        jtView.add(jbFitCameraToMap);
+
+        //Layer up / down buttons sit at the bottom of the layer selector
+        JPanel jpLayerArrows = new JPanel(new GridLayout(1, 2, 2, 0));
+        jpLayerArrows.setOpaque(false);
+        jpLayerArrows.add(jbMoveLayerUp);
+        jpLayerArrows.add(jbMoveLayerDown);
+        jpLayer.setLayout(new BorderLayout());
+        jpLayer.add(thumbnailLayerSelector, BorderLayout.CENTER);
+        jpLayer.add(jpLayerArrows, BorderLayout.SOUTH);
 
         //Edit menu entries for the region selection
         jmiSelectAll = new JMenuItem("Select All");
