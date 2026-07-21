@@ -258,10 +258,21 @@ public class MapDisplay extends GLJPanel implements GLEventListener, MouseListen
     //Selection context menu
     protected javax.swing.JPopupMenu selectionPopupMenu = null;
 
+    //Marching ants animation for the selection outline
+    private float antsPhase = 0;
+    private final javax.swing.Timer antsTimer = new javax.swing.Timer(75, e -> {
+        if (hasSelection() && isOrthoView() && isShowing()) {
+            antsPhase = (antsPhase + 1) % 8;
+            repaint();
+        }
+    });
+
     public MapDisplay() {
         //Set default display size
         setPreferredSize(new Dimension(width, height));
         setSize(new Dimension(width, height));
+
+        antsTimer.start();
 
         //Add listeners
         addGLEventListener(this);
@@ -2532,7 +2543,9 @@ public class MapDisplay extends GLJPanel implements GLEventListener, MouseListen
         Graphics2D g2d = (Graphics2D) g;
         Stroke oldStroke = g2d.getStroke();
 
-        g2d.setColor(new Color(70, 150, 255, 50));
+        //A lighter fill while moving the selection keeps the tiles readable
+        int fillAlpha = editMode == EditMode.MODE_MOVE_SELECT ? 18 : 50;
+        g2d.setColor(new Color(70, 150, 255, fillAlpha));
         for (int i = 0; i < cols; i++) {
             for (int j = 0; j < rows; j++) {
                 if (mask[i][j]) {
@@ -2545,7 +2558,7 @@ public class MapDisplay extends GLJPanel implements GLEventListener, MouseListen
         //Border segments where a selected cell has an unselected neighbor
         Stroke solid = new BasicStroke(1);
         Stroke dashed = new BasicStroke(1, BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER,
-                10.0f, new float[]{4.0f, 4.0f}, 0.0f);
+                10.0f, new float[]{4.0f, 4.0f}, antsPhase);
         for (int i = 0; i < cols; i++) {
             for (int j = 0; j < rows; j++) {
                 if (!mask[i][j]) {
@@ -2569,17 +2582,18 @@ public class MapDisplay extends GLJPanel implements GLEventListener, MouseListen
         for (int pass = 0; pass < 2; pass++) {
             g2d.setStroke(pass == 0 ? solid : dashed);
             g2d.setColor(pass == 0 ? Color.black : Color.white);
+            //Clockwise winding so the animated dashes march around the outline
             if (top) {
                 g2d.drawLine(px, py, px + tileSize, py);
             }
-            if (bottom) {
-                g2d.drawLine(px, py + tileSize, px + tileSize, py + tileSize);
-            }
-            if (left) {
-                g2d.drawLine(px, py, px, py + tileSize);
-            }
             if (right) {
                 g2d.drawLine(px + tileSize, py, px + tileSize, py + tileSize);
+            }
+            if (bottom) {
+                g2d.drawLine(px + tileSize, py + tileSize, px, py + tileSize);
+            }
+            if (left) {
+                g2d.drawLine(px, py + tileSize, px, py);
             }
         }
     }
