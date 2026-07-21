@@ -117,23 +117,23 @@ new FormModel {
 				add( new FormComponent( "javax.swing.JComboBox" ) {
 					name: "jcbSoundType"
 					"model": new javax.swing.DefaultComboBoxModel {
-						selectedItem: "Water flow"
-						addElement( "Water flow" )
-						addElement( "Wind turbine" )
-						addElement( "Sea waves" )
-						addElement( "Silence 1" )
+						selectedItem: "Water Flow"
+						addElement( "Water Flow" )
+						addElement( "Windmill" )
+						addElement( "Seashore" )
+						addElement( "Pillar" )
 						addElement( "Whirlpool" )
-						addElement( "Strong water current" )
-						addElement( "Silence 2" )
-						addElement( "Stadium chant" )
-						addElement( "Ship horn" )
-						addElement( "Silence 3" )
-						addElement( "Sea wave 2" )
-						addElement( "Bells " )
-						addElement( "Wind" )
-						addElement( "Silence 4" )
-						addElement( "Unknown" )
-						addElement( "Synth horn" )
+						addElement( "Waterfall" )
+						addElement( "Lava" )
+						addElement( "Stadium Chant" )
+						addElement( "Steam Whistle" )
+						addElement( "Snorlax's Snoring" )
+						addElement( "Motor" )
+						addElement( "Bells" )
+						addElement( "Strong Wind" )
+						addElement( "Engine" )
+						addElement( "Fountain" )
+						addElement( "Electric Barrier" )
 					}
 					auxiliary() {
 						"JavaCodeGenerator.typeParameters": "String"
