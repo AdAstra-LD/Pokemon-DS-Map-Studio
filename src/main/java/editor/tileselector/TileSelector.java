@@ -2517,6 +2517,14 @@ public class TileSelector extends JPanel {
 
     /* -------------------- Misc accessors -------------------- */
 
+    /** Releases the Ctrl / Shift multi selection (e.g. when a new map is opened). */
+    public void clearMultiSelection() {
+        if (!multiSelected.isEmpty()) {
+            multiSelected.clear();
+            repaint();
+        }
+    }
+
     public ArrayList<Integer> getIndicesSelected() {
         if (!rangeSelectedIndices.isEmpty()) {
             return new ArrayList<>(rangeSelectedIndices);

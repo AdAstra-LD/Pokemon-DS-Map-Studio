@@ -68,6 +68,9 @@ final class MapProjectActions {
     }
 
     void openMap(String path) {
+        //Opening a map releases every selection right away
+        mapDisplay.deselect();
+        tileSelector.clearMultiSelection();
         MainFrameBusyRunner.BusyTask busyTask = busyRunner.startLoading();
         Thread openMap = new Thread(() -> {
             busyRunner.setGUIBlock(true);
@@ -409,6 +412,9 @@ final class MapProjectActions {
             dialog.setVisible(true);
 
             if (dialog.getReturnValue() == GameTsetSelectorDialog2.ACCEPTED) {
+                //Creating a map releases every selection right away
+                mapDisplay.deselect();
+                tileSelector.clearMultiSelection();
                 handler.setIndexTileSelected(0);
                 handler.setSmartGridIndexSelected(0);
 
