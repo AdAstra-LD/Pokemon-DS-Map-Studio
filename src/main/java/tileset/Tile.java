@@ -595,6 +595,9 @@ public class Tile {
         ArrayList<Integer> textureIDsFixed = new ArrayList<>();
         for (int i = 0; i < textureIDs.size(); i++) {
             int id = textureIDs.get(i);
+            if (i >= fIndsQuadArray.size() || i >= fIndsTriArray.size()) {
+                System.out.println("OBJ import: no face group for material index " + i + " (texture ID " + id + ")");
+            }
             int index = textureIDsFixed.indexOf(id);
             if (index == -1) {
                 ArrayList<Face> fIndsQuad = new ArrayList<>();
