@@ -63,6 +63,7 @@ import java.awt.AlphaComposite;
 import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Cursor;
+import java.awt.Toolkit;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
@@ -193,7 +194,7 @@ public class MapDisplay extends GLJPanel implements GLEventListener, MouseListen
         MODE_INV_SMART_PAINT(Utils.loadCursor("/cursors/smartGridInvertedCursor.png")),
         MODE_SELECT(new Cursor(Cursor.CROSSHAIR_CURSOR)),
         MODE_SELECT_LASSO(new Cursor(Cursor.CROSSHAIR_CURSOR)),
-        MODE_SELECT_WAND(new Cursor(Cursor.CROSSHAIR_CURSOR)),
+        MODE_SELECT_WAND(createWandCursor()),
         MODE_MOVE_SELECT(new Cursor(Cursor.MOVE_CURSOR)),
         MODE_BUCKET(Utils.loadCursor("/cursors/floodFillIcon.png")),
         MODE_PICKER(Utils.loadCursor("/cursors/grabColorCursor.png")),
@@ -205,6 +206,30 @@ public class MapDisplay extends GLJPanel implements GLEventListener, MouseListen
 
         private EditMode(Cursor cursor) {
             this.cursor = cursor;
+        }
+
+        /** Wand cursor drawn like the toolbar wand icon, sparkle tip as hotspot. */
+        private static Cursor createWandCursor() {
+            BufferedImage img = new BufferedImage(32, 32, BufferedImage.TYPE_INT_ARGB);
+            Graphics2D g = img.createGraphics();
+            g.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
+                    RenderingHints.VALUE_ANTIALIAS_ON);
+            g.setStroke(new BasicStroke(3, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND));
+            g.setColor(new Color(150, 100, 40));
+            g.drawLine(22, 22, 8, 8);
+            g.setColor(new Color(255, 210, 60));
+            g.setStroke(new BasicStroke(2, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND));
+            int cx = 8, cy = 8;
+            g.drawLine(cx - 6, cy, cx + 6, cy);
+            g.drawLine(cx, cy - 6, cx, cy + 6);
+            g.drawLine(cx - 4, cy - 4, cx + 4, cy + 4);
+            g.drawLine(cx - 4, cy + 4, cx + 4, cy - 4);
+            g.dispose();
+            try {
+                return Toolkit.getDefaultToolkit().createCustomCursor(img, new Point(8, 8), "wand");
+            } catch (Exception ex) {
+                return new Cursor(Cursor.CROSSHAIR_CURSOR);
+            }
         }
 
     }
@@ -482,6 +507,11 @@ public class MapDisplay extends GLJPanel implements GLEventListener, MouseListen
                 break;
             case KeyEvent.VK_SHIFT:
                 SHIFT_PRESSED = true;
+                //Temporary rectangle selection: show the select tool cursor
+                //(the wand keeps its own cursor; Shift there selects matching)
+                if (isOrthoView() && editMode != EditMode.MODE_SELECT_WAND) {
+                    setCursor(EditMode.MODE_SELECT.cursor);
+                }
                 repaint();
                 break;
             case KeyEvent.VK_CONTROL:
@@ -595,6 +625,9 @@ public class MapDisplay extends GLJPanel implements GLEventListener, MouseListen
         } else if (e.getKeyCode() == KeyEvent.VK_CONTROL) {
             CTRL_PRESSED = false;
             repaint();
+        }
+        if (e.getKeyCode() == KeyEvent.VK_SHIFT) {
+            setCursor(editMode.cursor);
         }
 
     }
