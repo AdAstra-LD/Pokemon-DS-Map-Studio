@@ -1,5 +1,6 @@
 package editor.buildingeditor;
 
+import com.formdev.flatlaf.util.SystemFileChooser;
 import editor.handler.MapEditorHandler;
 import net.miginfocom.swing.*;
 import utils.Utils;
@@ -108,14 +109,14 @@ public class BuildingEditorDialog extends JDialog {
     }
 
     public void openMatshpWithDialog() {
-        final JFileChooser fc = new JFileChooser();
+        final SystemFileChooser fc = new SystemFileChooser();
         if (handler.getLastBuildDirectoryUsed() != null) {
             fc.setCurrentDirectory(new File(handler.getLastBuildDirectoryUsed()));
         }
         fc.setApproveButtonText("Open");
         fc.setDialogTitle("Open Build Model Matshp File");
         final int returnVal = fc.showOpenDialog(this);
-        if (returnVal == JFileChooser.APPROVE_OPTION) {
+        if (returnVal == SystemFileChooser.APPROVE_OPTION) {
             handler.setLastBuildDirectoryUsed(fc.getSelectedFile().getParent());
             try {
                 buildHandler.loadBuildModelMashup(fc.getSelectedFile().getPath());
@@ -131,14 +132,14 @@ public class BuildingEditorDialog extends JDialog {
     }
 
     public void openTilesetListWithDialog() {
-        final JFileChooser fc = new JFileChooser();
+        final SystemFileChooser fc = new SystemFileChooser();
         if (handler.getLastBuildDirectoryUsed() != null) {
             fc.setCurrentDirectory(new File(handler.getLastBuildDirectoryUsed()));
         }
         fc.setApproveButtonText("Open");
         fc.setDialogTitle("Open Build Tileset List");
         final int returnVal = fc.showOpenDialog(this);
-        if (returnVal == JFileChooser.APPROVE_OPTION) {
+        if (returnVal == SystemFileChooser.APPROVE_OPTION) {
             handler.setLastBuildDirectoryUsed(fc.getSelectedFile().getParent());
             try {
                 buildHandler.loadBuildTilesetList(fc.getSelectedFile().getPath());
@@ -152,14 +153,14 @@ public class BuildingEditorDialog extends JDialog {
     }
 
     public void saveMatshpWithDialog() {
-        final JFileChooser fc = new JFileChooser();
+        final SystemFileChooser fc = new SystemFileChooser();
         if (handler.getLastBuildDirectoryUsed() != null) {
             fc.setCurrentDirectory(new File(handler.getLastBuildDirectoryUsed()));
         }
         fc.setApproveButtonText("Save");
         fc.setDialogTitle("Save Build Model Matshp File");
-        final int returnVal = fc.showOpenDialog(this);
-        if (returnVal == JFileChooser.APPROVE_OPTION) {
+        final int returnVal = fc.showSaveDialog(this);
+        if (returnVal == SystemFileChooser.APPROVE_OPTION) {
             handler.setLastBuildDirectoryUsed(fc.getSelectedFile().getParent());
             try {
                 String path = fc.getSelectedFile().getPath();
@@ -174,14 +175,14 @@ public class BuildingEditorDialog extends JDialog {
     }
 
     public void saveBtlWithDialog() {
-        final JFileChooser fc = new JFileChooser();
+        final SystemFileChooser fc = new SystemFileChooser();
         if (handler.getLastBuildDirectoryUsed() != null) {
             fc.setCurrentDirectory(new File(handler.getLastBuildDirectoryUsed()));
         }
         fc.setApproveButtonText("Save");
         fc.setDialogTitle("Save Build Tile List");
-        final int returnVal = fc.showOpenDialog(this);
-        if (returnVal == JFileChooser.APPROVE_OPTION) {
+        final int returnVal = fc.showSaveDialog(this);
+        if (returnVal == SystemFileChooser.APPROVE_OPTION) {
             handler.setLastBuildDirectoryUsed(fc.getSelectedFile().getParent());
             try {
                 String path = fc.getSelectedFile().getPath();

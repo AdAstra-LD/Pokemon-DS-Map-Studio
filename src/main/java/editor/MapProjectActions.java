@@ -1,5 +1,6 @@
 package editor;
 
+import com.formdev.flatlaf.util.SystemFileChooser;
 import editor.gameselector.GameTsetSelectorDialog2;
 import editor.handler.MapData;
 import editor.handler.MapEditorHandler;
@@ -24,9 +25,7 @@ import java.util.Set;
 import javax.imageio.ImageIO;
 import javax.swing.JButton;
 import javax.swing.AbstractButton;
-import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
-import javax.swing.filechooser.FileNameExtensionFilter;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.TransformerException;
 import tileset.TextureNotFoundException;
@@ -148,16 +147,16 @@ final class MapProjectActions {
     }
 
     void openMapWithDialog() {
-        final JFileChooser fileChooser = new JFileChooser();
+        final SystemFileChooser fileChooser = new SystemFileChooser();
         if (handler.getLastMapDirectoryUsed() != null) {
             fileChooser.setCurrentDirectory(new File(handler.getLastMapDirectoryUsed()));
         }
 
-        fileChooser.setFileFilter(new FileNameExtensionFilter("Pokemon DS map (*.pdsmap)", MapMatrix.fileExtension));
+        fileChooser.setFileFilter(new SystemFileChooser.FileNameExtensionFilter("Pokemon DS map (*.pdsmap)", MapMatrix.fileExtension));
         fileChooser.setApproveButtonText("Open");
         fileChooser.setDialogTitle("Open Map");
         final int returnVal = fileChooser.showOpenDialog(frame);
-        if (returnVal == JFileChooser.APPROVE_OPTION) {
+        if (returnVal == SystemFileChooser.APPROVE_OPTION) {
             recentMapsMenu.addAndPersist(
                     Utils.addExtensionToPath(fileChooser.getSelectedFile().getPath(), MapMatrix.fileExtension));
             openMap(fileChooser.getSelectedFile().getPath());
@@ -165,16 +164,16 @@ final class MapProjectActions {
     }
 
     void addMapWithDialog() {
-        final JFileChooser fileChooser = new JFileChooser();
+        final SystemFileChooser fileChooser = new SystemFileChooser();
         if (handler.getLastMapDirectoryUsed() != null) {
             fileChooser.setCurrentDirectory(new File(handler.getLastMapDirectoryUsed()));
         }
 
-        fileChooser.setFileFilter(new FileNameExtensionFilter("Pokemon DS map (*.pdsmap)", MapMatrix.fileExtension));
+        fileChooser.setFileFilter(new SystemFileChooser.FileNameExtensionFilter("Pokemon DS map (*.pdsmap)", MapMatrix.fileExtension));
         fileChooser.setApproveButtonText("Open");
         fileChooser.setDialogTitle("Add Maps from PDSMAP file");
         final int returnVal = fileChooser.showOpenDialog(frame);
-        if (returnVal == JFileChooser.APPROVE_OPTION) {
+        if (returnVal == SystemFileChooser.APPROVE_OPTION) {
             if (fileChooser.getSelectedFile().exists()) {
                 handler.setLastMapDirectoryUsed(fileChooser.getSelectedFile().getParent());
                 try {
@@ -298,30 +297,30 @@ final class MapProjectActions {
     }
 
     void openTilesetWithDialog() {
-        final JFileChooser fileChooser = new JFileChooser();
+        final SystemFileChooser fileChooser = new SystemFileChooser();
         if (handler.getLastTilesetDirectoryUsed() != null) {
             fileChooser.setCurrentDirectory(new File(handler.getLastTilesetDirectoryUsed()));
         }
-        fileChooser.setFileFilter(new FileNameExtensionFilter("Pokemon DS Tileset (*.pdsts)", Tileset.fileExtension));
+        fileChooser.setFileFilter(new SystemFileChooser.FileNameExtensionFilter("Pokemon DS Tileset (*.pdsts)", Tileset.fileExtension));
         fileChooser.setApproveButtonText("Open");
         fileChooser.setDialogTitle("Open");
         final int returnVal = fileChooser.showOpenDialog(frame);
-        if (returnVal == JFileChooser.APPROVE_OPTION) {
+        if (returnVal == SystemFileChooser.APPROVE_OPTION) {
             String path = fileChooser.getSelectedFile().getPath();
             openTileset(path);
         }
     }
 
     void openBackImgWithDialog() {
-        final JFileChooser fileChooser = new JFileChooser();
+        final SystemFileChooser fileChooser = new SystemFileChooser();
         if (handler.getLastMapDirectoryUsed() != null) {
             fileChooser.setCurrentDirectory(new File(handler.getLastMapDirectoryUsed()));
         }
-        fileChooser.setFileFilter(new FileNameExtensionFilter("PNG (*.png)", "png"));
+        fileChooser.setFileFilter(new SystemFileChooser.FileNameExtensionFilter("PNG (*.png)", "png"));
         fileChooser.setApproveButtonText("Open");
         fileChooser.setDialogTitle("Open Background Image");
         final int returnVal = fileChooser.showOpenDialog(frame);
-        if (returnVal == JFileChooser.APPROVE_OPTION) {
+        if (returnVal == SystemFileChooser.APPROVE_OPTION) {
             try {
                 BufferedImage img = ImageIO.read(fileChooser.getSelectedFile());
 
@@ -414,15 +413,15 @@ final class MapProjectActions {
     }
 
     void saveMapWithDialog() {
-        final JFileChooser fileChooser = new JFileChooser();
+        final SystemFileChooser fileChooser = new SystemFileChooser();
         if (handler.getLastMapDirectoryUsed() != null) {
             fileChooser.setCurrentDirectory(new File(handler.getLastMapDirectoryUsed()));
         }
-        fileChooser.setFileFilter(new FileNameExtensionFilter("Pokemon DS map (*.pdsmap)", MapMatrix.fileExtension));
+        fileChooser.setFileFilter(new SystemFileChooser.FileNameExtensionFilter("Pokemon DS map (*.pdsmap)", MapMatrix.fileExtension));
         fileChooser.setApproveButtonText("Save");
         fileChooser.setDialogTitle("Save");
-        final int returnVal = fileChooser.showOpenDialog(frame);
-        if (returnVal == JFileChooser.APPROVE_OPTION) {
+        final int returnVal = fileChooser.showSaveDialog(frame);
+        if (returnVal == SystemFileChooser.APPROVE_OPTION) {
             handler.setLastMapDirectoryUsed(fileChooser.getSelectedFile().getParent());
 
             MainFrameBusyRunner.BusyTask busyTask = busyRunner.startLoading();
@@ -461,16 +460,16 @@ final class MapProjectActions {
 
     void saveTilesetWithDialog() {
         if (handler.getTileset().size() > 0) {
-            final JFileChooser fileChooser = new JFileChooser();
+            final SystemFileChooser fileChooser = new SystemFileChooser();
             if (handler.getLastTilesetDirectoryUsed() != null) {
                 fileChooser.setCurrentDirectory(new File(handler.getLastTilesetDirectoryUsed()));
             }
             fileChooser.setFileFilter(
-                    new FileNameExtensionFilter("Pokemon DS tileset (*.pdsts)", Tileset.fileExtension));
+                    new SystemFileChooser.FileNameExtensionFilter("Pokemon DS tileset (*.pdsts)", Tileset.fileExtension));
             fileChooser.setApproveButtonText("Save");
             fileChooser.setDialogTitle("Save Tileset");
-            final int returnVal = fileChooser.showOpenDialog(frame);
-            if (returnVal == JFileChooser.APPROVE_OPTION) {
+            final int returnVal = fileChooser.showSaveDialog(frame);
+            if (returnVal == SystemFileChooser.APPROVE_OPTION) {
                 handler.setLastMapDirectoryUsed(fileChooser.getSelectedFile().getParent());
                 try {
                     File file = fileChooser.getSelectedFile();

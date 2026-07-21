@@ -14,6 +14,7 @@ import javax.xml.transform.TransformerException;
 
 import com.formdev.flatlaf.FlatDarculaLaf;
 import com.formdev.flatlaf.FlatLightLaf;
+import com.formdev.flatlaf.util.SystemFileChooser;
 import editor.handler.MapData;
 import editor.handler.MapEditorHandler;
 import editor.heightselector.*;
@@ -57,6 +58,23 @@ public class MainFrame extends JFrame {
                     UIManager.setLookAndFeel(new FlatDarculaLaf());
                     break;
             }
+            SystemFileChooser.setStateStore(new SystemFileChooser.StateStore() {
+                private static final String PREFIX = "fileChooser.";
+
+                @Override
+                public String get(String key, String def) {
+                    return prefs.get(PREFIX + key, def);
+                }
+
+                @Override
+                public void put(String key, String value) {
+                    if (value != null) {
+                        prefs.put(PREFIX + key, value);
+                    } else {
+                        prefs.remove(PREFIX + key);
+                    }
+                }
+            });
             loadRecentMaps();
         } catch (Exception ex) {
             System.err.println("Failed to initialize LaF");

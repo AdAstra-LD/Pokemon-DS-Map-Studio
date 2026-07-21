@@ -1,5 +1,6 @@
 package formats.backsound;
 
+import com.formdev.flatlaf.util.SystemFileChooser;
 import utils.exceptions.WrongFormatException;
 import editor.handler.MapEditorHandler;
 import utils.sound.SoundPlayer;
@@ -11,7 +12,6 @@ import javax.swing.border.LineBorder;
 import javax.swing.border.TitledBorder;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ListSelectionEvent;
-import javax.swing.filechooser.FileNameExtensionFilter;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.WindowAdapter;
@@ -193,15 +193,15 @@ public class BacksoundEditorDialog extends JDialog {
     }
 
     public void openBacksoundWithDialog() {
-        final JFileChooser fc = new JFileChooser();
+        final SystemFileChooser fc = new SystemFileChooser();
         if (handler.getLastBdhcDirectoryUsed() != null) {
             fc.setCurrentDirectory(new File(handler.getLastBdhcDirectoryUsed()));
         }
-        fc.setFileFilter(new FileNameExtensionFilter("Backsound File (*.bgs)", Backsound.fileExtension));
+        fc.setFileFilter(new SystemFileChooser.FileNameExtensionFilter("Backsound File (*.bgs)", Backsound.fileExtension));
         fc.setApproveButtonText("Open");
         fc.setDialogTitle("Open Background Sound File");
         final int returnVal = fc.showOpenDialog(this);
-        if (returnVal == JFileChooser.APPROVE_OPTION) {
+        if (returnVal == SystemFileChooser.APPROVE_OPTION) {
             try {
                 String path = fc.getSelectedFile().getPath();
                 handler.setLastBdhcDirectoryUsed(fc.getSelectedFile().getParent());
@@ -220,15 +220,15 @@ public class BacksoundEditorDialog extends JDialog {
     }
 
     public void saveBacksoundWithDialog() {
-        final JFileChooser fc = new JFileChooser();
+        final SystemFileChooser fc = new SystemFileChooser();
         if (handler.getLastBdhcDirectoryUsed() != null) {
             fc.setCurrentDirectory(new File(handler.getLastBdhcDirectoryUsed()));
         }
-        fc.setFileFilter(new FileNameExtensionFilter("Backsound File (*.bgs)", Backsound.fileExtension));
+        fc.setFileFilter(new SystemFileChooser.FileNameExtensionFilter("Backsound File (*.bgs)", Backsound.fileExtension));
         fc.setApproveButtonText("Save");
         fc.setDialogTitle("Save Background Sound File");
-        final int returnVal = fc.showOpenDialog(this);
-        if (returnVal == JFileChooser.APPROVE_OPTION) {
+        final int returnVal = fc.showSaveDialog(this);
+        if (returnVal == SystemFileChooser.APPROVE_OPTION) {
             try {
                 String path = fc.getSelectedFile().getPath();
                 handler.setLastBdhcDirectoryUsed(fc.getSelectedFile().getParent());

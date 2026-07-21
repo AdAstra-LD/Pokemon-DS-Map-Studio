@@ -1,11 +1,11 @@
 
 package editor.buildingeditor2;
 
+import com.formdev.flatlaf.util.SystemFileChooser;
 import editor.handler.MapEditorHandler;
 import editor.game.GameFolder;
 
 import java.io.File;
-import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 
 /**
@@ -14,15 +14,15 @@ import javax.swing.JOptionPane;
 public class BuildingEditorChooser {
 
     public static void loadGame(MapEditorHandler handler) {
-        final JFileChooser fc = new JFileChooser();
+        final SystemFileChooser fc = new SystemFileChooser();
         if (handler.getLastBuildDirectoryUsed() != null) {
             fc.setCurrentDirectory(new File(handler.getLastBuildDirectoryUsed()));
         }
-        fc.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+        fc.setFileSelectionMode(SystemFileChooser.DIRECTORIES_ONLY);
         fc.setApproveButtonText("Select folder");
         fc.setDialogTitle("Select the game's main folder that was generated with SDSME, DSPRE or similar");
         final int returnVal = fc.showOpenDialog(handler.getMainFrame());
-        if (returnVal == JFileChooser.APPROVE_OPTION) {
+        if (returnVal == SystemFileChooser.APPROVE_OPTION) {
             String folderPath = fc.getSelectedFile().getPath();
             if (isDPPtFolder(folderPath)) {
                 handler.setLastBuildDirectoryUsed(folderPath);

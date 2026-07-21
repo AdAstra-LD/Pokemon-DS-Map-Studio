@@ -1,5 +1,6 @@
 package editor;
 
+import com.formdev.flatlaf.util.SystemFileChooser;
 import editor.converter.ConverterDialog;
 import editor.converter.ConverterErrorDialog;
 import editor.converter.ExportNsbmdDialog;
@@ -33,9 +34,7 @@ import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
 import java.util.HashSet;
-import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
-import javax.swing.filechooser.FileNameExtensionFilter;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.TransformerException;
 import tileset.NormalsNotFoundException;
@@ -62,15 +61,15 @@ final class MapExportActions {
                 boolean flip = exportTileDialog.flip();
                 boolean includeVertexColors = exportTileDialog.includeVertexColors();
 
-                final JFileChooser fileChooser = new JFileChooser();
+                final SystemFileChooser fileChooser = new SystemFileChooser();
                 if (handler.getLastTileObjDirectoryUsed() != null) {
                     fileChooser.setCurrentDirectory(new File(handler.getLastTileObjDirectoryUsed()));
                 }
-                fileChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+                fileChooser.setFileSelectionMode(SystemFileChooser.DIRECTORIES_ONLY);
                 fileChooser.setApproveButtonText("Save");
                 fileChooser.setDialogTitle("Select folder for saving all tiles as OBJ");
-                final int returnVal = fileChooser.showOpenDialog(frame);
-                if (returnVal == JFileChooser.APPROVE_OPTION) {
+                final int returnVal = fileChooser.showSaveDialog(frame);
+                if (returnVal == SystemFileChooser.APPROVE_OPTION) {
                     handler.setLastTileObjDirectoryUsed(fileChooser.getSelectedFile().getPath());
                     try {
                         ObjWriter objWriter = new ObjWriter(handler.getTileset(), handler.getGrid(),
@@ -102,19 +101,19 @@ final class MapExportActions {
             boolean useExportgroups = exportMapDialog.useExportgroups();
             float tileUpscale = exportMapDialog.getTileUpscaling();
 
-            final JFileChooser fileChooser = new JFileChooser();
+            final SystemFileChooser fileChooser = new SystemFileChooser();
             fileChooser.setSelectedFile(new File(Utils.removeExtensionFromPath(handler.getMapMatrix().filePath)));
 
             if (handler.getLastMapDirectoryUsed() != null) {
                 fileChooser.setCurrentDirectory(new File(handler.getLastMapDirectoryUsed()));
             }
 
-            fileChooser.setFileFilter(new FileNameExtensionFilter("OBJ (*.obj)", "obj"));
+            fileChooser.setFileFilter(new SystemFileChooser.FileNameExtensionFilter("OBJ (*.obj)", "obj"));
             fileChooser.setApproveButtonText("Save");
             fileChooser.setDialogTitle("Select a name for the OBJ map");
-            final int returnVal = fileChooser.showOpenDialog(frame);
+            final int returnVal = fileChooser.showSaveDialog(frame);
 
-            if (returnVal == JFileChooser.APPROVE_OPTION) {
+            if (returnVal == SystemFileChooser.APPROVE_OPTION) {
                 handler.setLastMapDirectoryUsed(fileChooser.getSelectedFile().getParent());
                 try {
                     String path = fileChooser.getSelectedFile().getPath();
@@ -188,15 +187,15 @@ final class MapExportActions {
             boolean useExportgroups = exportMapDialog.useExportgroups();
             float tileUpscale = exportMapDialog.getTileUpscaling();
 
-            final JFileChooser fileChooser = new JFileChooser();
+            final SystemFileChooser fileChooser = new SystemFileChooser();
             fileChooser.setSelectedFile(new File(Utils.removeExtensionFromPath(handler.getMapMatrix().filePath)));
             if (handler.getLastMapDirectoryUsed() != null) {
                 fileChooser.setCurrentDirectory(new File(handler.getLastMapDirectoryUsed()));
             }
-            fileChooser.setFileFilter(new FileNameExtensionFilter("OBJ (*.obj)", "obj"));
+            fileChooser.setFileFilter(new SystemFileChooser.FileNameExtensionFilter("OBJ (*.obj)", "obj"));
             fileChooser.setApproveButtonText("Save");
             fileChooser.setDialogTitle("Select a name for saving the maps as OBJ");
-            final int returnVal = fileChooser.showOpenDialog(frame);
+            final int returnVal = fileChooser.showSaveDialog(frame);
 
             String type;
             if (useExportgroups) {
@@ -205,7 +204,7 @@ final class MapExportActions {
                 type = "maps";
             }
 
-            if (returnVal == JFileChooser.APPROVE_OPTION) {
+            if (returnVal == SystemFileChooser.APPROVE_OPTION) {
                 handler.setLastMapDirectoryUsed(fileChooser.getSelectedFile().getParent());
                 try {
                     String path = fileChooser.getSelectedFile().getPath();
@@ -298,27 +297,27 @@ final class MapExportActions {
                     "No tileset loaded", JOptionPane.WARNING_MESSAGE);
         }
 
-        final JFileChooser openChooser = new JFileChooser();
+        final SystemFileChooser openChooser = new SystemFileChooser();
         openChooser.setSelectedFile(new File(Utils.removeExtensionFromPath(handler.getMapMatrix().filePath) + ".obj"));
         if (handler.getLastMapDirectoryUsed() != null) {
             openChooser.setCurrentDirectory(new File(handler.getLastMapDirectoryUsed()));
         }
-        openChooser.setFileFilter(new FileNameExtensionFilter("OBJ (*.obj)", "obj"));
+        openChooser.setFileFilter(new SystemFileChooser.FileNameExtensionFilter("OBJ (*.obj)", "obj"));
         openChooser.setApproveButtonText("Open");
         openChooser.setDialogTitle("Open OBJ Map for converting into IMD");
         final int returnValOpen = openChooser.showOpenDialog(frame);
-        if (returnValOpen == JFileChooser.APPROVE_OPTION) {
+        if (returnValOpen == SystemFileChooser.APPROVE_OPTION) {
             if (openChooser.getSelectedFile().exists()) {
                 String pathOpen = openChooser.getSelectedFile().getPath();
 
-                final JFileChooser saveChooser = new JFileChooser();
+                final SystemFileChooser saveChooser = new SystemFileChooser();
                 saveChooser.setSelectedFile(new File(Utils.removeExtensionFromPath(handler.getMapMatrix().filePath)));
                 saveChooser.setCurrentDirectory(openChooser.getSelectedFile().getParentFile());
-                saveChooser.setFileFilter(new FileNameExtensionFilter("IMD (*.imd)", "imd"));
+                saveChooser.setFileFilter(new SystemFileChooser.FileNameExtensionFilter("IMD (*.imd)", "imd"));
                 saveChooser.setApproveButtonText("Save");
                 saveChooser.setDialogTitle("Save");
-                final int returnValSave = saveChooser.showOpenDialog(frame);
-                if (returnValSave == JFileChooser.APPROVE_OPTION) {
+                final int returnValSave = saveChooser.showSaveDialog(frame);
+                if (returnValSave == SystemFileChooser.APPROVE_OPTION) {
                     String pathSave = saveChooser.getSelectedFile().getPath();
 
                     try {
@@ -397,17 +396,17 @@ final class MapExportActions {
         if (convDialog.getReturnValue() == ConverterDialog.APPROVE_OPTION) {
             boolean includeNsbtx = convDialog.includeNsbtxInNsbmd();
             try {
-                final JFileChooser openChooser = new JFileChooser();
+                final SystemFileChooser openChooser = new SystemFileChooser();
                 openChooser.setSelectedFile(
                         new File(Utils.removeExtensionFromPath(handler.getMapMatrix().filePath) + ".imd"));
                 if (handler.getLastMapDirectoryUsed() != null) {
                     openChooser.setCurrentDirectory(new File(handler.getLastMapDirectoryUsed()));
                 }
-                openChooser.setFileFilter(new FileNameExtensionFilter("IMD (*.imd)", "imd"));
+                openChooser.setFileFilter(new SystemFileChooser.FileNameExtensionFilter("IMD (*.imd)", "imd"));
                 openChooser.setApproveButtonText("Open");
                 openChooser.setDialogTitle("Open IMD Map for converting into NSBMD");
                 final int returnVal = openChooser.showOpenDialog(frame);
-                if (returnVal == JFileChooser.APPROVE_OPTION) {
+                if (returnVal == SystemFileChooser.APPROVE_OPTION) {
                     String imdPath;
                     if (System.getProperty("os.name").toLowerCase().startsWith("windows")) {
                         imdPath = openChooser.getSelectedFile().getPath();
@@ -416,15 +415,15 @@ final class MapExportActions {
                         imdPath = new File(cwd).toURI()
                                 .relativize(openChooser.getSelectedFile().toPath().toRealPath().toUri()).getPath();
                     }
-                    final JFileChooser saveChooser = new JFileChooser();
+                    final SystemFileChooser saveChooser = new SystemFileChooser();
                     saveChooser.setSelectedFile(new File(Utils.removeExtensionFromPath(handler.getMapMatrix().filePath)));
                     saveChooser.setCurrentDirectory(openChooser.getSelectedFile().getParentFile());
-                    saveChooser.setFileFilter(new FileNameExtensionFilter("NSBMD (*.nsbmd)", "nsbmd"));
+                    saveChooser.setFileFilter(new SystemFileChooser.FileNameExtensionFilter("NSBMD (*.nsbmd)", "nsbmd"));
                     saveChooser.setApproveButtonText("Save");
                     saveChooser.setDialogTitle("Save");
-                    final int returnValSave = saveChooser.showOpenDialog(frame);
+                    final int returnValSave = saveChooser.showSaveDialog(frame);
 
-                    if (returnValSave == JFileChooser.APPROVE_OPTION) {
+                    if (returnValSave == SystemFileChooser.APPROVE_OPTION) {
                         String nsbPath = saveChooser.getSelectedFile().getPath();
                         String filename = new File(nsbPath).getName();
 
@@ -525,27 +524,27 @@ final class MapExportActions {
     }
 
     void saveMapBtxWithDialog() {
-        final JFileChooser openChooser = new JFileChooser();
+        final SystemFileChooser openChooser = new SystemFileChooser();
         openChooser.setSelectedFile(new File(Utils.removeExtensionFromPath(handler.getMapMatrix().filePath) + ".imd"));
         if (handler.getLastMapDirectoryUsed() != null) {
             openChooser.setCurrentDirectory(new File(handler.getLastMapDirectoryUsed()));
         }
-        openChooser.setFileFilter(new FileNameExtensionFilter("IMD (*.imd)", "imd"));
+        openChooser.setFileFilter(new SystemFileChooser.FileNameExtensionFilter("IMD (*.imd)", "imd"));
         openChooser.setApproveButtonText("Open");
         openChooser.setDialogTitle("Open IMD Map for converting into NSBTX");
         final int returnVal = openChooser.showOpenDialog(frame);
-        if (returnVal == JFileChooser.APPROVE_OPTION) {
+        if (returnVal == SystemFileChooser.APPROVE_OPTION) {
             String imdPath = openChooser.getSelectedFile().getPath();
 
-            final JFileChooser saveChooser = new JFileChooser();
+            final SystemFileChooser saveChooser = new SystemFileChooser();
             saveChooser.setSelectedFile(new File(Utils.removeExtensionFromPath(handler.getMapMatrix().filePath)));
             saveChooser.setCurrentDirectory(openChooser.getSelectedFile().getParentFile());
-            saveChooser.setFileFilter(new FileNameExtensionFilter("NSBTX (*.nsbtx)", "nsbtx"));
+            saveChooser.setFileFilter(new SystemFileChooser.FileNameExtensionFilter("NSBTX (*.nsbtx)", "nsbtx"));
             saveChooser.setApproveButtonText("Save");
             saveChooser.setDialogTitle("Save");
-            final int returnValSave = saveChooser.showOpenDialog(frame);
+            final int returnValSave = saveChooser.showSaveDialog(frame);
 
-            if (returnValSave == JFileChooser.APPROVE_OPTION) {
+            if (returnValSave == SystemFileChooser.APPROVE_OPTION) {
                 String nsbPath = saveChooser.getSelectedFile().getPath();
                 String filename = new File(nsbPath).getName();
 

@@ -1,5 +1,6 @@
 package formats.animationeditor;
 
+import com.formdev.flatlaf.util.SystemFileChooser;
 import editor.handler.MapEditorHandler;
 import utils.Utils;
 
@@ -8,7 +9,6 @@ import javax.swing.border.LineBorder;
 import javax.swing.border.TitledBorder;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ListSelectionEvent;
-import javax.swing.filechooser.FileNameExtensionFilter;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.WindowAdapter;
@@ -281,14 +281,14 @@ public class AnimationEditorDialog extends JDialog {
     }
 
     public void openAnimationFileWithDialog() {
-        final JFileChooser fc = new JFileChooser();
+        final SystemFileChooser fc = new SystemFileChooser();
         if (handler.getLastNsbtxDirectoryUsed() != null) {
             fc.setCurrentDirectory(new File(handler.getLastNsbtxDirectoryUsed()));
         }
         fc.setApproveButtonText("Open");
         fc.setDialogTitle("Open Animation File File");
         final int returnVal = fc.showOpenDialog(this);
-        if (returnVal == JFileChooser.APPROVE_OPTION) {
+        if (returnVal == SystemFileChooser.APPROVE_OPTION) {
             handler.setLastNsbtxDirectoryUsed(fc.getSelectedFile().getParent());
             try {
                 animHandler.readAnimationFile(fc.getSelectedFile().getPath());
@@ -305,15 +305,15 @@ public class AnimationEditorDialog extends JDialog {
     }
 
     public void openNsbtxWithDialog() {
-        final JFileChooser fc = new JFileChooser();
+        final SystemFileChooser fc = new SystemFileChooser();
         if (handler.getLastNsbtxDirectoryUsed() != null) {
             fc.setCurrentDirectory(new File(handler.getLastNsbtxDirectoryUsed()));
         }
-        fc.setFileFilter(new FileNameExtensionFilter("NSBTX (*.nsbtx)", "nsbtx"));
+        fc.setFileFilter(new SystemFileChooser.FileNameExtensionFilter("NSBTX (*.nsbtx)", "nsbtx"));
         fc.setApproveButtonText("Open");
         fc.setDialogTitle("Open NSBTX File");
         final int returnVal = fc.showOpenDialog(this);
-        if (returnVal == JFileChooser.APPROVE_OPTION) {
+        if (returnVal == SystemFileChooser.APPROVE_OPTION) {
             handler.setLastNsbtxDirectoryUsed(fc.getSelectedFile().getParent());
             try {
                 animHandler.readNsbtx(fc.getSelectedFile().getPath());
@@ -330,14 +330,14 @@ public class AnimationEditorDialog extends JDialog {
 
     private void saveAnimationFileWithDialog() {
         if (animHandler.getAnimationFile() != null) {
-            final JFileChooser fc = new JFileChooser();
+            final SystemFileChooser fc = new SystemFileChooser();
             if (handler.getLastNsbtxDirectoryUsed() != null) {
                 fc.setCurrentDirectory(new File(handler.getLastNsbtxDirectoryUsed()));
             }
             fc.setApproveButtonText("Save");
             fc.setDialogTitle("Save Animation File");
-            final int returnVal = fc.showOpenDialog(this);
-            if (returnVal == JFileChooser.APPROVE_OPTION) {
+            final int returnVal = fc.showSaveDialog(this);
+            if (returnVal == SystemFileChooser.APPROVE_OPTION) {
                 handler.setLastNsbtxDirectoryUsed(fc.getSelectedFile().getParent());
                 try {
                     String path = fc.getSelectedFile().getPath();

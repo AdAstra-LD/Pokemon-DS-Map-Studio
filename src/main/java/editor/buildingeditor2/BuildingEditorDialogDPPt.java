@@ -1,5 +1,6 @@
 package editor.buildingeditor2;
 
+import com.formdev.flatlaf.util.SystemFileChooser;
 import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;
@@ -44,11 +45,9 @@ import java.util.logging.Logger;
 import javax.swing.DefaultListCellRenderer;
 import javax.swing.DefaultListModel;
 import javax.swing.ImageIcon;
-import javax.swing.JFileChooser;
 import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JOptionPane;
-import javax.swing.filechooser.FileNameExtensionFilter;
 
 import nitroreader.nsbca.NSBCA;
 import nitroreader.nsbca.NSBCAreader;
@@ -205,15 +204,15 @@ public class BuildingEditorDialogDPPt extends JDialog {
 
     private void jbAddBuildingActionPerformed(ActionEvent evt) {
         if (buildHandler.getBuildModelList() != null) {
-            final JFileChooser fc = new JFileChooser();
+            final SystemFileChooser fc = new SystemFileChooser();
             if (handler.getLastBuildDirectoryUsed() != null) {
                 fc.setCurrentDirectory(new File(handler.getLastBuildDirectoryUsed()));
             }
-            fc.setFileFilter(new FileNameExtensionFilter("NSBMD (*.nsbmd)", "nsbmd"));
+            fc.setFileFilter(new SystemFileChooser.FileNameExtensionFilter("NSBMD (*.nsbmd)", "nsbmd"));
             fc.setApproveButtonText("Open");
             fc.setDialogTitle("Add a new NSBMD Building Model");
             final int returnVal = fc.showOpenDialog(this);
-            if (returnVal == JFileChooser.APPROVE_OPTION) {
+            if (returnVal == SystemFileChooser.APPROVE_OPTION) {
                 try {
                     handler.setLastBuildDirectoryUsed(fc.getSelectedFile().getParent());
 
@@ -232,15 +231,15 @@ public class BuildingEditorDialogDPPt extends JDialog {
 
     private void jbReplaceBuildingActionPerformed(ActionEvent evt) {
         if (buildHandler.getBuildModelList() != null) {
-            final JFileChooser fc = new JFileChooser();
+            final SystemFileChooser fc = new SystemFileChooser();
             if (handler.getLastBuildDirectoryUsed() != null) {
                 fc.setCurrentDirectory(new File(handler.getLastBuildDirectoryUsed()));
             }
-            fc.setFileFilter(new FileNameExtensionFilter("NSBMD (*.nsbmd)", "nsbmd"));
+            fc.setFileFilter(new SystemFileChooser.FileNameExtensionFilter("NSBMD (*.nsbmd)", "nsbmd"));
             fc.setApproveButtonText("Open");
             fc.setDialogTitle("Select the new NSBMD Building Model (material order will be deleted)");
             final int returnVal = fc.showOpenDialog(this);
-            if (returnVal == JFileChooser.APPROVE_OPTION) {
+            if (returnVal == SystemFileChooser.APPROVE_OPTION) {
                 try {
                     handler.setLastBuildDirectoryUsed(fc.getSelectedFile().getParent());
 
@@ -260,11 +259,11 @@ public class BuildingEditorDialogDPPt extends JDialog {
 
     private void jbExportBuildingActionPerformed(ActionEvent evt) {
         if (buildHandler.getBuildModelList() != null) {
-            final JFileChooser fc = new JFileChooser();
+            final SystemFileChooser fc = new SystemFileChooser();
             if (handler.getLastBuildDirectoryUsed() != null) {
                 fc.setCurrentDirectory(new File(handler.getLastBuildDirectoryUsed()));
             }
-            fc.setFileFilter(new FileNameExtensionFilter("NSBMD (*.nsbmd)", "nsbmd"));
+            fc.setFileFilter(new SystemFileChooser.FileNameExtensionFilter("NSBMD (*.nsbmd)", "nsbmd"));
             fc.setApproveButtonText("Save");
             fc.setDialogTitle("Save the NSBMD Building Model");
             try {//TODO: Replace this with some index bounds cheking?
@@ -273,8 +272,8 @@ public class BuildingEditorDialogDPPt extends JDialog {
             } catch (Exception ex) {
                 ex.printStackTrace();
             }
-            final int returnVal = fc.showOpenDialog(this);
-            if (returnVal == JFileChooser.APPROVE_OPTION) {
+            final int returnVal = fc.showSaveDialog(this);
+            if (returnVal == SystemFileChooser.APPROVE_OPTION) {
                 try {
                     handler.setLastBuildDirectoryUsed(fc.getSelectedFile().getParent());
 
@@ -447,15 +446,15 @@ public class BuildingEditorDialogDPPt extends JDialog {
 
     private void jbAddAnimActionPerformed(ActionEvent evt) {
         if (buildHandler.getGlobalAnimationsList() != null) {
-            final JFileChooser fc = new JFileChooser();
+            final SystemFileChooser fc = new SystemFileChooser();
             if (handler.getLastBuildDirectoryUsed() != null) {
                 fc.setCurrentDirectory(new File(handler.getLastBuildDirectoryUsed()));
             }
-            fc.setFileFilter(new FileNameExtensionFilter("Animation Files (*.nsbca, *.nsbta, *.nsbtp, *.nsbma, *.nsbva)", "nsbca", "nsbta", "nsbtp", "nsbma", "nsbva"));
+            fc.setFileFilter(new SystemFileChooser.FileNameExtensionFilter("Animation Files (*.nsbca, *.nsbta, *.nsbtp, *.nsbma, *.nsbva)", "nsbca", "nsbta", "nsbtp", "nsbma", "nsbva"));
             fc.setApproveButtonText("Open");
             fc.setDialogTitle("Add a new Animation");
             final int returnVal = fc.showOpenDialog(this);
-            if (returnVal == JFileChooser.APPROVE_OPTION) {
+            if (returnVal == SystemFileChooser.APPROVE_OPTION) {
                 try {
                     handler.setLastBuildDirectoryUsed(fc.getSelectedFile().getParent());
 
@@ -472,15 +471,15 @@ public class BuildingEditorDialogDPPt extends JDialog {
 
     private void jbReplaceAnimActionPerformed(ActionEvent evt) {
         if (buildHandler.getGlobalAnimationsList() != null) {
-            final JFileChooser fc = new JFileChooser();
+            final SystemFileChooser fc = new SystemFileChooser();
             if (handler.getLastBuildDirectoryUsed() != null) {
                 fc.setCurrentDirectory(new File(handler.getLastBuildDirectoryUsed()));
             }
-            fc.setFileFilter(new FileNameExtensionFilter("Animation Files (*.nsbca, *.nsbta, *.nsbtp, *.nsbma, *.nsbva)", "nsbca", "nsbta", "nsbtp", "nsbma", "nsbva"));
+            fc.setFileFilter(new SystemFileChooser.FileNameExtensionFilter("Animation Files (*.nsbca, *.nsbta, *.nsbtp, *.nsbma, *.nsbva)", "nsbca", "nsbta", "nsbtp", "nsbma", "nsbva"));
             fc.setApproveButtonText("Open");
             fc.setDialogTitle("Select the new Animation");
             final int returnVal = fc.showOpenDialog(this);
-            if (returnVal == JFileChooser.APPROVE_OPTION) {
+            if (returnVal == SystemFileChooser.APPROVE_OPTION) {
                 try {
                     handler.setLastBuildDirectoryUsed(fc.getSelectedFile().getParent());
 
@@ -497,13 +496,13 @@ public class BuildingEditorDialogDPPt extends JDialog {
 
     private void jbExportAnimationActionPerformed(ActionEvent evt) {
         if (buildHandler.getGlobalAnimationsList() != null) {
-            final JFileChooser fc = new JFileChooser();
+            final SystemFileChooser fc = new SystemFileChooser();
             if (handler.getLastBuildDirectoryUsed() != null) {
                 fc.setCurrentDirectory(new File(handler.getLastBuildDirectoryUsed()));
             }
             String type = buildHandler.getGlobalAnimationsList().getAnimations().get(jlAnimationsList.getSelectedIndex()).getExtensionName();
 
-            fc.setFileFilter(new FileNameExtensionFilter(type.toUpperCase() + " (*." + type + ")", type));
+            fc.setFileFilter(new SystemFileChooser.FileNameExtensionFilter(type.toUpperCase() + " (*." + type + ")", type));
             fc.setApproveButtonText("Save");
             fc.setDialogTitle("Save the Animation");
             try {//TODO: Replace this with some index bounds cheking?
@@ -512,8 +511,8 @@ public class BuildingEditorDialogDPPt extends JDialog {
             } catch (Exception ex) {
                 ex.printStackTrace();
             }
-            final int returnVal = fc.showOpenDialog(this);
-            if (returnVal == JFileChooser.APPROVE_OPTION) {
+            final int returnVal = fc.showSaveDialog(this);
+            if (returnVal == SystemFileChooser.APPROVE_OPTION) {
                 try {
                     handler.setLastBuildDirectoryUsed(fc.getSelectedFile().getParent());
 
@@ -805,15 +804,15 @@ public class BuildingEditorDialogDPPt extends JDialog {
     private void jbAddTsetActionPerformed(ActionEvent evt) {
         if (buildHandler.getBuildTilesetList() != null && buildHandler.getAreaBuildList() != null) {
 
-            final JFileChooser fc = new JFileChooser();
+            final SystemFileChooser fc = new SystemFileChooser();
             if (handler.getLastBuildDirectoryUsed() != null) {
                 fc.setCurrentDirectory(new File(handler.getLastBuildDirectoryUsed()));
             }
-            fc.setFileFilter(new FileNameExtensionFilter("NSBTX (*.nsbtx)", "nsbtx"));
+            fc.setFileFilter(new SystemFileChooser.FileNameExtensionFilter("NSBTX (*.nsbtx)", "nsbtx"));
             fc.setApproveButtonText("Open");
             fc.setDialogTitle("Add a new Building NSBTX");
             final int returnVal = fc.showOpenDialog(this);
-            if (returnVal == JFileChooser.APPROVE_OPTION) {
+            if (returnVal == SystemFileChooser.APPROVE_OPTION) {
                 try {
                     handler.setLastBuildDirectoryUsed(fc.getSelectedFile().getParent());
 
@@ -837,15 +836,15 @@ public class BuildingEditorDialogDPPt extends JDialog {
     private void jbReplaceTsetActionPerformed(ActionEvent evt) {
         if (buildHandler.getBuildTilesetList() != null && buildHandler.getAreaBuildList() != null) {
 
-            final JFileChooser fc = new JFileChooser();
+            final SystemFileChooser fc = new SystemFileChooser();
             if (handler.getLastBuildDirectoryUsed() != null) {
                 fc.setCurrentDirectory(new File(handler.getLastBuildDirectoryUsed()));
             }
-            fc.setFileFilter(new FileNameExtensionFilter("NSBTX (*.nsbtx)", "nsbtx"));
+            fc.setFileFilter(new SystemFileChooser.FileNameExtensionFilter("NSBTX (*.nsbtx)", "nsbtx"));
             fc.setApproveButtonText("Open");
             fc.setDialogTitle("Replace the Building NSBTX");
             final int returnVal = fc.showOpenDialog(this);
-            if (returnVal == JFileChooser.APPROVE_OPTION) {
+            if (returnVal == SystemFileChooser.APPROVE_OPTION) {
                 try {
                     handler.setLastBuildDirectoryUsed(fc.getSelectedFile().getParent());
 
@@ -868,11 +867,11 @@ public class BuildingEditorDialogDPPt extends JDialog {
 
     private void jbExportTilesetActionPerformed(ActionEvent evt) {
         if (buildHandler.getBuildModelList() != null) {
-            final JFileChooser fc = new JFileChooser();
+            final SystemFileChooser fc = new SystemFileChooser();
             if (handler.getLastBuildDirectoryUsed() != null) {
                 fc.setCurrentDirectory(new File(handler.getLastBuildDirectoryUsed()));
             }
-            fc.setFileFilter(new FileNameExtensionFilter("NSBTX (*.nsbtx)", "nsbtx"));
+            fc.setFileFilter(new SystemFileChooser.FileNameExtensionFilter("NSBTX (*.nsbtx)", "nsbtx"));
             fc.setApproveButtonText("Save");
             fc.setDialogTitle("Save Building's NSBTX");
             try {//TODO: Replace this with some index bounds cheking?
@@ -881,8 +880,8 @@ public class BuildingEditorDialogDPPt extends JDialog {
             } catch (Exception ex) {
                 ex.printStackTrace();
             }
-            final int returnVal = fc.showOpenDialog(this);
-            if (returnVal == JFileChooser.APPROVE_OPTION) {
+            final int returnVal = fc.showSaveDialog(this);
+            if (returnVal == SystemFileChooser.APPROVE_OPTION) {
                 try {
                     handler.setLastBuildDirectoryUsed(fc.getSelectedFile().getParent());
 
@@ -1005,15 +1004,15 @@ public class BuildingEditorDialogDPPt extends JDialog {
     }
 
     private void jbImportBldActionPerformed(ActionEvent evt) {
-        final JFileChooser fc = new JFileChooser();
+        final SystemFileChooser fc = new SystemFileChooser();
         if (handler.getLastBuildDirectoryUsed() != null) {
             fc.setCurrentDirectory(new File(handler.getLastBuildDirectoryUsed()));
         }
-        fc.setFileFilter(new FileNameExtensionFilter("BLD (*.bld)", "bld"));
+        fc.setFileFilter(new SystemFileChooser.FileNameExtensionFilter("BLD (*.bld)", "bld"));
         fc.setApproveButtonText("Open");
         fc.setDialogTitle("Import Buildings File");
         final int returnVal = fc.showOpenDialog(this);
-        if (returnVal == JFileChooser.APPROVE_OPTION) {
+        if (returnVal == SystemFileChooser.APPROVE_OPTION) {
             try {
                 handler.setLastBuildDirectoryUsed(fc.getSelectedFile().getParent());
 
@@ -1033,11 +1032,11 @@ public class BuildingEditorDialogDPPt extends JDialog {
 
     private void jbExportBldActionPerformed(ActionEvent evt) {
         if (handler.getBuildings() != null) {
-            final JFileChooser fc = new JFileChooser();
+            final SystemFileChooser fc = new SystemFileChooser();
             if (handler.getLastMapDirectoryUsed() != null) {
                 fc.setCurrentDirectory(new File(handler.getLastMapDirectoryUsed()));
             }
-            fc.setFileFilter(new FileNameExtensionFilter("BLD (*.bld)", "bld"));
+            fc.setFileFilter(new SystemFileChooser.FileNameExtensionFilter("BLD (*.bld)", "bld"));
             fc.setApproveButtonText("Save");
             fc.setDialogTitle("Save Building File");
             try {//TODO: Replace this with some index bounds cheking?
@@ -1047,8 +1046,8 @@ public class BuildingEditorDialogDPPt extends JDialog {
             } catch (Exception ex) {
                 ex.printStackTrace();
             }
-            final int returnVal = fc.showOpenDialog(this);
-            if (returnVal == JFileChooser.APPROVE_OPTION) {
+            final int returnVal = fc.showSaveDialog(this);
+            if (returnVal == SystemFileChooser.APPROVE_OPTION) {
                 try {
                     handler.setLastMapDirectoryUsed(fc.getSelectedFile().getParent());
 
@@ -1227,15 +1226,15 @@ public class BuildingEditorDialogDPPt extends JDialog {
     }
 
     private void jbOpenMapActionPerformed(ActionEvent evt) {
-        final JFileChooser fc = new JFileChooser();
+        final SystemFileChooser fc = new SystemFileChooser();
         if (handler.getLastMapDirectoryUsed() != null) {
             fc.setCurrentDirectory(new File(handler.getLastMapDirectoryUsed()));
         }
-        fc.setFileFilter(new FileNameExtensionFilter("NSBMD (*.nsbmd)", "nsbmd"));
+        fc.setFileFilter(new SystemFileChooser.FileNameExtensionFilter("NSBMD (*.nsbmd)", "nsbmd"));
         fc.setApproveButtonText("Open");
         fc.setDialogTitle("Open Map's NSBMD");
         final int returnVal = fc.showOpenDialog(this);
-        if (returnVal == JFileChooser.APPROVE_OPTION) {
+        if (returnVal == SystemFileChooser.APPROVE_OPTION) {
             try {
                 handler.setLastMapDirectoryUsed(fc.getSelectedFile().getParent());
 
