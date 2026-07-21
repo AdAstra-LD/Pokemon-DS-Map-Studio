@@ -408,22 +408,22 @@ public class BacksoundEditorDialog extends JDialog {
 
             //---- jcbSoundType ----
             jcbSoundType.setModel(new DefaultComboBoxModel<>(new String[] {
-                "Water flow",
-                "Wind turbine",
-                "Sea waves",
-                "Silence 1",
+                "Water Flow",
+                "Windmill",
+                "Seashore",
+                "Pillar",
                 "Whirlpool",
-                "Strong water current",
-                "Silence 2",
-                "Stadium chant",
-                "Ship horn",
-                "Silence 3",
-                "Sea wave 2",
-                "Bells ",
-                "Wind",
-                "Silence 4",
-                "Unknown",
-                "Synth horn"
+                "Waterfall",
+                "Lava",
+                "Stadium Chant",
+                "Steam Whistle",
+                "Snorlax's Snoring",
+                "Motor",
+                "Bells",
+                "Strong Wind",
+                "Engine",
+                "Fountain",
+                "Electric Barrier"
             }));
             jcbSoundType.addActionListener(e -> jcbSoundTypeActionPerformed(e));
             jPanel2.add(jcbSoundType, "cell 1 0");
