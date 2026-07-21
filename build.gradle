@@ -6,9 +6,6 @@ plugins {
 
 repositories {
     mavenCentral()
-    flatDir {
-        dirs 'libs'
-    }
 }
 
 dependencies {
@@ -24,7 +21,7 @@ test {
     useJUnitPlatform()
 }
 
-version '2.3.1'
+version '2.4'
 
 java {
     sourceCompatibility = JavaVersion.VERSION_11
