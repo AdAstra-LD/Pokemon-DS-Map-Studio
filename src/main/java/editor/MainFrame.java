@@ -266,6 +266,7 @@ public class MainFrame extends JFrame {
 
         addToolGroup(2, jtbModeEdit, jtbModeClear, jtbModeSmartPaint, jtbModeInvSmartPaint);
         addToolGroup(2, jtbModeSelect, jtbModeLasso, jtbModeWand, jtbModeMoveSelect);
+        addDeselectRow();
         addSelectionActionGroup();
         addToolGroup(2, jtbModeBucket, jtbModePicker, jtbModeLine, jtbModeRectShape, jtbModeEllipseShape);
         addSmartToolsToolbarHeader();
@@ -451,6 +452,21 @@ public class MainFrame extends JFrame {
     }
 
     /** Four clipboard buttons followed by a full-width Deselect command. */
+    /** Full width Deselect row glued under the selection tools group. */
+    private void addDeselectRow() {
+        jbDeselect.setMargin(new Insets(2, 4, 2, 4));
+        applyToolButtonBackground(jbDeselect);
+        JPanel panel = new JPanel(new GridLayout(1, 1));
+        panel.setOpaque(false);
+        panel.add(jbDeselect);
+        Dimension pref = new Dimension(toolGroupWidth, jbDeselect.getPreferredSize().height + 2);
+        panel.setPreferredSize(pref);
+        panel.setMaximumSize(pref);
+        panel.setAlignmentX(0.0f);
+        jtTools.add(Box.createVerticalStrut(2));
+        jtTools.add(panel);
+    }
+
     private void addSelectionActionGroup() {
         if (jtTools.getComponentCount() > 0) {
             jtTools.add(Box.createVerticalStrut(3));
@@ -478,12 +494,6 @@ public class MainFrame extends JFrame {
             gbc.gridwidth = 1;
             panel.add(button, gbc);
         }
-        jbDeselect.setMargin(new Insets(2, 4, 2, 4));
-        applyToolButtonBackground(jbDeselect);
-        gbc.gridx = 0;
-        gbc.gridy = 2;
-        gbc.gridwidth = 2;
-        panel.add(jbDeselect, gbc);
         panel.setAlignmentX(0.0f);
         Dimension pref = panel.getPreferredSize();
         pref = new Dimension(toolGroupWidth, pref.height);
