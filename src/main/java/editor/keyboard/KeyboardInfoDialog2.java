@@ -66,6 +66,7 @@ public class KeyboardInfoDialog2 extends JDialog {
                             "SHIFT + DRAG - Rectangle selection",
                             "CTRL + DRAG - Move camera",
                             "CTRL + MOUSE WHEEL - Zoom",
+                            "MIDDLE CLICK - Flood fill inside selection",
                             "SPACE - Enable / Disable 3D view",
                             "E - Enable edit mode",
                             "G - Enable / disable grid",

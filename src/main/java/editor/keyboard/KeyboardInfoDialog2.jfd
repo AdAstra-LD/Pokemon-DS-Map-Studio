@@ -31,6 +31,7 @@ new FormModel {
 								addElement( "SHIFT + DRAG - Rectangle selection" )
 								addElement( "CTRL + DRAG - Move camera" )
 								addElement( "CTRL + MOUSE WHEEL - Zoom" )
+								addElement( "MIDDLE CLICK - Flood fill inside selection" )
 								addElement( "SPACE - Enable / Disable 3D view" )
 								addElement( "E - Enable edit mode" )
 								addElement( "G - Enable / disable grid" )

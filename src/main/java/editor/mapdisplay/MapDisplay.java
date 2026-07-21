@@ -1344,11 +1344,22 @@ public class MapDisplay extends GLJPanel implements GLEventListener, MouseListen
         }
     }
 
+    /**
+     * Middle click flood fills only act inside the current selection;
+     * clicking an unselected cell does nothing.
+     */
+    private boolean isInsideSelectionOnSelectedMap(Point p) {
+        return hasSelection() && selection.getMapCoords().equals(handler.getMapSelected())
+                && selection.contains(p.x, p.y);
+    }
+
     protected void floodFillClearTileInGrid(MouseEvent e) {
         if (handler.getTileset().size() > 0) {
             Point p = getCoordsInSelectedMap(e);
-            if (isPointInsideGrid(p.x, p.y) && handler.getActiveTileLayer()[p.x][p.y] != -1) {
-                handler.getGrid().floodFillTileGrid(p.x, p.y, -1, 1, 1);
+            if (isPointInsideGrid(p.x, p.y) && handler.getActiveTileLayer()[p.x][p.y] != -1
+                    && isInsideSelectionOnSelectedMap(p)) {
+                handler.addMapState(new MapLayerState("Flood Fill Clear Tile", handler));
+                handler.getGrid().floodFillTileGrid(p.x, p.y, -1, 1, 1, selection.getMask());
                 //updateMapThumbnail(e);
             }
         }
@@ -1357,9 +1368,12 @@ public class MapDisplay extends GLJPanel implements GLEventListener, MouseListen
     protected void floodFillTileInGrid(MouseEvent e) {
         if (handler.getTileset().size() > 0) {
             Point p = getCoordsInSelectedMap(e);
-            if (isPointInsideGrid(p.x, p.y) && handler.getActiveTileLayer()[p.x][p.y] != handler.getTileIndexSelected()) {
+            if (isPointInsideGrid(p.x, p.y) && handler.getActiveTileLayer()[p.x][p.y] != handler.getTileIndexSelected()
+                    && isInsideSelectionOnSelectedMap(p)) {
+                handler.addMapState(new MapLayerState("Flood Fill Tile", handler));
                 Tile tile = handler.getTileSelected();
-                handler.getGrid().floodFillTileGrid(p.x, p.y, handler.getTileIndexSelected(), tile.getWidth(), tile.getHeight());
+                handler.getGrid().floodFillTileGrid(p.x, p.y, handler.getTileIndexSelected(),
+                        tile.getWidth(), tile.getHeight(), selection.getMask());
                 applyAutoCollision(handler.getMapSelected());
                 //updateMapThumbnail(e);
             }

@@ -90,7 +90,6 @@ public class ViewOrthoMode extends ViewMode {
                             d.updateActiveMapLayerGL();
                             d.repaint();
                         } else if (SwingUtilities.isMiddleMouseButton(e)) {
-                            d.handler.addMapState(new MapLayerState("Flood Fill Tile", d.handler));
                             d.floodFillTileInGrid(e);
                             d.updateActiveMapLayerGL();
                             d.repaint();
@@ -115,7 +114,6 @@ public class ViewOrthoMode extends ViewMode {
                             d.updateActiveMapLayerGL();
                             d.repaint();
                         } else if (SwingUtilities.isMiddleMouseButton(e)) {
-                            d.handler.addMapState(new MapLayerState("Flood Fill Clear Tile", d.handler));
                             d.floodFillClearTileInGrid(e);
                             d.updateActiveMapLayerGL();
                             d.repaint();
