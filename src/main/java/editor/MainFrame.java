@@ -270,11 +270,18 @@ public class MainFrame extends JFrame {
         addToolGroup(2, jtbModeBucket, jtbModePicker, jtbModeLine, jtbModeRectShape, jtbModeEllipseShape);
         addSmartToolsToolbarHeader();
 
-        //Camera controls live in the View group next to the view toggles
-        jtView.addSeparator();
+        //Camera controls live in the View group next to the view toggles,
+        //compacted into a two column grid to save vertical space
+        jtView.removeAll();
+        jtView.setLayout(new GridLayout(0, 2, 2, 2));
+        jtView.add(jtbView3D);
+        jtView.add(jtbViewOrtho);
+        jtView.add(jtbViewHeight);
+        jtView.add(jbFitCameraToMap);
+        jtView.add(jtbViewGrid);
+        jtView.add(jtbViewWireframe);
         jtView.add(jtbModeMove);
         jtView.add(jtbModeZoom);
-        jtView.add(jbFitCameraToMap);
 
         //Layer up / down buttons sit at the bottom of the layer selector
         JPanel jpLayerArrows = new JPanel(new GridLayout(1, 2, 2, 0));
