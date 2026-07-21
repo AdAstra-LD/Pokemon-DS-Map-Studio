@@ -40,6 +40,26 @@ public class CollisionTypes {
             2, 2, 2, 2, 2, 8, 8, 8, 8
     };
 
+    private static final String[][] layerNamesPerGame = new String[][]{
+            {"Type", "Collision"},
+            {"Type", "Collision"},
+            {"Type", "Collision"},
+            {"Type", "Collision"},
+            {"Type", "Collision"},
+            {"Terrain", "Terrain 2", "Height", "Height 2", "Flags", "Layer 6 (?)", "Collision", "Shadow"},
+            {"Terrain", "Terrain 2", "Height", "Height 2", "Flags", "Layer 6 (?)", "Collision", "Shadow"},
+            {"Terrain", "Terrain 2", "Height", "Height 2", "Flags", "Layer 6 (?)", "Collision", "Shadow"},
+            {"Terrain", "Terrain 2", "Height", "Height 2", "Flags", "Layer 6 (?)", "Collision", "Shadow"}
+    };
+
+    public static String layerName(int gameIndex, int layer) {
+        if (gameIndex >= 0 && gameIndex < layerNamesPerGame.length
+                && layer >= 0 && layer < layerNamesPerGame[gameIndex].length) {
+            return layerNamesPerGame[gameIndex][layer];
+        }
+        return "Layer " + layer;
+    }
+
     public CollisionTypes(int gameIndex) {
         this.numLayers = numLayersPerGame[gameIndex];
         fillColors = loadColorsAsResource(collisionTypesFilesPerGame[gameIndex]);

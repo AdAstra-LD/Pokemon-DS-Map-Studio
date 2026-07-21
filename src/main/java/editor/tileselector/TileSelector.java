@@ -2269,8 +2269,8 @@ public class TileSelector extends JPanel {
             JPanel layerPanel = new JPanel(new BorderLayout(2, 4));
             layerPanel.setBorder(BorderFactory.createEtchedBorder());
             JPanel layerHeader = new JPanel(new BorderLayout(4, 2));
-            layerHeader.add(new JLabel("Layer " + layer, SwingConstants.CENTER),
-                    BorderLayout.NORTH);
+            layerHeader.add(new JLabel(CollisionTypes.layerName(gameIndex, layer),
+                    SwingConstants.CENTER), BorderLayout.NORTH);
             layerHeader.add(valueCombo, BorderLayout.CENTER);
             layerPanel.add(layerHeader, BorderLayout.NORTH);
             JPanel centeredGrid = new JPanel(new FlowLayout(FlowLayout.CENTER, 0, 0));

@@ -200,7 +200,8 @@ public class CollisionDefaultsEditorPanel extends JPanel {
         });
 
         JPanel header = new JPanel(new BorderLayout(4, 3));
-        header.add(new JLabel("Layer " + layer, SwingConstants.CENTER), BorderLayout.NORTH);
+        header.add(new JLabel(CollisionTypes.layerName(handler.getGameIndex(), layer),
+                SwingConstants.CENTER), BorderLayout.NORTH);
         header.add(collisionCombo, BorderLayout.CENTER);
 
         JPanel buttons = new JPanel(new GridLayout(2, 2, 4, 3));
