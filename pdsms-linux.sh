@@ -1,8 +1,13 @@
 #!/usr/bin/env bash
 
+VERSION="2.2.2"
+APP_NAME="Pokemon DS Map Studio"
+APP_DIR="$APP_NAME-$VERSION"
+ZIP_NAME="Pokemon.DS.Map.Studio-$VERSION.zip"
+
 # check that unzip is present
 command -v unzip >/dev/null 2>&1 || {
-    echo >&2 "This script requires gunzip!"
+    echo >&2 "This script requires unzip!"
     exit 1
 }
 
@@ -18,24 +23,27 @@ command -v java >/dev/null 2>&1 || {
     exit 1
 }
 
-# download PDSMS 2.2.2 to local user applications
+# download PDSMS to local user applications
 cd ~/.local/share/applications/ || exit
-wget "https://github.com/AdAstra-LD/Pokemon-DS-Map-Studio/releases/download/v2.2.2/Pokemon.DS.Map.Studio-2.2.2.zip"
-unzip "Pokemon.DS.Map.Studio-2.2.2.zip"
+wget "https://github.com/AdAstra-LD/Pokemon-DS-Map-Studio/releases/download/v$VERSION/$ZIP_NAME" || {
+    echo >&2 "Download failed!"
+    exit 1
+}
+# the release zip has no top-level folder, so extract into a versioned directory
+unzip -o "$ZIP_NAME" -d "$APP_DIR"
 # remove the downloaded archive
-rm -f "Pokemon.DS.Map.Studio-2.2.2.zip"
+rm -f "$ZIP_NAME"
 
 # download icon
-wget "https://github.com/AdAstra-LD/Pokemon-DS-Map-Studio/raw/master/src/main/resources/icons/programIconHD.png"
-mv "programIconHD.png" "Pokemon DS Map Studio-2.2/icon.png"
+wget -O "$APP_DIR/icon.png" "https://github.com/AdAstra-LD/Pokemon-DS-Map-Studio/raw/master/src/main/resources/icons/programIconHD.png"
 
 # create a desktop shortcut
 echo "#!/usr/bin/env xdg-open
 [Desktop Entry]
 Type=Application
 Name=Pokemon DS Map Studio
-Exec=/usr/bin/java -jar \"${PWD}/Pokemon DS Map Studio-2.2.2/lib/Pokemon DS Map Studio-2.2.2.jar\"
-Icon=${PWD}/Pokemon DS Map Studio-2.2/icon.png
+Exec=/usr/bin/java -jar \"${PWD}/$APP_DIR/lib/$APP_NAME-$VERSION.jar\"
+Icon=${PWD}/$APP_DIR/icon.png
 Categories=Development;
 " > PDSMS.desktop
 
