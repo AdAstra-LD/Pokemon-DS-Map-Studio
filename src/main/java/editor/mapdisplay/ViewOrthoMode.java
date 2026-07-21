@@ -24,20 +24,58 @@ public class ViewOrthoMode extends ViewMode {
     @Override
     public void mousePressed(MapDisplay d, MouseEvent e) {
         if (d.SHIFT_PRESSED) {
+            //Shift + Click with the magic wand selects all matching tiles in the map
+            if (SwingUtilities.isLeftMouseButton(e)
+                    && d.editMode == MapDisplay.EditMode.MODE_SELECT_WAND) {
+                d.setMapSelected(e);
+                d.wandSelect(e, true);
+                d.repaint();
+            }
+            //Shift + Click / drag with rectangle select adds to the selection
+            if (SwingUtilities.isLeftMouseButton(e)
+                    && d.editMode == MapDisplay.EditMode.MODE_SELECT && !d.isPasting()) {
+                d.setMapSelected(e);
+                d.startSelection(e, true);
+                d.repaint();
+            }
             if (SwingUtilities.isLeftMouseButton(e) || SwingUtilities.isMiddleMouseButton(e)) {
                 d.lastMouseX = e.getX();
                 d.lastMouseY = e.getY();
             }
         } else {
+            //Right click inside a selection opens the edit menu; everywhere
+            //else right click keeps its normal behaviour (e.g. tile picker)
+            boolean invertedSmartDrawing = SwingUtilities.isRightMouseButton(e)
+                    && ((d.editMode == MapDisplay.EditMode.MODE_EDIT && d.canStartSmartStroke())
+                    || ((d.editMode == MapDisplay.EditMode.MODE_LINE
+                    || d.editMode == MapDisplay.EditMode.MODE_SHAPE_RECT
+                    || d.editMode == MapDisplay.EditMode.MODE_SHAPE_ELLIPSE)
+                    && d.canUseSmartTools()));
+            if (SwingUtilities.isRightMouseButton(e) && !d.isPasting()
+                    && !invertedSmartDrawing && d.isCursorInsideSelection(e)) {
+                d.showSelectionPopup(e);
+                return;
+            }
+
             switch (d.editMode) {
                 case MODE_EDIT:
                     if (d.handler.getTileset().size() > 0) {
                         d.setMapSelected(e);
                         d.handler.setLayerChanged(false);
-                        if (SwingUtilities.isLeftMouseButton(e)) {
+                        boolean left = SwingUtilities.isLeftMouseButton(e);
+                        boolean invertedSmart = SwingUtilities.isRightMouseButton(e)
+                                && d.canStartSmartStroke();
+                        if (left || invertedSmart) {
                             d.dragStart = d.getCoordsInSelectedMap(e);
-                            d.handler.addMapState(new MapLayerState("Draw Tile", d.handler));
-                            d.setTileInGrid(e);
+                            boolean smartStroke = d.canStartSmartStroke();
+                            d.handler.addMapState(new MapLayerState(
+                                    smartStroke ? (invertedSmart ? "Inverted Smart Draw" : "Smart Draw")
+                                            : "Draw Tile", d.handler));
+                            if (smartStroke) {
+                                d.startSmartStroke(e, invertedSmart);
+                            } else {
+                                d.setTileInGrid(e);
+                            }
                             d.updateActiveMapLayerGL();
                             d.repaint();
                         } else if (SwingUtilities.isMiddleMouseButton(e)) {
@@ -107,6 +145,89 @@ public class ViewOrthoMode extends ViewMode {
                     }
                     break;
 
+                case MODE_SELECT:
+                    if (SwingUtilities.isLeftMouseButton(e)) {
+                        if (d.isPasting()) {
+                            d.commitPaste(e);
+                        } else {
+                            d.setMapSelected(e);
+                            d.startSelection(e, false);
+                            d.repaint();
+                        }
+                    } else if (SwingUtilities.isRightMouseButton(e)) {
+                        if (d.isPasting()) {
+                            d.cancelPaste();
+                        } else if (d.hasSelection()) {
+                            d.showSelectionPopup(e);
+                        }
+                        d.repaint();
+                    }
+                    break;
+
+                case MODE_SELECT_LASSO:
+                    if (SwingUtilities.isLeftMouseButton(e)) {
+                        d.setMapSelected(e);
+                        d.startLasso(e);
+                        d.repaint();
+                    } else if (SwingUtilities.isRightMouseButton(e) && d.hasSelection()) {
+                        d.showSelectionPopup(e);
+                    }
+                    break;
+
+                case MODE_SELECT_WAND:
+                    if (SwingUtilities.isLeftMouseButton(e)) {
+                        d.setMapSelected(e);
+                        d.wandSelect(e, false);
+                        d.repaint();
+                    } else if (SwingUtilities.isRightMouseButton(e) && d.hasSelection()) {
+                        d.showSelectionPopup(e);
+                    }
+                    break;
+
+                case MODE_MOVE_SELECT:
+                    if (SwingUtilities.isLeftMouseButton(e)) {
+                        if (d.canBeginMoveSelection(e)) {
+                            d.beginMoveSelection(e);
+                            d.repaint();
+                        } else if (d.hasSelection()) {
+                            //Clicking outside the selection deselects
+                            d.clearSelection();
+                            d.repaint();
+                        }
+                    } else if (SwingUtilities.isRightMouseButton(e) && d.hasSelection()) {
+                        d.showSelectionPopup(e);
+                    }
+                    break;
+
+                case MODE_BUCKET:
+                    if (SwingUtilities.isLeftMouseButton(e)) {
+                        d.bucketFill(e);
+                    }
+                    break;
+
+                case MODE_PICKER:
+                    if (SwingUtilities.isLeftMouseButton(e)) {
+                        d.pickTile(e);
+                    }
+                    break;
+
+                case MODE_LINE:
+                case MODE_SHAPE_RECT:
+                case MODE_SHAPE_ELLIPSE:
+                    boolean left = SwingUtilities.isLeftMouseButton(e);
+                    boolean invertedSmart = SwingUtilities.isRightMouseButton(e)
+                            && d.canUseSmartTools();
+                    if (left || invertedSmart) {
+                        if (d.handler.getTileset().size() > 0) {
+                            d.startShape(e, invertedSmart);
+                            d.repaint();
+                        }
+                    } else if (SwingUtilities.isRightMouseButton(e)) {
+                        d.resetShape();
+                        d.repaint();
+                    }
+                    break;
+
                 case MODE_MOVE:
                     if (SwingUtilities.isLeftMouseButton(e) || SwingUtilities.isMiddleMouseButton(e)) {
                         d.lastMouseX = e.getX();
@@ -130,6 +251,13 @@ public class ViewOrthoMode extends ViewMode {
     @Override
     public void mouseReleased(MapDisplay d, MouseEvent e) {
         switch (d.editMode) {
+            case MODE_EDIT:
+                if (SwingUtilities.isLeftMouseButton(e)
+                        || SwingUtilities.isRightMouseButton(e)) {
+                    d.finishSmartStroke();
+                }
+                break;
+
             case MODE_CLEAR:
                 d.handler.getMapMatrix().removeUnusedMaps();
                 if (!d.handler.mapSelectedExists()) {
@@ -137,6 +265,52 @@ public class ViewOrthoMode extends ViewMode {
 
                     d.handler.getMainFrame().getThumbnailLayerSelector().drawAllLayerThumbnails();
                     d.handler.getMainFrame().getThumbnailLayerSelector().repaint();
+                }
+                break;
+
+            case MODE_SELECT:
+                //A plain click without dragging deselects (Paint.net behavior),
+                //but a Shift click adds the clicked tile instead
+                if (SwingUtilities.isLeftMouseButton(e) && !d.isPasting()
+                        && d.resizeHandle == 0 && !d.selDragMoved && !d.selStartedAdditive
+                        && d.hasSelection()) {
+                    d.clearSelection();
+                    d.repaint();
+                }
+                d.endSelectionDrag();
+                break;
+
+            case MODE_SELECT_LASSO:
+                if (SwingUtilities.isLeftMouseButton(e)) {
+                    d.endLasso();
+                    d.repaint();
+                }
+                break;
+
+            case MODE_MOVE_SELECT:
+                if (SwingUtilities.isLeftMouseButton(e) && d.isFloatingMove()) {
+                    d.commitMoveSelection(e);
+                }
+                break;
+
+            case MODE_LINE:
+                if (SwingUtilities.isLeftMouseButton(e)
+                        || (SwingUtilities.isRightMouseButton(e) && d.smartShapeInverted)) {
+                    d.commitLine();
+                }
+                break;
+
+            case MODE_SHAPE_RECT:
+                if (SwingUtilities.isLeftMouseButton(e)
+                        || (SwingUtilities.isRightMouseButton(e) && d.smartShapeInverted)) {
+                    d.commitRectShape();
+                }
+                break;
+
+            case MODE_SHAPE_ELLIPSE:
+                if (SwingUtilities.isLeftMouseButton(e)
+                        || (SwingUtilities.isRightMouseButton(e) && d.smartShapeInverted)) {
+                    d.commitEllipseShape();
                 }
                 break;
         }
@@ -156,7 +330,13 @@ public class ViewOrthoMode extends ViewMode {
     public void mouseDragged(MapDisplay d, MouseEvent e) {
         d.updateMousePostion(e);
         if (d.SHIFT_PRESSED) {
-            if (SwingUtilities.isLeftMouseButton(e) || SwingUtilities.isMiddleMouseButton(e)) {
+            //An additive selection drag keeps extending the selection instead of panning
+            if (SwingUtilities.isLeftMouseButton(e)
+                    && d.editMode == MapDisplay.EditMode.MODE_SELECT
+                    && d.selDragActive && !d.isPasting()) {
+                d.updateSelection(e);
+                d.repaint();
+            } else if (SwingUtilities.isLeftMouseButton(e) || SwingUtilities.isMiddleMouseButton(e)) {
                 d.moveCamera(e);
                 d.repaint();
             }
@@ -164,11 +344,17 @@ public class ViewOrthoMode extends ViewMode {
             switch (d.editMode) {
                 case MODE_EDIT:
                     if (d.handler.getTileset().size() > 0) {
-                        d.setMapSelected(e);
-                        if (SwingUtilities.isLeftMouseButton(e)) {
-                            //d.updateLastMapState();
-                            d.editedMapCoords.add(d.getMapCoords(e));
-                            d.dragTileInGrid(e);
+                        if (SwingUtilities.isLeftMouseButton(e)
+                                || (SwingUtilities.isRightMouseButton(e)
+                                && d.smartStrokeMap != null)) {
+                            if (d.smartStrokeMap != null) {
+                                d.editedMapCoords.add(d.smartStrokeMap);
+                                d.extendSmartStroke(e);
+                            } else {
+                                d.setMapSelected(e);
+                                d.editedMapCoords.add(d.getMapCoords(e));
+                                d.dragTileInGrid(e);
+                            }
                             d.updateActiveMapLayerGL();
                             d.repaint();
                         }
@@ -188,6 +374,36 @@ public class ViewOrthoMode extends ViewMode {
                     }
                     break;
 
+                case MODE_SELECT:
+                    if (SwingUtilities.isLeftMouseButton(e) && !d.isPasting()) {
+                        d.updateSelection(e);
+                        d.repaint();
+                    }
+                    break;
+
+                case MODE_SELECT_LASSO:
+                    if (SwingUtilities.isLeftMouseButton(e)) {
+                        d.updateLasso(e);
+                        d.repaint();
+                    }
+                    break;
+
+                case MODE_MOVE_SELECT:
+                    if (SwingUtilities.isLeftMouseButton(e) && d.isFloatingMove()) {
+                        d.repaint();
+                    }
+                    break;
+
+                case MODE_LINE:
+                case MODE_SHAPE_RECT:
+                case MODE_SHAPE_ELLIPSE:
+                    if (SwingUtilities.isLeftMouseButton(e)
+                            || (SwingUtilities.isRightMouseButton(e) && d.smartShapeInverted)) {
+                        d.updateShape(e);
+                        d.repaint();
+                    }
+                    break;
+
                 case MODE_MOVE:
                     if (SwingUtilities.isLeftMouseButton(e) || SwingUtilities.isMiddleMouseButton(e)) {
                         d.moveCamera(e);
@@ -201,6 +417,10 @@ public class ViewOrthoMode extends ViewMode {
     @Override
     public void mouseMoved(MapDisplay d, MouseEvent e) {
         d.updateMousePostion(e);
+        d.updateCursorTileCoordsStatus(e);
+        if (d.editMode == MapDisplay.EditMode.MODE_SELECT && !d.isPasting()) {
+            d.updateSelectModeCursor(e);
+        }
         d.repaint();
     }
 
@@ -216,12 +436,16 @@ public class ViewOrthoMode extends ViewMode {
                 d.repaint();
                 break;
             case KeyEvent.VK_C:
-                d.toggleClearTile();
-                d.repaint();
+                if (!e.isControlDown()) {
+                    d.toggleClearTile();
+                    d.repaint();
+                }
                 break;
             case KeyEvent.VK_S:
-                d.toggleSmartGrid();
-                d.repaint();
+                if (!e.isControlDown()) {
+                    d.toggleSmartGrid();
+                    d.repaint();
+                }
                 break;
             case KeyEvent.VK_RIGHT:
                 d.setCameraAtNextMapAndSelect(new Point(1, 0));
@@ -299,6 +523,36 @@ public class ViewOrthoMode extends ViewMode {
                 case MODE_INV_SMART_PAINT:
                     d.drawUnitTileBounds(g);
                     break;
+                case MODE_SELECT:
+                    if (!d.isPasting()) {
+                        d.drawUnitTileBounds(g);
+                    }
+                    break;
+                case MODE_SELECT_LASSO:
+                case MODE_SELECT_WAND:
+                case MODE_BUCKET:
+                case MODE_PICKER:
+                    d.drawUnitTileBounds(g);
+                    break;
+                case MODE_LINE:
+                case MODE_SHAPE_RECT:
+                case MODE_SHAPE_ELLIPSE:
+                    if (d.shapeMap == null) {
+                        d.drawUnitTileBounds(g);
+                    } else {
+                        d.drawShapePreview(g);
+                    }
+                    break;
+            }
+
+            if (!d.isFloatingMove()) {
+                d.drawSelectionOverlay(g);
+            }
+            if (d.isPasting()) {
+                d.drawPastePreview(g);
+            }
+            if (d.isFloatingMove()) {
+                d.drawFloatingMovePreview(g);
             }
 
             g.setColor(Color.white);

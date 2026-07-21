@@ -43,6 +43,9 @@ public class Tileset {
     //Smart grid
     private ArrayList<SmartGrid> sgridArray = new ArrayList<>();
 
+    //Palette folders (tile organization, saved in the .meta sidecar file)
+    private ArrayList<PaletteFolder> paletteFolders = new ArrayList<>();
+
     public Tileset() {
         tiles = new ArrayList();
         textures = new ArrayList<>();
@@ -76,7 +79,108 @@ public class Tileset {
             tileset.sgridArray.add(sgridArray.get(i));
         }
 
+        tileset.paletteFolders = new ArrayList<>(paletteFolders);
+
         return tileset;
+    }
+
+    public ArrayList<PaletteFolder> getPaletteFolders() {
+        return paletteFolders;
+    }
+
+    /** The folder with the given path, or null if it does not exist. */
+    public PaletteFolder getPaletteFolder(String path) {
+        for (PaletteFolder folder : paletteFolders) {
+            if (folder.getPath().equals(path)) {
+                return folder;
+            }
+        }
+        return null;
+    }
+
+    public PaletteFolder getOrCreatePaletteFolder(String path) {
+        PaletteFolder folder = getPaletteFolder(path);
+        if (folder == null) {
+            folder = new PaletteFolder(path);
+            paletteFolders.add(folder);
+        }
+        return folder;
+    }
+
+    /**
+     * Creates the folder and any missing parent folders of its path
+     * ("Terrain/Grass/HGSS" nests HGSS inside Grass inside Terrain).
+     */
+    public PaletteFolder getOrCreatePaletteFolderWithParents(String path) {
+        if (path.isEmpty()) {
+            return getOrCreatePaletteFolder(path);
+        }
+        PaletteFolder folder = null;
+        StringBuilder prefix = new StringBuilder();
+        for (String segment : path.split("/")) {
+            if (prefix.length() > 0) {
+                prefix.append('/');
+            }
+            prefix.append(segment);
+            folder = getOrCreatePaletteFolder(prefix.toString());
+        }
+        return folder;
+    }
+
+    /** The parent path of a nested folder path, or null for root folders. */
+    public static String getParentFolderPath(String path) {
+        int idx = path.lastIndexOf('/');
+        return idx < 0 ? null : path.substring(0, idx);
+    }
+
+    /**
+     * Removes the folder and all its subfolders; their tiles keep existing
+     * only in the All Tiles section.
+     */
+    public void removePaletteFolder(PaletteFolder folder) {
+        String prefix = folder.getPath() + "/";
+        paletteFolders.removeIf(f -> f == folder || f.getPath().startsWith(prefix));
+        for (Tile tile : tiles) {
+            ArrayList<String> memberships = new ArrayList<>(tile.getPaletteFolderSlots().keySet());
+            for (String path : memberships) {
+                if (path.equals(folder.getPath()) || path.startsWith(prefix)) {
+                    tile.removePaletteFolder(path);
+                }
+            }
+        }
+        for (SmartGrid grid : sgridArray) {
+            String path = grid.getPaletteFolder();
+            if (path.equals(folder.getPath()) || path.startsWith(prefix)) {
+                grid.setPaletteFolder("");
+            }
+        }
+    }
+
+    /**
+     * Renames or moves the folder (a new path may have a different parent).
+     * Subfolders and the folder references of all affected tiles follow.
+     */
+    public void renamePaletteFolder(PaletteFolder folder, String newPath) {
+        String oldPath = folder.getPath();
+        String oldPrefix = oldPath + "/";
+        for (PaletteFolder f : paletteFolders) {
+            if (f == folder) {
+                f.setPath(newPath);
+            } else if (f.getPath().startsWith(oldPrefix)) {
+                f.setPath(newPath + "/" + f.getPath().substring(oldPrefix.length()));
+            }
+        }
+        for (Tile tile : tiles) {
+            tile.renamePaletteFolder(oldPath, newPath);
+        }
+        for (SmartGrid grid : sgridArray) {
+            String path = grid.getPaletteFolder();
+            if (path.equals(oldPath)) {
+                grid.setPaletteFolder(newPath);
+            } else if (path.startsWith(oldPrefix)) {
+                grid.setPaletteFolder(newPath + "/" + path.substring(oldPrefix.length()));
+            }
+        }
     }
 
     public void saveImagesToFile(String path) {

@@ -36,7 +36,8 @@ public class AnimationFramesDisplay extends JPanel {
             if (animHandler.getAnimationFile() != null) {
                 if (!animHandler.isAnimationRunning()) {
                     int index = evt.getX() / cellSize;
-                    if (index >= 0 && index < animHandler.getAnimationSelected().size()) {
+                    Animation selected = animHandler.getAnimationSelected();
+                    if (selected != null && index >= 0 && index < selected.size()) {
                         animHandler.setCurrentFrameIndex(index);
                         animHandler.repaintDialog();
                     }
@@ -73,13 +74,10 @@ public class AnimationFramesDisplay extends JPanel {
     }
 
     public void updateSize() {
-        if (animHandler != null) {
-            if (animHandler.getAnimationSelected() != null) {
-                this.setPreferredSize(
-                        new Dimension(cellSize * animHandler.getAnimationSelected().size(), cellSize + labelSize * 2));
-                this.revalidate();
-            }
-        }
+        int frames = animHandler != null && animHandler.getAnimationSelected() != null
+                ? animHandler.getAnimationSelected().size() : 0;
+        this.setPreferredSize(new Dimension(cellSize * frames, cellSize + labelSize * 2));
+        this.revalidate();
     }
 
     public void drawCell(Graphics g, BufferedImage img, int delay, String frameName, int cellIndex) {

@@ -1,0 +1,76 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - 'v*'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build-portable:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 21
+          cache: gradle
+      - run: chmod +x gradlew
+      - run: ./gradlew clean test portableZip
+      - uses: actions/upload-artifact@v4
+        with:
+          name: portable-release
+          path: build/release/*.zip
+
+  build-windows:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 21
+          cache: gradle
+      - name: Build application JAR
+        shell: pwsh
+        run: .\gradlew.bat clean test jar
+      - name: Build self-contained Windows application
+        shell: pwsh
+        run: |
+          $version = (Select-String -Path build.gradle -Pattern "version '([^']+)'" ).Matches[0].Groups[1].Value
+          $destination = Join-Path $PWD 'build\windows'
+          New-Item -ItemType Directory -Force -Path $destination | Out-Null
+          jpackage --type app-image --name 'Pokemon DS Map Studio' --app-version $version --input 'build\libs' --main-jar "Pokemon DS Map Studio-$version.jar" --main-class editor.MainFrame --dest $destination
+          $app = Join-Path $destination 'Pokemon DS Map Studio'
+          Copy-Item -Recurse -Force converter (Join-Path $app 'converter')
+          Copy-Item README.md,RELEASE_NOTES.md $app
+          $archive = Join-Path $PWD "build\release\Pokemon.DS.Map.Studio-$version-Windows.zip"
+          New-Item -ItemType Directory -Force -Path (Split-Path $archive) | Out-Null
+          Compress-Archive -Path $app -DestinationPath $archive -CompressionLevel Optimal
+      - uses: actions/upload-artifact@v4
+        with:
+          name: windows-release
+          path: build/release/*.zip
+
+  publish:
+    if: startsWith(github.ref, 'refs/tags/')
+    needs: [build-portable, build-windows]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/download-artifact@v4
+        with:
+          path: release
+          merge-multiple: true
+      - name: Generate checksums
+        run: cd release && sha256sum *.zip > SHA256SUMS.txt
+      - uses: softprops/action-gh-release@v2
+        with:
+          body_path: RELEASE_NOTES.md
+          files: |
+            release/*.zip
+            release/SHA256SUMS.txt

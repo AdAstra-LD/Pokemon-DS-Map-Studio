@@ -7,8 +7,6 @@ import formats.nsbtx2.NsbtxLoader2;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  * @author Trifindo
@@ -29,6 +27,7 @@ public class AnimationHandler {
 
     public void readAnimationFile(String path) throws IOException {
         this.animationFile = new AnimationFile(path);
+        currentFrameIndex = 0;
     }
 
     public void saveAnimationFile(String path) throws IOException {
@@ -41,6 +40,7 @@ public class AnimationHandler {
     }
 
     public void readNsbtxImages() {
+        nsbtxImages = null;
         if (nsbtx != null) {
             if (nsbtx.hasTextures() && nsbtx.hasPalettes()) {
                 nsbtxImages = new ArrayList<>(nsbtx.getTextures().size());
@@ -75,30 +75,24 @@ public class AnimationHandler {
     }
 
     public void incrementFrameIndex() {
-        currentFrameIndex++;
-        if (animationFile != null) {
-            if (getAnimationSelected() != null) {
-                Animation anim = getAnimationSelected();
-                if (currentFrameIndex >= anim.size()) {
-                    currentFrameIndex = 0;
-                }
-            }
+        Animation anim = getAnimationSelected();
+        if (anim != null && anim.size() > 0) {
+            currentFrameIndex = (currentFrameIndex + 1) % anim.size();
+        } else {
+            currentFrameIndex = 0;
         }
     }
 
     public int getCurrentDelay() {
-        if (getAnimationSelected() != null) {
-            Animation anim = getAnimationSelected();
-            return anim.getDelay(currentFrameIndex);
-        } else {
-            return 1;
-        }
+        Animation anim = getAnimationSelected();
+        return anim != null && currentFrameIndex >= 0 && currentFrameIndex < anim.size()
+                ? anim.getDelay(currentFrameIndex) : 1;
     }
 
     public BufferedImage getCurrentFrameImage() {
         if (nsbtxImages != null && animationFile != null) {
             Animation anim = getAnimationSelected();
-            if (currentFrameIndex >= 0 && currentFrameIndex < anim.size()) {
+            if (anim != null && currentFrameIndex >= 0 && currentFrameIndex < anim.size()) {
                 int frameIndex = anim.getFrame(currentFrameIndex);
                 if (frameIndex >= 0 && frameIndex < nsbtxImages.size()) {
                     return nsbtxImages.get(frameIndex);
@@ -111,7 +105,7 @@ public class AnimationHandler {
     public int getCurrentNsbtxTextureIndex() {
         if (nsbtxImages != null && animationFile != null) {
             Animation anim = getAnimationSelected();
-            if (currentFrameIndex >= 0 && currentFrameIndex < anim.size()) {
+            if (anim != null && currentFrameIndex >= 0 && currentFrameIndex < anim.size()) {
                 int frameIndex = anim.getFrame(currentFrameIndex);
                 if (frameIndex >= 0 && frameIndex < nsbtxImages.size()) {
                     return frameIndex;
@@ -124,7 +118,7 @@ public class AnimationHandler {
     public BufferedImage getFrameImage(int index) {
         if (nsbtxImages != null && animationFile != null) {
             Animation anim = getAnimationSelected();
-            if (index >= 0 && index < anim.size()) {
+            if (anim != null && index >= 0 && index < anim.size()) {
                 int frameIndex = anim.getFrame(index);
                 if (frameIndex >= 0 && frameIndex < nsbtxImages.size()) {
                     return nsbtxImages.get(frameIndex);
@@ -181,28 +175,29 @@ public class AnimationHandler {
     }
 
     public void playAnimation() {
+        pauseAnimation();
+        Animation selected = getAnimationSelected();
+        if (selected == null || selected.size() == 0) {
+            return;
+        }
         animationThread = new AnimationThread(this);
         animationThread.start();
-        System.out.println("Started!");
     }
 
     public void pauseAnimation() {
         if (animationThread != null) {
             animationThread.terminate();
             try {
-                animationThread.join();
+                animationThread.join(500);
             } catch (InterruptedException ex) {
-                Logger.getLogger(AnimationHandler.class.getName()).log(Level.SEVERE, null, ex);
+                Thread.currentThread().interrupt();
             }
+            animationThread = null;
         }
     }
 
     public boolean isAnimationRunning() {
-        if (animationThread != null) {
-            return animationThread.isRunnning();
-        } else {
-            return false;
-        }
+        return animationThread != null && animationThread.isRunnning();
     }
 
 }

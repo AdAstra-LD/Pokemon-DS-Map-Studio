@@ -1,6 +1,8 @@
 
 package formats.animationeditor;
 
+import javax.swing.SwingUtilities;
+
 /**
  * @author Trifindo
  */
@@ -16,12 +18,14 @@ public class AnimationThread extends Thread {
     @Override
     public void run() {
         while (running) {
-            animHandler.repaintDialog();
+            SwingUtilities.invokeLater(animHandler::repaintDialog);
 
             try {
                 Thread.sleep((long) ((Math.max(animHandler.getCurrentDelay(), 1) / 30.0f) * 1000));
             } catch (InterruptedException ex) {
-                ex.printStackTrace();
+                if (!running) {
+                    return;
+                }
             }
 
             animHandler.incrementFrameIndex();
@@ -30,6 +34,7 @@ public class AnimationThread extends Thread {
 
     public void terminate() {
         this.running = false;
+        interrupt();
     }
 
     public boolean isRunnning() {

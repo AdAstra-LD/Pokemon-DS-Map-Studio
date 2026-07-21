@@ -121,6 +121,7 @@ public class ViewHeightMode extends ViewMode {
     @Override
     public void mouseMoved(MapDisplay d, MouseEvent e) {
         d.updateMousePostion(e);
+        d.updateCursorTileCoordsStatus(e);
         d.repaint();
     }
 

@@ -3,6 +3,7 @@ package editor;
 import com.formdev.flatlaf.util.SystemFileChooser;
 import editor.converter.ConverterDialog;
 import editor.converter.ConverterErrorDialog;
+import editor.converter.ConverterLocator;
 import editor.converter.ExportNsbmdDialog;
 import editor.converter.ExportNsbmdResultDialog;
 import editor.converter.ExportNsbtxDialog;
@@ -428,7 +429,7 @@ final class MapExportActions {
                         String filename = new File(nsbPath).getName();
 
                         try {
-                            String converterPath = "converter/g3dcvtr.exe";
+                            String converterPath = ConverterLocator.getConverterPath();
                             String[] cmd;
                             if (System.getProperty("os.name").toLowerCase().startsWith("windows")) {
                                 if (includeNsbtx) {
@@ -549,7 +550,7 @@ final class MapExportActions {
                 String filename = new File(nsbPath).getName();
 
                 System.out.println(filename);
-                String converterPath = "converter/g3dcvtr.exe";
+                String converterPath = ConverterLocator.getConverterPath();
                 String[] cmd = {converterPath, imdPath, "-etex", "-o", filename};
                 Process process;
                 try {

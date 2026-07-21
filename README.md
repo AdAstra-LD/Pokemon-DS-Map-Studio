@@ -21,7 +21,7 @@ This is due to the additional 3D layer, and the new "exportgroup" and "egcenter"
 
 ## Running
 Pokemon DS Map Studio has been tested under Windows, Linux and MacOS.
-In order to run it, Java 21 must be installed on your computer, regardless of the operating system you are using. 
+The Windows release includes a Java runtime and can be started with `Pokemon DS Map Studio.exe` without installing Java. The portable release requires Java 11 or newer.
 Pokemon DS Map Studio can be executed by double clicking the "PokemonDsMapStudio.jar" file. 
 
 If it doesn't open, try typing the following command in a terminal:
@@ -37,4 +37,4 @@ sh -c "$(wget -O- https://raw.githubusercontent.com/AdAstra-LD/Pokemon-DS-Map-St
 ```
 
 ## Notes
-If you wish to export `.nsbmd` files, `g3dcvtr.exe` and `xerces-c_2_5_0.dll` must be placed into the `bin/converter` folder.
+If you wish to export `.nsbmd` files, place your legally obtained `g3dcvtr.exe` in the release's `converter` folder. The release creates this folder and includes the supporting DLL and setup instructions, but cannot redistribute `g3dcvtr.exe`.

@@ -8,7 +8,7 @@ import java.util.ArrayList;
  */
 public class StateHandler {
 
-    private static final int maxNumStates = 20;
+    private static final int maxNumStates = 50;
     private int stateIndex;
     private boolean stateAdded = false;
 

@@ -13,6 +13,7 @@ import formats.collisions.Collisions;
 import editor.game.Game;
 import editor.smartdrawing.SmartGrid;
 import editor.state.MapLayerState;
+import editor.state.MapState;
 import editor.state.StateHandler;
 
 import java.awt.Color;
@@ -34,8 +35,14 @@ import utils.Utils;
  */
 public class MapEditorHandler {
 
-    //Version name
-    public static final String versionName = "Pokemon DS Map Studio 2.2.2 [AdAstra]";
+    private static final String FALLBACK_VERSION = "2.3.1";
+    public static final String versionName = "Pokemon DS Map Studio v"
+            + getApplicationVersion() + " [AdAstra]";
+
+    private static String getApplicationVersion() {
+        String version = MapEditorHandler.class.getPackage().getImplementationVersion();
+        return version == null || version.isBlank() ? FALLBACK_VERSION : version;
+    }
 
     //Main frame
     private final MainFrame mainFrame;
@@ -83,6 +90,11 @@ public class MapEditorHandler {
     private int activeLayer = 0;
     private int[][] tileLayerCopy = null;
     private int[][] heightLayerCopy = null;
+
+    //Region clipboard (tile selection copy/paste)
+    private int[][] tileRegionClipboard = null;
+    private int[][] heightRegionClipboard = null;
+    private boolean[][] regionClipboardMask = null;
 
     //Map State Hanlder
     private StateHandler mapStateHandler = new StateHandler();
@@ -436,7 +448,7 @@ public class MapEditorHandler {
         return mapStateHandler;
     }
 
-    public void addMapState(MapLayerState state) {
+    public void addMapState(MapState state) {
         mapStateHandler.addState(state);
         mainFrame.getUndoButton().setEnabled(true);
         mainFrame.getRedoButton().setEnabled(false);
@@ -696,6 +708,28 @@ public class MapEditorHandler {
     public void clearCopyLayer() {
         tileLayerCopy = null;
         heightLayerCopy = null;
+    }
+
+    public void setRegionClipboard(int[][] tiles, int[][] heights, boolean[][] mask) {
+        this.tileRegionClipboard = tiles;
+        this.heightRegionClipboard = heights;
+        this.regionClipboardMask = mask;
+    }
+
+    public boolean[][] getRegionClipboardMask() {
+        return regionClipboardMask;
+    }
+
+    public boolean hasRegionClipboard() {
+        return tileRegionClipboard != null && heightRegionClipboard != null;
+    }
+
+    public int[][] getTileRegionClipboard() {
+        return tileRegionClipboard;
+    }
+
+    public int[][] getHeightRegionClipboard() {
+        return heightRegionClipboard;
     }
 
     public void indexOfTileVisualData() {

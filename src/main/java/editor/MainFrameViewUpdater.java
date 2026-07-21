@@ -79,6 +79,11 @@ final class MainFrameViewUpdater {
         tileSelector.repaint();
     }
 
+    void updateTileSelectorLayout() {
+        tileSelector.updateLayout();
+        tileSelector.repaint();
+    }
+
     void repaintTileDisplay() {
         tileDisplay.repaint();
     }
@@ -164,6 +169,10 @@ final class MainFrameViewUpdater {
             try {
                 String tileInfo = handler.getTileIndexSelected() + "   ";
                 tileInfo += String.valueOf(handler.getTileSelected().getObjFilename());
+                String paletteName = handler.getTileSelected().getPaletteName();
+                if (!paletteName.isEmpty()) {
+                    tileInfo += "   \"" + paletteName + "\"";
+                }
                 tileTextLabel.setText(tileInfo);
             } catch (Exception ex) {
                 ex.printStackTrace();
@@ -192,6 +201,22 @@ final class MainFrameViewUpdater {
         }
         tilesetRenderer.destroy();
         mapDisplay.setContext(context, false);
+    }
+
+    void renderTileThumbnail(int tileIndex) {
+        GLContext context = mapDisplay.getContext();
+        TilesetRenderer tilesetRenderer = new TilesetRenderer(handler.getTileset());
+        try {
+            tilesetRenderer.renderTileThumbnail(tileIndex);
+        } catch (NullPointerException e) {
+            e.printStackTrace();
+        }
+        tilesetRenderer.destroy();
+        mapDisplay.setContext(context, false);
+        mapDisplay.requestUpdate();
+        mapDisplay.repaint();
+        tileDisplay.requestUpdate();
+        tileDisplay.repaint();
     }
 
     void updateMapDisplaySize() {
