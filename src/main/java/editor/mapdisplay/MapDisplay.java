@@ -482,6 +482,7 @@ public class MapDisplay extends GLJPanel implements GLEventListener, MouseListen
                 break;
             case KeyEvent.VK_SHIFT:
                 SHIFT_PRESSED = true;
+                repaint();
                 break;
             case KeyEvent.VK_CONTROL:
                 CTRL_PRESSED = true;

@@ -536,7 +536,11 @@ public class ViewOrthoMode extends ViewMode {
 
             switch (d.editMode) {
                 case MODE_EDIT:
-                    d.drawTileThumbnail(g);
+                    //Shift means a selection is being made, not a draw:
+                    //hide the tile preview and leave only the pointer
+                    if (!d.SHIFT_PRESSED) {
+                        d.drawTileThumbnail(g);
+                    }
                     break;
                 case MODE_CLEAR:
                     d.drawUnitTileBounds(g);

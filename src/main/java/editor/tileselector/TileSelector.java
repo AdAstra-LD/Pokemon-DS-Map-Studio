@@ -81,6 +81,11 @@ public class TileSelector extends JPanel {
     private boolean tileDragging = false;
     private int tileDragIndex = -1;
     private Point tileDragStart = null;
+    //Dragging from a multi selected tile moves the whole group
+    private boolean tileDragGroup = false;
+    //Shift + drag rubber band selection (screen coords; main window selector only)
+    private Point bandStart = null;
+    private Rectangle bandRect = null;
     private PaletteFolder resizingPinnedFolder;
     private int pinnedResizeStartY;
     private int pinnedResizeStartHeight;
@@ -170,6 +175,13 @@ public class TileSelector extends JPanel {
                 indexTileHovering = getIndexSelected(evt);
                 repaint();
             }
+        } else if (bandStart != null && SwingUtilities.isLeftMouseButton(evt)) {
+            bandRect = new Rectangle(Math.min(bandStart.x, evt.getX()),
+                    Math.min(bandStart.y, evt.getY()),
+                    Math.abs(evt.getX() - bandStart.x),
+                    Math.abs(evt.getY() - bandStart.y));
+            selectTilesInBand();
+            repaint();
         } else if (tileDragArmed && SwingUtilities.isLeftMouseButton(evt)) {
             if (!tileDragging && tileDragStart.distance(evt.getPoint()) > 5) {
                 tileDragging = true;
@@ -178,6 +190,30 @@ public class TileSelector extends JPanel {
                 mouseX = evt.getX();
                 mouseY = evt.getY();
                 repaint();
+            }
+        }
+    }
+
+    private void selectTilesInBand() {
+        if (bandRect == null) {
+            return;
+        }
+        Point p1 = getSourcePoint(bandRect.x, bandRect.y);
+        Point p2 = getSourcePoint(bandRect.x + bandRect.width, bandRect.y + bandRect.height);
+        Rectangle band = new Rectangle(Math.min(p1.x, p2.x), Math.min(p1.y, p2.y),
+                Math.abs(p2.x - p1.x) + 1, Math.abs(p2.y - p1.y) + 1);
+        multiSelected.clear();
+        if (!placements.isEmpty()) {
+            for (Placement placement : placements) {
+                if (placement.bounds.intersects(band)) {
+                    multiSelected.add(placement.tileIndex);
+                }
+            }
+        } else {
+            for (int i = 0; i < boundingBoxes.size(); i++) {
+                if (boundingBoxes.get(i).intersects(band)) {
+                    multiSelected.add(i);
+                }
             }
         }
     }
@@ -289,6 +325,13 @@ public class TileSelector extends JPanel {
             return;
         }
 
+        if (SwingUtilities.isLeftMouseButton(evt) && evt.isShiftDown()) {
+            //Shift + drag selects a rectangle of tiles; a plain Shift + click
+            //selects the range from the current tile to the clicked one
+            bandStart = evt.getPoint();
+            bandRect = null;
+            return;
+        }
         int index = getIndexSelected(evt);
         if (index != -1) {
             if (SwingUtilities.isLeftMouseButton(evt) && evt.isControlDown()) {
@@ -301,7 +344,12 @@ public class TileSelector extends JPanel {
             }
             handler.setIndexTileSelected(index);
             if (SwingUtilities.isLeftMouseButton(evt)) {
-                multiSelected.clear();
+                //Pressing a multi selected tile arms a group drag and keeps
+                //the selection; a plain click clears it on release instead
+                tileDragGroup = multiSelected.contains(index);
+                if (!tileDragGroup) {
+                    multiSelected.clear();
+                }
                 if (handler.getMainFrame().getMapDisplay().getViewMode().getViewID() == ViewMode.ViewID.VIEW_ORTHO) {
                     handler.getMainFrame().getMapDisplay().setEditMode(MapDisplay.EditMode.MODE_EDIT);
                     handler.getMainFrame().getJtbModeEdit().setSelected(true);
@@ -357,12 +405,37 @@ public class TileSelector extends JPanel {
             return;
         }
         if (!multiSelectionEnabled) {
+            if (bandStart != null) {
+                if (bandRect == null && SwingUtilities.isLeftMouseButton(evt)) {
+                    //Shift + click: select the range from the current tile to the click
+                    int index = getIndexSelected(evt);
+                    int from = handler.getTileIndexSelected();
+                    if (index != -1 && from >= 0) {
+                        multiSelected.clear();
+                        for (int i = Math.min(from, index); i <= Math.max(from, index); i++) {
+                            multiSelected.add(i);
+                        }
+                    }
+                }
+                bandStart = null;
+                bandRect = null;
+                repaint();
+                return;
+            }
             if (tileDragging) {
-                dropTile(evt);
+                if (tileDragGroup && multiSelected.size() > 1) {
+                    dropSelectedTilesGroup(evt);
+                } else {
+                    dropTile(evt);
+                }
+            } else if (tileDragGroup) {
+                //A plain click (no drag) on a selected tile clears the multi selection
+                multiSelected.clear();
             }
             tileDragArmed = false;
             tileDragging = false;
             tileDragIndex = -1;
+            tileDragGroup = false;
             repaint();
             return;
         }
@@ -472,6 +545,12 @@ public class TileSelector extends JPanel {
         }
         if (drawPinnedSections) {
             drawPinnedFolderSections((Graphics2D) g);
+        }
+        if (bandRect != null) {
+            g.setColor(new Color(80, 180, 255, 50));
+            g.fillRect(bandRect.x, bandRect.y, bandRect.width, bandRect.height);
+            g.setColor(new Color(80, 180, 255));
+            g.drawRect(bandRect.x, bandRect.y, bandRect.width, bandRect.height);
         }
     }
 
@@ -1018,6 +1097,13 @@ public class TileSelector extends JPanel {
         g2d.setComposite(java.awt.AlphaComposite.SrcOver.derive(0.7f));
         g.drawImage(handler.getTileset().get(tileDragIndex).getThumbnail(), mouseX + 4, mouseY + 4, null);
         g2d.setComposite(oldComposite);
+        if (tileDragGroup && multiSelected.size() > 1) {
+            String label = "x" + multiSelected.size();
+            g.setColor(new Color(80, 180, 255));
+            g.fillRoundRect(mouseX + 2, mouseY - 12, g.getFontMetrics().stringWidth(label) + 8, 14, 6, 6);
+            g.setColor(Color.white);
+            g.drawString(label, mouseX + 6, mouseY - 1);
+        }
     }
 
     private void dropTile(MouseEvent evt) {
@@ -1064,6 +1150,32 @@ public class TileSelector extends JPanel {
         }
         updateLayout();
         repaint();
+    }
+
+    /**
+     * Drops the Ctrl / Shift multi selection as a group, in tileset index order.
+     */
+    private void dropSelectedTilesGroup(MouseEvent evt) {
+        Section target = getSectionAt(evt.getX(), evt.getY());
+        if (target == null) {
+            return;
+        }
+        ArrayList<Integer> selected = new ArrayList<>(multiSelected);
+        java.util.Collections.sort(selected);
+        if (target.allTiles) {
+            //Dropping on All Tiles takes the group out of its folder
+            for (int index : selected) {
+                Tile tile = handler.getTileset().get(index);
+                tile.setPaletteFolder(PaletteFolder.UNSORTED);
+                tile.setPaletteSlot(-1);
+            }
+            updateLayout();
+            repaint();
+            return;
+        }
+        dragSelectionIndices = selected;
+        dropSelectedTilesToFolder(evt);
+        dragSelectionIndices = null;
     }
 
     private boolean dropSelectedTilesToFolder(MouseEvent evt) {
