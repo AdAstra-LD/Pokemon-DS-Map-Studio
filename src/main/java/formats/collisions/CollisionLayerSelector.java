@@ -43,10 +43,10 @@ public class CollisionLayerSelector extends JPanel {
             {"TYPE", "COLLISION"},
             {"TYPE", "COLLISION"},
             {"TYPE", "COLLISION"},
-            {"TERRAIN", "TERRAIN 2", "HEIGHT", "HEIGHT 2", "FLAGS", "LAYER 6 (?)", "COLLISION", "SHADOW"},
-            {"TERRAIN", "TERRAIN 2", "HEIGHT", "HEIGHT 2", "FLAGS", "LAYER 6 (?)", "COLLISION", "SHADOW"},
-            {"TERRAIN", "TERRAIN 2", "HEIGHT", "HEIGHT 2", "FLAGS", "LAYER 6 (?)", "COLLISION", "SHADOW"},
-            {"TERRAIN", "TERRAIN 2", "HEIGHT", "HEIGHT 2", "FLAGS", "LAYER 6 (?)", "COLLISION", "SHADOW"}
+            {"SLOPE NRM", "SLOPE NRM 2", "HEIGHT IDX", "HEIGHT IDX 2", "BEHAVIOR", "BEHAVIOR 2", "FLAGS", "FLAGS 2/DIAG"},
+            {"SLOPE NRM", "SLOPE NRM 2", "HEIGHT IDX", "HEIGHT IDX 2", "BEHAVIOR", "BEHAVIOR 2", "FLAGS", "FLAGS 2/DIAG"},
+            {"SLOPE NRM", "SLOPE NRM 2", "HEIGHT IDX", "HEIGHT IDX 2", "BEHAVIOR", "BEHAVIOR 2", "FLAGS", "FLAGS 2/DIAG"},
+            {"SLOPE NRM", "SLOPE NRM 2", "HEIGHT IDX", "HEIGHT IDX 2", "BEHAVIOR", "BEHAVIOR 2", "FLAGS", "FLAGS 2/DIAG"}
     };
 
     public CollisionLayerSelector() {

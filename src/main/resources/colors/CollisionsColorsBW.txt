@@ -1,2055 +1,2048 @@
-0x00 #FFFFFF ???
-0x01 #FFFFFF ???
-0x02 #8863CC Stairs Corner
-0x03 #FFFFFF ???
-0x04 #AC7CFF Stairs Up East
-0x05 #FFFFFF ???
-0x06 #FFFFFF ???
-0x07 #FFFFFF ???
-0x08 #AC7CFF StairsUpNorth
-0x09 #FFFFFF ???
-0x0A #FFFFFF ???
-0x0B #FFFFFF ???
-0x0C #FFFFFF ???
-0x0D #FFFFFF ???
-0x0E #FFFFFF ???
-0x0F #FFFFFF ???
-0x10 #AC7CFF StairsUpSouth
-0x11 #FFFFFF ???
-0x12 #FFFFFF ???
-0x13 #FFFFFF ???
-0x14 #FFFFFF ???
-0x15 #FFFFFF ???
-0x16 #FFFFFF ???
-0x17 #FFFFFF ???
-0x18 #AC7CFF StairsUpWest
-0x19 #FFFFFF ???
-0x1A #FFFFFF ???
-0x1B #FFFFFF ???
-0x1C #FFFFFF ???
-0x1D #FFFFFF ???
-0x1E #FFFFFF ???
-0x1F #FFFFFF ???
-0x20 #FFFFFF ???
-0x21 #FFFFFF ???
-0x22 #FFFFFF ???
-0x23 #FFFFFF ???
-0x24 #FFFFFF ???
-0x25 #FFFFFF ???
-0x26 #FFFFFF ???
-0x27 #FFFFFF ???
-0x28 #FFFFFF ???
-0x29 #FFFFFF ???
-0x2A #FFFFFF ???
-0x2B #FFFFFF ???
-0x2C #FFFFFF ???
-0x2D #FFFFFF ???
-0x2E #FFFFFF ???
-0x2F #FFFFFF ???
-0x30 #FFFFFF ???
-0x31 #FFFFFF ???
-0x32 #FFFFFF ???
-0x33 #FFFFFF ???
-0x34 #FFFFFF ???
-0x35 #FFFFFF ???
-0x36 #FFFFFF ???
-0x37 #FFFFFF ???
-0x38 #FFFFFF ???
-0x39 #FFFFFF ???
-0x3A #FFFFFF ???
-0x3B #FFFFFF ???
-0x3C #FFFFFF ???
-0x3D #FFFFFF ???
-0x3E #FFFFFF ???
-0x3F #FFFFFF ???
-0x40 #FFFFFF ???
-0x41 #FFFFFF ???
-0x42 #FFFFFF ???
-0x43 #FFFFFF ???
-0x44 #FFFFFF ???
-0x45 #FFFFFF ???
-0x46 #FFFFFF ???
-0x47 #FFFFFF ???
-0x48 #FFFFFF ???
-0x49 #FFFFFF ???
-0x4A #FFFFFF ???
-0x4B #FFFFFF ???
-0x4C #FFFFFF ???
-0x4D #FFFFFF ???
-0x4E #FFFFFF ???
-0x4F #FFFFFF ???
-0x50 #FFFFFF ???
-0x51 #FFFFFF ???
-0x52 #FFFFFF ???
-0x53 #FFFFFF ???
-0x54 #FFFFFF ???
-0x55 #FFFFFF ???
-0x56 #FFFFFF ???
-0x57 #FFFFFF ???
-0x58 #FFFFFF ???
-0x59 #FFFFFF ???
-0x5A #FFFFFF ???
-0x5B #FFFFFF ???
-0x5C #FFFFFF ???
-0x5D #FFFFFF ???
-0x5E #FFFFFF ???
-0x5F #FFFFFF ???
-0x60 #FFFFFF ???
-0x61 #FFFFFF ???
-0x62 #FFFFFF ???
-0x63 #FFFFFF ???
-0x64 #FFFFFF ???
-0x65 #FFFFFF ???
-0x66 #FFFFFF ???
-0x67 #FFFFFF ???
-0x68 #FFFFFF ???
-0x69 #FFFFFF ???
-0x6A #FFFFFF ???
-0x6B #FFFFFF ???
-0x6C #FFFFFF ???
-0x6D #FFFFFF ???
-0x6E #FFFFFF ???
-0x6F #FFFFFF ???
-0x70 #FFFFFF ???
-0x71 #FFFFFF ???
-0x72 #FFFFFF ???
-0x73 #FFFFFF ???
-0x74 #FFFFFF ???
-0x75 #FFFFFF ???
-0x76 #FFFFFF ???
-0x77 #FFFFFF ???
-0x78 #FFFFFF ???
-0x79 #FFFFFF ???
-0x7A #FFFFFF ???
-0x7B #FFFFFF ???
-0x7C #FFFFFF ???
-0x7D #FFFFFF ???
-0x7E #FFFFFF ???
-0x7F #FFFFFF ???
-0x80 #FFFFFF ???
-0x81 #FFFFFF ???
-0x82 #FFFFFF ???
-0x83 #FFFFFF ???
-0x84 #FFFFFF ???
-0x85 #FFFFFF ???
-0x86 #FFFFFF ???
-0x87 #FFFFFF ???
-0x88 #FFFFFF ???
-0x89 #FFFFFF ???
-0x8A #FFFFFF ???
-0x8B #FFFFFF ???
-0x8C #FFFFFF ???
-0x8D #FFFFFF ???
-0x8E #FFFFFF ???
-0x8F #FFFFFF ???
-0x90 #FFFFFF ???
-0x91 #FFFFFF ???
-0x92 #FFFFFF ???
-0x93 #FFFFFF ???
-0x94 #FFFFFF ???
-0x95 #FFFFFF ???
-0x96 #FFFFFF ???
-0x97 #FFFFFF ???
-0x98 #FFFFFF ???
-0x99 #FFFFFF ???
-0x9A #FFFFFF ???
-0x9B #FFFFFF ???
-0x9C #FFFFFF ???
-0x9D #FFFFFF ???
-0x9E #FFFFFF ???
-0x9F #FFFFFF ???
-0xA0 #FFFFFF ???
-0xA1 #FFFFFF ???
-0xA2 #FFFFFF ???
-0xA3 #FFFFFF ???
-0xA4 #FFFFFF ???
-0xA5 #FFFFFF ???
-0xA6 #FFFFFF ???
-0xA7 #FFFFFF ???
-0xA8 #FFFFFF ???
-0xA9 #FFFFFF ???
-0xAA #FFFFFF ???
-0xAB #FFFFFF ???
-0xAC #FFFFFF ???
-0xAD #FFFFFF ???
-0xAE #FFFFFF ???
-0xAF #FFFFFF ???
-0xB0 #FFFFFF ???
-0xB1 #FFFFFF ???
-0xB2 #FFFFFF ???
-0xB3 #FFFFFF ???
-0xB4 #FFFFFF ???
-0xB5 #FFFFFF ???
-0xB6 #FFFFFF ???
-0xB7 #FFFFFF ???
-0xB8 #FFFFFF ???
-0xB9 #FFFFFF ???
-0xBA #FFFFFF ???
-0xBB #FFFFFF ???
-0xBC #FFFFFF ???
-0xBD #FFFFFF ???
-0xBE #FFFFFF ???
-0xBF #FFFFFF ???
-0xC0 #FFFFFF ???
-0xC1 #FFFFFF ???
-0xC2 #FFFFFF ???
-0xC3 #FFFFFF ???
-0xC4 #FFFFFF ???
-0xC5 #FFFFFF ???
-0xC6 #FFFFFF ???
-0xC7 #FFFFFF ???
-0xC8 #FFFFFF ???
-0xC9 #FFFFFF ???
-0xCA #FFFFFF ???
-0xCB #FFFFFF ???
-0xCC #FFFFFF ???
-0xCD #FFFFFF ???
-0xCE #FFFFFF ???
-0xCF #FFFFFF ???
-0xD0 #FFFFFF ???
-0xD1 #FFFFFF ???
-0xD2 #FFFFFF ???
-0xD3 #FFFFFF ???
-0xD4 #FFFFFF ???
-0xD5 #FFFFFF ???
-0xD6 #FFFFFF ???
-0xD7 #FFFFFF ???
-0xD8 #FFFFFF ???
-0xD9 #FFFFFF ???
-0xDA #FFFFFF ???
-0xDB #FFFFFF ???
-0xDC #FFFFFF ???
-0xDD #FFFFFF ???
-0xDE #FFFFFF ???
-0xDF #FFFFFF ???
-0xE0 #FFFFFF ???
-0xE1 #FFFFFF ???
-0xE2 #FFFFFF ???
-0xE3 #FFFFFF ???
-0xE4 #FFFFFF ???
-0xE5 #FFFFFF ???
-0xE6 #FFFFFF ???
-0xE7 #FFFFFF ???
-0xE8 #FFFFFF ???
-0xE9 #FFFFFF ???
-0xEA #FFFFFF ???
-0xEB #FFFFFF ???
-0xEC #FFFFFF ???
-0xED #FFFFFF ???
-0xEE #FFFFFF ???
-0xEF #FFFFFF ???
-0xF0 #FFFFFF ???
-0xF1 #FFFFFF ???
-0xF2 #FFFFFF ???
-0xF3 #FFFFFF ???
-0xF4 #FFFFFF ???
-0xF5 #FFFFFF ???
-0xF6 #FFFFFF ???
-0xF7 #FFFFFF ???
-0xF8 #FFFFFF ???
-0xF9 #FFFFFF ???
-0xFA #FFFFFF ???
-0xFB #FFFFFF ???
-0xFC #FFFFFF ???
-0xFD #FFFFFF ???
-0xFE #FFFFFF ???
-0xFF #FFFFFF ???
-
-0x00 #FFFFFF ???
-0x01 #FFFFFF ???
-0x02 #FFFFFF ???
-0x03 #FFFFFF ???
-0x04 #FFFFFF ???
-0x05 #FFFFFF ???
-0x06 #FFFFFF ???
-0x07 #FFFFFF ???
-0x08 #FFFFFF ???
-0x09 #FFFFFF ???
-0x0A #FFFFFF ???
-0x0B #FFFFFF ???
-0x0C #FFFFFF ???
-0x0D #FFFFFF ???
-0x0E #FFFFFF ???
-0x0F #FFFFFF ???
-0x10 #FFFFFF ???
-0x11 #FFFFFF ???
-0x12 #FFFFFF ???
-0x13 #FFFFFF ???
-0x14 #FFFFFF ???
-0x15 #FFFFFF ???
-0x16 #FFFFFF ???
-0x17 #FFFFFF ???
-0x18 #FFFFFF ???
-0x19 #FFFFFF ???
-0x1A #FFFFFF ???
-0x1B #FFFFFF ???
-0x1C #FFFFFF ???
-0x1D #FFFFFF ???
-0x1E #FFFFFF ???
-0x1F #FFFFFF ???
-0x20 #FFFFFF ???
-0x21 #FFFFFF ???
-0x22 #FFFFFF ???
-0x23 #FFFFFF ???
-0x24 #FFFFFF ???
-0x25 #FFFFFF ???
-0x26 #FFFFFF ???
-0x27 #FFFFFF ???
-0x28 #FFFFFF ???
-0x29 #FFFFFF ???
-0x2A #FFFFFF ???
-0x2B #FFFFFF ???
-0x2C #FFFFFF ???
-0x2D #FFFFFF ???
-0x2E #FFFFFF ???
-0x2F #FFFFFF ???
-0x30 #FFFFFF ???
-0x31 #FFFFFF ???
-0x32 #FFFFFF ???
-0x33 #FFFFFF ???
-0x34 #FFFFFF ???
-0x35 #FFFFFF ???
-0x36 #FFFFFF ???
-0x37 #FFFFFF ???
-0x38 #FFFFFF ???
-0x39 #FFFFFF ???
-0x3A #FFFFFF ???
-0x3B #FFFFFF ???
-0x3C #FFFFFF ???
-0x3D #FFFFFF ???
-0x3E #FFFFFF ???
-0x3F #FFFFFF ???
-0x40 #FFFFFF ???
-0x41 #FFFFFF ???
-0x42 #FFFFFF ???
-0x43 #FFFFFF ???
-0x44 #FFFFFF ???
-0x45 #FFFFFF ???
-0x46 #FFFFFF ???
-0x47 #FFFFFF ???
-0x48 #FFFFFF ???
-0x49 #FFFFFF ???
-0x4A #FFFFFF ???
-0x4B #FFFFFF ???
-0x4C #FFFFFF ???
-0x4D #FFFFFF ???
-0x4E #FFFFFF ???
-0x4F #FFFFFF ???
-0x50 #FFFFFF ???
-0x51 #FFFFFF ???
-0x52 #FFFFFF ???
-0x53 #FFFFFF ???
-0x54 #FFFFFF ???
-0x55 #FFFFFF ???
-0x56 #FFFFFF ???
-0x57 #FFFFFF ???
-0x58 #FFFFFF ???
-0x59 #FFFFFF ???
-0x5A #FFFFFF ???
-0x5B #FFFFFF ???
-0x5C #FFFFFF ???
-0x5D #FFFFFF ???
-0x5E #FFFFFF ???
-0x5F #FFFFFF ???
-0x60 #FFFFFF ???
-0x61 #FFFFFF ???
-0x62 #FFFFFF ???
-0x63 #FFFFFF ???
-0x64 #FFFFFF ???
-0x65 #FFFFFF ???
-0x66 #FFFFFF ???
-0x67 #FFFFFF ???
-0x68 #FFFFFF ???
-0x69 #FFFFFF ???
-0x6A #FFFFFF ???
-0x6B #FFFFFF ???
-0x6C #FFFFFF ???
-0x6D #FFFFFF ???
-0x6E #FFFFFF ???
-0x6F #FFFFFF ???
-0x70 #FFFFFF ???
-0x71 #FFFFFF ???
-0x72 #FFFFFF ???
-0x73 #FFFFFF ???
-0x74 #FFFFFF ???
-0x75 #FFFFFF ???
-0x76 #FFFFFF ???
-0x77 #FFFFFF ???
-0x78 #FFFFFF ???
-0x79 #FFFFFF ???
-0x7A #FFFFFF ???
-0x7B #FFFFFF ???
-0x7C #FFFFFF ???
-0x7D #FFFFFF ???
-0x7E #FFFFFF ???
-0x7F #FFFFFF ???
-0x80 #FFFFFF ???
-0x81 #FFFFFF ???
-0x82 #FFFFFF ???
-0x83 #FFFFFF ???
-0x84 #FFFFFF ???
-0x85 #FFFFFF ???
-0x86 #FFFFFF ???
-0x87 #FFFFFF ???
-0x88 #FFFFFF ???
-0x89 #FFFFFF ???
-0x8A #FFFFFF ???
-0x8B #FFFFFF ???
-0x8C #FFFFFF ???
-0x8D #FFFFFF ???
-0x8E #FFFFFF ???
-0x8F #FFFFFF ???
-0x90 #FFFFFF ???
-0x91 #FFFFFF ???
-0x92 #FFFFFF ???
-0x93 #FFFFFF ???
-0x94 #FFFFFF ???
-0x95 #FFFFFF ???
-0x96 #FFFFFF ???
-0x97 #FFFFFF ???
-0x98 #FFFFFF ???
-0x99 #FFFFFF ???
-0x9A #FFFFFF ???
-0x9B #FFFFFF ???
-0x9C #FFFFFF ???
-0x9D #FFFFFF ???
-0x9E #FFFFFF ???
-0x9F #FFFFFF ???
-0xA0 #FFFFFF ???
-0xA1 #FFFFFF ???
-0xA2 #FFFFFF ???
-0xA3 #FFFFFF ???
-0xA4 #FFFFFF ???
-0xA5 #FFFFFF ???
-0xA6 #FFFFFF ???
-0xA7 #FFFFFF ???
-0xA8 #FFFFFF ???
-0xA9 #FFFFFF ???
-0xAA #FFFFFF ???
-0xAB #FFFFFF ???
-0xAC #FFFFFF ???
-0xAD #FFFFFF ???
-0xAE #FFFFFF ???
-0xAF #FFFFFF ???
-0xB0 #FFFFFF ???
-0xB1 #FFFFFF ???
-0xB2 #FFFFFF ???
-0xB3 #FFFFFF ???
-0xB4 #FFFFFF ???
-0xB5 #FFFFFF ???
-0xB6 #FFFFFF ???
-0xB7 #FFFFFF ???
-0xB8 #FFFFFF ???
-0xB9 #FFFFFF ???
-0xBA #FFFFFF ???
-0xBB #FFFFFF ???
-0xBC #FFFFFF ???
-0xBD #FFFFFF ???
-0xBE #FFFFFF ???
-0xBF #FFFFFF ???
-0xC0 #FFFFFF ???
-0xC1 #FFFFFF ???
-0xC2 #FFFFFF ???
-0xC3 #FFFFFF ???
-0xC4 #FFFFFF ???
-0xC5 #FFFFFF ???
-0xC6 #FFFFFF ???
-0xC7 #FFFFFF ???
-0xC8 #FFFFFF ???
-0xC9 #FFFFFF ???
-0xCA #FFFFFF ???
-0xCB #FFFFFF ???
-0xCC #FFFFFF ???
-0xCD #FFFFFF ???
-0xCE #FFFFFF ???
-0xCF #FFFFFF ???
-0xD0 #FFFFFF ???
-0xD1 #FFFFFF ???
-0xD2 #FFFFFF ???
-0xD3 #FFFFFF ???
-0xD4 #FFFFFF ???
-0xD5 #FFFFFF ???
-0xD6 #FFFFFF ???
-0xD7 #FFFFFF ???
-0xD8 #FFFFFF ???
-0xD9 #FFFFFF ???
-0xDA #FFFFFF ???
-0xDB #FFFFFF ???
-0xDC #FFFFFF ???
-0xDD #FFFFFF ???
-0xDE #FFFFFF ???
-0xDF #FFFFFF ???
-0xE0 #FFFFFF ???
-0xE1 #FFFFFF ???
-0xE2 #FFFFFF ???
-0xE3 #FFFFFF ???
-0xE4 #FFFFFF ???
-0xE5 #FFFFFF ???
-0xE6 #FFFFFF ???
-0xE7 #FFFFFF ???
-0xE8 #FFFFFF ???
-0xE9 #FFFFFF ???
-0xEA #FFFFFF ???
-0xEB #FFFFFF ???
-0xEC #FFFFFF ???
-0xED #FFFFFF ???
-0xEE #FFFFFF ???
-0xEF #FFFFFF ???
-0xF0 #FFFFFF ???
-0xF1 #FFFFFF ???
-0xF2 #FFFFFF ???
-0xF3 #FFFFFF ???
-0xF4 #FFFFFF ???
-0xF5 #FFFFFF ???
-0xF6 #FFFFFF ???
-0xF7 #FFFFFF ???
-0xF8 #FFFFFF ???
-0xF9 #FFFFFF ???
-0xFA #FFFFFF ???
-0xFB #FFFFFF ???
-0xFC #FFFFFF ???
-0xFD #FFFFFF ???
-0xFE #FFFFFF ???
-0xFF #FFFFFF ???
-
-0x00 #FFFFFF ???
-0x01 #FFFFFF ???
-0x02 #FFFFFF ???
-0x03 #7F7F7F Z=0
-0x04 #727272 Z=-1
-0x05 #FFFFFF ???
-0x06 #FFFFFF ???
-0x07 #FFFFFF ???
-0x08 #FFFFFF ???
-0x09 #FFFFFF ???
-0x0A #FFFFFF ???
-0x0B #FFFFFF ???
-0x0C #FFFFFF ???
-0x0D #FFFFFF ???
-0x0E #8C8C8C Z=1
-0x0F #FFFFFF ???
-0x10 #FFFFFF ???
-0x11 #FFFFFF ???
-0x12 #FFFFFF ???
-0x13 #FFFFFF ???
-0x14 #FFFFFF ???
-0x15 #FFFFFF ???
-0x16 #FFFFFF ???
-0x17 #FFFFFF ???
-0x18 #FFFFFF ???
-0x19 #FFFFFF ???
-0x1A #FFFFFF ???
-0x1B #FFFFFF ???
-0x1C #FFFFFF ???
-0x1D #FFFFFF ???
-0x1E #FFFFFF ???
-0x1F #FFFFFF ???
-0x20 #FFFFFF ???
-0x21 #FFFFFF ???
-0x22 #FFFFFF ???
-0x23 #999999 Z=2
-0x24 #FFFFFF ???
-0x25 #FFFFFF ???
-0x26 #FFFFFF ???
-0x27 #FFFFFF ???
-0x28 #FFFFFF ???
-0x29 #FFFFFF ???
-0x2A #FFFFFF ???
-0x2B #FFFFFF ???
-0x2C #FFFFFF ???
-0x2D #FFFFFF ???
-0x2E #FFFFFF ???
-0x2F #FFFFFF ???
-0x30 #FFFFFF ???
-0x31 #FFFFFF ???
-0x32 #FFFFFF ???
-0x33 #FFFFFF ???
-0x34 #FFFFFF ???
-0x35 #FFFFFF ???
-0x36 #FFFFFF ???
-0x37 #FFFFFF ???
-0x38 #FFFFFF ???
-0x39 #FFFFFF ???
-0x3A #FFFFFF ???
-0x3B #FFFFFF ???
-0x3C #FFFFFF ???
-0x3D #FFFFFF ???
-0x3E #595959 Z=-3
-0x3F #FFFFFF ???
-0x40 #FFFFFF ???
-0x41 #FFFFFF ???
-0x42 #FFFFFF ???
-0x43 #FFFFFF ???
-0x44 #FFFFFF ???
-0x45 #FFFFFF ???
-0x46 #FFFFFF ???
-0x47 #FFFFFF ???
-0x48 #FFFFFF ???
-0x49 #FFFFFF ???
-0x4A #FFFFFF ???
-0x4B #FFFFFF ???
-0x4C #FFFFFF ???
-0x4D #FFFFFF ???
-0x4E #FFFFFF ???
-0x4F #FFFFFF ???
-0x50 #FFFFFF ???
-0x51 #FFFFFF ???
-0x52 #FFFFFF ???
-0x53 #FFFFFF ???
-0x54 #FFFFFF ???
-0x55 #FFFFFF ???
-0x56 #FFFFFF ???
-0x57 #FFFFFF ???
-0x58 #FFFFFF ???
-0x59 #FFFFFF ???
-0x5A #FFFFFF ???
-0x5B #FFFFFF ???
-0x5C #FFFFFF ???
-0x5D #FFFFFF ???
-0x5E #FFFFFF ???
-0x5F #FFFFFF ???
-0x60 #FFFFFF ???
-0x61 #FFFFFF ???
-0x62 #FFFFFF ???
-0x63 #FFFFFF ???
-0x64 #FFFFFF ???
-0x65 #CCCCCC Z=6
-0x66 #FFFFFF ???
-0x67 #FFFFFF ???
-0x68 #FFFFFF ???
-0x69 #FFFFFF ???
-0x6A #FFFFFF ???
-0x6B #FFFFFF ???
-0x6C #FFFFFF ???
-0x6D #FFFFFF ???
-0x6E #FFFFFF ???
-0x6F #FFFFFF ???
-0x70 #FFFFFF ???
-0x71 #FFFFFF ???
-0x72 #666666 Z=-2
-0x73 #FFFFFF ???
-0x74 #FFFFFF ???
-0x75 #FFFFFF ???
-0x76 #FFFFFF ???
-0x77 #FFFFFF ???
-0x78 #FFFFFF ???
-0x79 #FFFFFF ???
-0x7A #FFFFFF ???
-0x7B #FFFFFF ???
-0x7C #FFFFFF ???
-0x7D #FFFFFF ???
-0x7E #FFFFFF ???
-0x7F #FFFFFF ???
-0x80 #FFFFFF ???
-0x81 #FFFFFF ???
-0x82 #FFFFFF ???
-0x83 #FFFFFF ???
-0x84 #FFFFFF ???
-0x85 #FFFFFF ???
-0x86 #FFFFFF ???
-0x87 #FFFFFF ???
-0x88 #FFFFFF ???
-0x89 #FFFFFF ???
-0x8A #FFFFFF ???
-0x8B #FFFFFF ???
-0x8C #FFFFFF ???
-0x8D #FFFFFF ???
-0x8E #FFFFFF ???
-0x8F #FFFFFF ???
-0x90 #FFFFFF ???
-0x91 #FFFFFF ???
-0x92 #FFFFFF ???
-0x93 #FFFFFF ???
-0x94 #FFFFFF ???
-0x95 #FFFFFF ???
-0x96 #BFBFBF Z=5
-0x97 #FFFFFF ???
-0x98 #FFFFFF ???
-0x99 #FFFFFF ???
-0x9A #FFFFFF ???
-0x9B #FFFFFF ???
-0x9C #FFFFFF ???
-0x9D #FFFFFF ???
-0x9E #FFFFFF ???
-0x9F #FFFFFF ???
-0xA0 #FFFFFF ???
-0xA1 #FFFFFF ???
-0xA2 #FFFFFF ???
-0xA3 #FFFFFF ???
-0xA4 #FFFFFF ???
-0xA5 #FFFFFF ???
-0xA6 #FFFFFF ???
-0xA7 #FFFFFF ???
-0xA8 #FFFFFF ???
-0xA9 #FFFFFF ???
-0xAA #FFFFFF ???
-0xAB #FFFFFF ???
-0xAC #FFFFFF ???
-0xAD #FFFFFF ???
-0xAE #FFFFFF ???
-0xAF #FFFFFF ???
-0xB0 #FFFFFF ???
-0xB1 #4C4C4C Z=-4
-0xB2 #FFFFFF ???
-0xB3 #FFFFFF ???
-0xB4 #FFFFFF ???
-0xB5 #FFFFFF ???
-0xB6 #FFFFFF ???
-0xB7 #FFFFFF ???
-0xB8 #FFFFFF ???
-0xB9 #FFFFFF ???
-0xBA #FFFFFF ???
-0xBB #FFFFFF ???
-0xBC #FFFFFF ???
-0xBD #FFFFFF ???
-0xBE #FFFFFF ???
-0xBF #FFFFFF ???
-0xC0 #FFFFFF ???
-0xC1 #FFFFFF ???
-0xC2 #FFFFFF ???
-0xC3 #FFFFFF ???
-0xC4 #FFFFFF ???
-0xC5 #FFFFFF ???
-0xC6 #FFFFFF ???
-0xC7 #FFFFFF ???
-0xC8 #FFFFFF ???
-0xC9 #FFFFFF ???
-0xCA #FFFFFF ???
-0xCB #FFFFFF ???
-0xCC #FFFFFF ???
-0xCD #FFFFFF ???
-0xCE #FFFFFF ???
-0xCF #A5A5A5 Z=3
-0xD0 #3F3F3F Z=-5
-0xD1 #FFFFFF ???
-0xD2 #FFFFFF ???
-0xD3 #FFFFFF ???
-0xD4 #FFFFFF ???
-0xD5 #FFFFFF ???
-0xD6 #FFFFFF ???
-0xD7 #FFFFFF ???
-0xD8 #FFFFFF ???
-0xD9 #FFFFFF ???
-0xDA #FFFFFF ???
-0xDB #FFFFFF ???
-0xDC #FFFFFF ???
-0xDD #FFFFFF ???
-0xDE #FFFFFF ???
-0xDF #FFFFFF ???
-0xE0 #FFFFFF ???
-0xE1 #FFFFFF ???
-0xE2 #FFFFFF ???
-0xE3 #FFFFFF ???
-0xE4 #FFFFFF ???
-0xE5 #FFFFFF ???
-0xE6 #FFFFFF ???
-0xE7 #FFFFFF ???
-0xE8 #FFFFFF ???
-0xE9 #FFFFFF ???
-0xEA #FFFFFF ???
-0xEB #FFFFFF ???
-0xEC #FFFFFF ???
-0xED #FFFFFF ???
-0xEE #FFFFFF ???
-0xEF #FFFFFF ???
-0xF0 #FFFFFF ???
-0xF1 #FFFFFF ???
-0xF2 #FFFFFF ???
-0xF3 #FFFFFF ???
-0xF4 #FFFFFF ???
-0xF5 #FFFFFF ???
-0xF6 #FFFFFF ???
-0xF7 #FFFFFF ???
-0xF8 #FFFFFF ???
-0xF9 #FFFFFF ???
-0xFA #FFFFFF ???
-0xFB #FFFFFF ???
-0xFC #FFFFFF ???
-0xFD #FFFFFF ???
-0xFE #FFFFFF ???
-0xFF #FFFFFF ???
-
-0x00 #FFFFFF ???
-0x01 #FFD800 UsedForHighTiles(?)
-0x02 #895400 UsedForLowTiles(?)
-0x03 #FFFFFF ???
-0x04 #FFFFFF ???
-0x05 #FFFFFF ???
-0x06 #FFFFFF ???
-0x07 #FFFFFF ???
-0x08 #FFFFFF ???
-0x09 #FFFFFF ???
-0x0A #FFFFFF ???
-0x0B #FFFFFF ???
-0x0C #FFFFFF ???
-0x0D #FFFFFF ???
-0x0E #FFFFFF ???
-0x0F #FFFFFF ???
-0x10 #FFFFFF ???
-0x11 #FFFFFF ???
-0x12 #FFFFFF ???
-0x13 #FFFFFF ???
-0x14 #FFFFFF ???
-0x15 #FFFFFF ???
-0x16 #FFFFFF ???
-0x17 #FFFFFF ???
-0x18 #FFFFFF ???
-0x19 #FFFFFF ???
-0x1A #FFFFFF ???
-0x1B #FFFFFF ???
-0x1C #FFFFFF ???
-0x1D #FFFFFF ???
-0x1E #FFFFFF ???
-0x1F #FFFFFF ???
-0x20 #FFFFFF ???
-0x21 #FFFFFF ???
-0x22 #FFFFFF ???
-0x23 #FFFFFF ???
-0x24 #FFFFFF ???
-0x25 #FFFFFF ???
-0x26 #FFFFFF ???
-0x27 #FFFFFF ???
-0x28 #FFFFFF ???
-0x29 #FFFFFF ???
-0x2A #FFFFFF ???
-0x2B #FFFFFF ???
-0x2C #FFFFFF ???
-0x2D #FFFFFF ???
-0x2E #FFFFFF ???
-0x2F #FFFFFF ???
-0x30 #FFFFFF ???
-0x31 #FFFFFF ???
-0x32 #FFFFFF ???
-0x33 #FFFFFF ???
-0x34 #FFFFFF ???
-0x35 #FFFFFF ???
-0x36 #FFFFFF ???
-0x37 #FFFFFF ???
-0x38 #FFFFFF ???
-0x39 #FFFFFF ???
-0x3A #FFFFFF ???
-0x3B #FFFFFF ???
-0x3C #FFFFFF ???
-0x3D #FFFFFF ???
-0x3E #FFFFFF ???
-0x3F #FFFFFF ???
-0x40 #FFFFFF ???
-0x41 #FFFFFF ???
-0x42 #FFFFFF ???
-0x43 #FFFFFF ???
-0x44 #FFFFFF ???
-0x45 #FFFFFF ???
-0x46 #FFFFFF ???
-0x47 #FFFFFF ???
-0x48 #FFFFFF ???
-0x49 #FFFFFF ???
-0x4A #FFFFFF ???
-0x4B #FFFFFF ???
-0x4C #FFFFFF ???
-0x4D #FFFFFF ???
-0x4E #FFFFFF ???
-0x4F #FFFFFF ???
-0x50 #FFFFFF ???
-0x51 #FFFFFF ???
-0x52 #FFFFFF ???
-0x53 #FFFFFF ???
-0x54 #FFFFFF ???
-0x55 #FFFFFF ???
-0x56 #FFFFFF ???
-0x57 #FFFFFF ???
-0x58 #FFFFFF ???
-0x59 #FFFFFF ???
-0x5A #FFFFFF ???
-0x5B #FFFFFF ???
-0x5C #FFFFFF ???
-0x5D #FFFFFF ???
-0x5E #FFFFFF ???
-0x5F #FFFFFF ???
-0x60 #FFFFFF ???
-0x61 #FFFFFF ???
-0x62 #FFFFFF ???
-0x63 #FFFFFF ???
-0x64 #FFFFFF ???
-0x65 #FFFFFF ???
-0x66 #FFFFFF ???
-0x67 #FFFFFF ???
-0x68 #FFFFFF ???
-0x69 #FFFFFF ???
-0x6A #FFFFFF ???
-0x6B #FFFFFF ???
-0x6C #FFFFFF ???
-0x6D #FFFFFF ???
-0x6E #FFFFFF ???
-0x6F #FFFFFF ???
-0x70 #FFFFFF ???
-0x71 #FFFFFF ???
-0x72 #FFFFFF ???
-0x73 #FFFFFF ???
-0x74 #FFFFFF ???
-0x75 #FFFFFF ???
-0x76 #FFFFFF ???
-0x77 #FFFFFF ???
-0x78 #FFFFFF ???
-0x79 #FFFFFF ???
-0x7A #FFFFFF ???
-0x7B #FFFFFF ???
-0x7C #FFFFFF ???
-0x7D #FFFFFF ???
-0x7E #FFFFFF ???
-0x7F #FFFFFF ???
-0x80 #FFFFFF ???
-0x81 #FFFFFF ???
-0x82 #FFFFFF ???
-0x83 #FFFFFF ???
-0x84 #FFFFFF ???
-0x85 #FFFFFF ???
-0x86 #FFFFFF ???
-0x87 #FFFFFF ???
-0x88 #FFFFFF ???
-0x89 #FFFFFF ???
-0x8A #FFFFFF ???
-0x8B #FFFFFF ???
-0x8C #FFFFFF ???
-0x8D #FFFFFF ???
-0x8E #FFFFFF ???
-0x8F #FFFFFF ???
-0x90 #FFFFFF ???
-0x91 #FFFFFF ???
-0x92 #FFFFFF ???
-0x93 #FFFFFF ???
-0x94 #FFFFFF ???
-0x95 #FFFFFF ???
-0x96 #FFFFFF ???
-0x97 #FFFFFF ???
-0x98 #FFFFFF ???
-0x99 #FFFFFF ???
-0x9A #FFFFFF ???
-0x9B #FFFFFF ???
-0x9C #FFFFFF ???
-0x9D #FFFFFF ???
-0x9E #FFFFFF ???
-0x9F #FFFFFF ???
-0xA0 #FFFFFF ???
-0xA1 #FFFFFF ???
-0xA2 #FFFFFF ???
-0xA3 #FFFFFF ???
-0xA4 #FFFFFF ???
-0xA5 #FFFFFF ???
-0xA6 #FFFFFF ???
-0xA7 #FFFFFF ???
-0xA8 #FFFFFF ???
-0xA9 #FFFFFF ???
-0xAA #FFFFFF ???
-0xAB #FFFFFF ???
-0xAC #FFFFFF ???
-0xAD #FFFFFF ???
-0xAE #FFFFFF ???
-0xAF #FFFFFF ???
-0xB0 #FFFFFF ???
-0xB1 #FFFFFF ???
-0xB2 #FFFFFF ???
-0xB3 #FFFFFF ???
-0xB4 #FFFFFF ???
-0xB5 #FFFFFF ???
-0xB6 #FFFFFF ???
-0xB7 #FFFFFF ???
-0xB8 #FFFFFF ???
-0xB9 #FFFFFF ???
-0xBA #FFFFFF ???
-0xBB #FFFFFF ???
-0xBC #FFFFFF ???
-0xBD #FFFFFF ???
-0xBE #FFFFFF ???
-0xBF #FFFFFF ???
-0xC0 #FFFFFF ???
-0xC1 #FFFFFF ???
-0xC2 #FFFFFF ???
-0xC3 #FFFFFF ???
-0xC4 #FFFFFF ???
-0xC5 #FFFFFF ???
-0xC6 #FFFFFF ???
-0xC7 #FFFFFF ???
-0xC8 #FFFFFF ???
-0xC9 #FFFFFF ???
-0xCA #FFFFFF ???
-0xCB #FFFFFF ???
-0xCC #FFFFFF ???
-0xCD #FFFFFF ???
-0xCE #FFFFFF ???
-0xCF #FFFFFF ???
-0xD0 #FFFFFF ???
-0xD1 #FFFFFF ???
-0xD2 #FFFFFF ???
-0xD3 #FFFFFF ???
-0xD4 #FFFFFF ???
-0xD5 #FFFFFF ???
-0xD6 #FFFFFF ???
-0xD7 #FFFFFF ???
-0xD8 #FFFFFF ???
-0xD9 #FFFFFF ???
-0xDA #FFFFFF ???
-0xDB #FFFFFF ???
-0xDC #FFFFFF ???
-0xDD #FFFFFF ???
-0xDE #FFFFFF ???
-0xDF #FFFFFF ???
-0xE0 #FFFFFF ???
-0xE1 #FFFFFF ???
-0xE2 #FFFFFF ???
-0xE3 #FFFFFF ???
-0xE4 #FFFFFF ???
-0xE5 #FFFFFF ???
-0xE6 #FFFFFF ???
-0xE7 #FFFFFF ???
-0xE8 #FFFFFF ???
-0xE9 #FFFFFF ???
-0xEA #FFFFFF ???
-0xEB #FFFFFF ???
-0xEC #FFFFFF ???
-0xED #FFFFFF ???
-0xEE #FFFFFF ???
-0xEF #FFFFFF ???
-0xF0 #FFFFFF ???
-0xF1 #FFFFFF ???
-0xF2 #FFFFFF ???
-0xF3 #FFFFFF ???
-0xF4 #FFFFFF ???
-0xF5 #FFFFFF ???
-0xF6 #FFFFFF ???
-0xF7 #FFFFFF ???
-0xF8 #FFFFFF ???
-0xF9 #FFFFFF ???
-0xFA #FFFFFF ???
-0xFB #FFFFFF ???
-0xFC #FFFFFF ???
-0xFD #FFFFFF ???
-0xFE #FFFFFF ???
-0xFF #FFFFFF ???
-
-0x00 #FFFFFF ???
-0x01 #FF0000 Collision
-0x02 #FFFFFF ???
-0x03 #E0D8A0 GroundPath
-0x04 #00A510 TallGrass
-0x05 #FFFFFF ???
-0x06 #006600 TallGrassDark
-0x07 #FFFFFF ???
-0x08 #FFFFFF ???
-0x09 #FFFFFF ???
-0x0A #FFFFFF ???
-0x0B #FFFF99 Sand
-0x0C #FFCC66 DeepSand
-0x0D #FFFFFF ???
-0x0E #FFFFFF ???
-0x0F #FFFFFF ???
-0x10 #FFFFFF ???
-0x11 #FFFFFF ???
-0x12 #FFFFFF ???
-0x13 #FFFFFF ???
-0x14 #33FFCC Puddle
-0x15 #FFFFFF ???
-0x16 #FFFFFF ???
-0x17 #FFFFFF ???
-0x18 #FFFFFF ???
-0x19 #FFFFFF ???
-0x1A #FFFFFF ???
-0x1B #FFFFFF ???
-0x1C #FFFFFF ???
-0x1D #FFFFFF ???
-0x1E #FFFFFF ???
-0x1F #98E088 GrassPath
-0x20 #FFFFFF ???
-0x21 #FFFFFF ???
-0x22 #FFFFFF ???
-0x23 #FFFFFF ???
-0x24 #FFFFFF ???
-0x25 #FFFFFF ???
-0x26 #FFFFFF ???
-0x27 #FFFFFF ???
-0x28 #FFFFFF ???
-0x29 #FFFFFF ???
-0x2A #FFFFFF ???
-0x2B #FFFFFF ???
-0x2C #FFFFFF ???
-0x2D #FFFFFF ???
-0x2E #FFFFFF ???
-0x2F #FFFFFF ???
-0x30 #FFFFFF ???
-0x31 #FFFFFF ???
-0x32 #FFFFFF ???
-0x33 #FFFFFF ???
-0x34 #FFFFFF ???
-0x35 #FFFFFF ???
-0x36 #FFFFFF ???
-0x37 #FFFFFF ???
-0x38 #FFFFFF ???
-0x39 #FFFFFF ???
-0x3A #FFFFFF ???
-0x3B #FFFFFF ???
-0x3C #FFFFFF ???
-0x3D #75CAD1 LakeWater
-0x3E #FFFFFF ???
-0x3F #0099FF Water
-0x40 #FFFFFF ???
-0x41 #EF5F00 LakeBorder
-0x42 #FFFFFF ???
-0x43 #FFFFFF ???
-0x44 #EF5F00 WaterBorder
-0x45 #FFFFFF ???
-0x46 #FFFFFF ???
-0x47 #FFFFFF ???
-0x48 #FFFFFF ???
-0x49 #FFFFFF ???
-0x4A #FFFFFF ???
-0x4B #FFFFFF ???
-0x4C #FFFFFF ???
-0x4D #FFFFFF ???
-0x4E #FFFFFF ???
-0x4F #FFFFFF ???
-0x50 #FFFFFF ???
-0x51 #7C5262 CollisionRight
-0x52 #7C5262 CollisionLeft
-0x53 #7C5262 CollisionUp
-0x54 #7C5262 CollisionDown
-0x55 #7C5262 CollisionUpRight
-0x56 #7C5262 CollisionUpLeft
-0x57 #7C5262 CollisionDownRight
-0x58 #7C5262 CollisionDownLeft
-0x59 #FFFFFF ???
-0x5A #FFFFFF ???
-0x5B #FFFFFF ???
-0x5C #FFFFFF ???
-0x5D #FFFFFF ???
-0x5E #FFFFFF ???
-0x5F #FFFFFF ???
-0x60 #FFFFFF ???
-0x61 #FFFFFF ???
-0x62 #FFFFFF ???
-0x63 #FFFFFF ???
-0x64 #FFFFFF ???
-0x65 #FFFFFF ???
-0x66 #FFFFFF ???
-0x67 #FFFFFF ???
-0x68 #FFFFFF ???
-0x69 #FFFFFF ???
-0x6A #FFFFFF ???
-0x6B #FFFFFF ???
-0x6C #FFFFFF ???
-0x6D #FFFFFF ???
-0x6E #FFFFFF ???
-0x6F #FFFFFF ???
-0x70 #FFFFFF ???
-0x71 #FFFFFF ???
-0x72 #8A4B08 JumpLeftToRight
-0x73 #8A4B08 JumpRightToLeft
-0x74 #8A4B08 JumpUp
-0x75 #8A4B08 JumpDown
-0x76 #FFFFFF ???
-0x77 #FFFFFF ???
-0x78 #FFFFFF ???
-0x79 #FFFFFF ???
-0x7A #FFFFFF ???
-0x7B #FFFFFF ???
-0x7C #FFFFFF ???
-0x7D #FFFFFF ???
-0x7E #FFFFFF ???
-0x7F #FFFFFF ???
-0x80 #FFFFFF ???
-0x81 #FFFFFF ???
-0x82 #FFFFFF ???
-0x83 #FFFFFF ???
-0x84 #FFFFFF ???
-0x85 #FFFFFF ???
-0x86 #FFFFFF ???
-0x87 #FFFFFF ???
-0x88 #FFFFFF ???
-0x89 #FFFFFF ???
-0x8A #FFFFFF ???
-0x8B #FFFFFF ???
-0x8C #FFFFFF ???
-0x8D #FFFFFF ???
-0x8E #FFFFFF ???
-0x8F #FFFFFF ???
-0x90 #FFFFFF ???
-0x91 #FFFFFF ???
-0x92 #FFFFFF ???
-0x93 #FFFFFF ???
-0x94 #FFFFFF ???
-0x95 #FFFFFF ???
-0x96 #FFFFFF ???
-0x97 #FFFFFF ???
-0x98 #FFFFFF ???
-0x99 #FFFFFF ???
-0x9A #FFFFFF ???
-0x9B #FFFFFF ???
-0x9C #FFFFFF ???
-0x9D #FFFFFF ???
-0x9E #FFFFFF ???
-0x9F #FFFFFF ???
-0xA0 #FFFFFF ???
-0xA1 #FFFFFF ???
-0xA2 #FFFFFF ???
-0xA3 #FFFFFF ???
-0xA4 #FFFFFF ???
-0xA5 #FFFFFF ???
-0xA6 #FFFFFF ???
-0xA7 #FFFFFF ???
-0xA8 #FFFFFF ???
-0xA9 #FFFFFF ???
-0xAA #FFFFFF ???
-0xAB #FFFFFF ???
-0xAC #FFFFFF ???
-0xAD #FFFFFF ???
-0xAE #FFFFFF ???
-0xAF #FFFFFF ???
-0xB0 #FFFFFF ???
-0xB1 #FFFFFF ???
-0xB2 #FFFFFF ???
-0xB3 #FFFFFF ???
-0xB4 #FFFFFF ???
-0xB5 #FFFFFF ???
-0xB6 #FFFFFF ???
-0xB7 #FFFFFF ???
-0xB8 #FFFFFF ???
-0xB9 #FFFFFF ???
-0xBA #FFFFFF ???
-0xBB #FFFFFF ???
-0xBC #FFFFFF ???
-0xBD #FFFFFF ???
-0xBE #FFFFFF ???
-0xBF #FFFFFF ???
-0xC0 #FFFFFF ???
-0xC1 #FFFFFF ???
-0xC2 #FFFFFF ???
-0xC3 #FFFFFF ???
-0xC4 #FFFFFF ???
-0xC5 #FFFFFF ???
-0xC6 #FFFFFF ???
-0xC7 #FFFFFF ???
-0xC8 #FFFFFF ???
-0xC9 #FFFFFF ???
-0xCA #FFFFFF ???
-0xCB #FFFFFF ???
-0xCC #FFFFFF ???
-0xCD #FFFFFF ???
-0xCE #FFFFFF ???
-0xCF #FFFFFF ???
-0xD0 #FFFFFF ???
-0xD1 #FFFFFF ???
-0xD2 #FFFFFF ???
-0xD3 #FFFFFF ???
-0xD4 #FFFFFF ???
-0xD5 #FFFFFF ???
-0xD6 #FFFFFF ???
-0xD7 #FFFFFF ???
-0xD8 #FFFFFF ???
-0xD9 #FFFFFF ???
-0xDA #FFFFFF ???
-0xDB #FFFFFF ???
-0xDC #FFFFFF ???
-0xDD #FFFFFF ???
-0xDE #FFFFFF ???
-0xDF #FFFFFF ???
-0xE0 #FFFFFF ???
-0xE1 #FFFFFF ???
-0xE2 #FFFFFF ???
-0xE3 #FFFFFF ???
-0xE4 #FFFFFF ???
-0xE5 #FFFFFF ???
-0xE6 #FFFFFF ???
-0xE7 #FFFFFF ???
-0xE8 #FFFFFF ???
-0xE9 #FFFFFF ???
-0xEA #FFFFFF ???
-0xEB #FFFFFF ???
-0xEC #FFFFFF ???
-0xED #FFFFFF ???
-0xEE #FFFFFF ???
-0xEF #FFFFFF ???
-0xF0 #FFFFFF ???
-0xF1 #FFFFFF ???
-0xF2 #FFFFFF ???
-0xF3 #FFFFFF ???
-0xF4 #FFFFFF ???
-0xF5 #FFFFFF ???
-0xF6 #FFFFFF ???
-0xF7 #FFFFFF ???
-0xF8 #FFFFFF ???
-0xF9 #FFFFFF ???
-0xFA #FFFFFF ???
-0xFB #FFFFFF ???
-0xFC #FFFFFF ???
-0xFD #FFFFFF ???
-0xFE #FFFFFF ???
-0xFF #FFFFFF ???
-
-0x00 #FFFFFF ???
-0x01 #FFFFFF ???
-0x02 #FFFFFF ???
-0x03 #FFFFFF ???
-0x04 #FFFFFF ???
-0x05 #FFFFFF ???
-0x06 #FFFFFF ???
-0x07 #FFFFFF ???
-0x08 #FFFFFF ???
-0x09 #FFFFFF ???
-0x0A #FFFFFF ???
-0x0B #FFFFFF ???
-0x0C #FFFFFF ???
-0x0D #FFFFFF ???
-0x0E #FFFFFF ???
-0x0F #FFFFFF ???
-0x10 #FFFFFF ???
-0x11 #FFFFFF ???
-0x12 #FFFFFF ???
-0x13 #FFFFFF ???
-0x14 #FFFFFF ???
-0x15 #FFFFFF ???
-0x16 #FFFFFF ???
-0x17 #FFFFFF ???
-0x18 #FFFFFF ???
-0x19 #FFFFFF ???
-0x1A #FFFFFF ???
-0x1B #FFFFFF ???
-0x1C #FFFFFF ???
-0x1D #FFFFFF ???
-0x1E #FFFFFF ???
-0x1F #FFFFFF ???
-0x20 #FFFFFF ???
-0x21 #FFFFFF ???
-0x22 #FFFFFF ???
-0x23 #FFFFFF ???
-0x24 #FFFFFF ???
-0x25 #FFFFFF ???
-0x26 #FFFFFF ???
-0x27 #FFFFFF ???
-0x28 #FFFFFF ???
-0x29 #FFFFFF ???
-0x2A #FFFFFF ???
-0x2B #FFFFFF ???
-0x2C #FFFFFF ???
-0x2D #FFFFFF ???
-0x2E #FFFFFF ???
-0x2F #FFFFFF ???
-0x30 #FFFFFF ???
-0x31 #FFFFFF ???
-0x32 #FFFFFF ???
-0x33 #FFFFFF ???
-0x34 #FFFFFF ???
-0x35 #FFFFFF ???
-0x36 #FFFFFF ???
-0x37 #FFFFFF ???
-0x38 #FFFFFF ???
-0x39 #FFFFFF ???
-0x3A #FFFFFF ???
-0x3B #FFFFFF ???
-0x3C #FFFFFF ???
-0x3D #FFFFFF ???
-0x3E #FFFFFF ???
-0x3F #FFFFFF ???
-0x40 #FFFFFF ???
-0x41 #FFFFFF ???
-0x42 #FFFFFF ???
-0x43 #FFFFFF ???
-0x44 #FFFFFF ???
-0x45 #FFFFFF ???
-0x46 #FFFFFF ???
-0x47 #FFFFFF ???
-0x48 #FFFFFF ???
-0x49 #FFFFFF ???
-0x4A #FFFFFF ???
-0x4B #FFFFFF ???
-0x4C #FFFFFF ???
-0x4D #FFFFFF ???
-0x4E #FFFFFF ???
-0x4F #FFFFFF ???
-0x50 #FFFFFF ???
-0x51 #FFFFFF ???
-0x52 #FFFFFF ???
-0x53 #FFFFFF ???
-0x54 #FFFFFF ???
-0x55 #FFFFFF ???
-0x56 #FFFFFF ???
-0x57 #FFFFFF ???
-0x58 #FFFFFF ???
-0x59 #FFFFFF ???
-0x5A #FFFFFF ???
-0x5B #FFFFFF ???
-0x5C #FFFFFF ???
-0x5D #FFFFFF ???
-0x5E #FFFFFF ???
-0x5F #FFFFFF ???
-0x60 #FFFFFF ???
-0x61 #FFFFFF ???
-0x62 #FFFFFF ???
-0x63 #FFFFFF ???
-0x64 #FFFFFF ???
-0x65 #FFFFFF ???
-0x66 #FFFFFF ???
-0x67 #FFFFFF ???
-0x68 #FFFFFF ???
-0x69 #FFFFFF ???
-0x6A #FFFFFF ???
-0x6B #FFFFFF ???
-0x6C #FFFFFF ???
-0x6D #FFFFFF ???
-0x6E #FFFFFF ???
-0x6F #FFFFFF ???
-0x70 #FFFFFF ???
-0x71 #FFFFFF ???
-0x72 #FFFFFF ???
-0x73 #FFFFFF ???
-0x74 #FFFFFF ???
-0x75 #FFFFFF ???
-0x76 #FFFFFF ???
-0x77 #FFFFFF ???
-0x78 #FFFFFF ???
-0x79 #FFFFFF ???
-0x7A #FFFFFF ???
-0x7B #FFFFFF ???
-0x7C #FFFFFF ???
-0x7D #FFFFFF ???
-0x7E #FFFFFF ???
-0x7F #FFFFFF ???
-0x80 #FFFFFF ???
-0x81 #FFFFFF ???
-0x82 #FFFFFF ???
-0x83 #FFFFFF ???
-0x84 #FFFFFF ???
-0x85 #FFFFFF ???
-0x86 #FFFFFF ???
-0x87 #FFFFFF ???
-0x88 #FFFFFF ???
-0x89 #FFFFFF ???
-0x8A #FFFFFF ???
-0x8B #FFFFFF ???
-0x8C #FFFFFF ???
-0x8D #FFFFFF ???
-0x8E #FFFFFF ???
-0x8F #FFFFFF ???
-0x90 #FFFFFF ???
-0x91 #FFFFFF ???
-0x92 #FFFFFF ???
-0x93 #FFFFFF ???
-0x94 #FFFFFF ???
-0x95 #FFFFFF ???
-0x96 #FFFFFF ???
-0x97 #FFFFFF ???
-0x98 #FFFFFF ???
-0x99 #FFFFFF ???
-0x9A #FFFFFF ???
-0x9B #FFFFFF ???
-0x9C #FFFFFF ???
-0x9D #FFFFFF ???
-0x9E #FFFFFF ???
-0x9F #FFFFFF ???
-0xA0 #FFFFFF ???
-0xA1 #FFFFFF ???
-0xA2 #FFFFFF ???
-0xA3 #FFFFFF ???
-0xA4 #FFFFFF ???
-0xA5 #FFFFFF ???
-0xA6 #FFFFFF ???
-0xA7 #FFFFFF ???
-0xA8 #FFFFFF ???
-0xA9 #FFFFFF ???
-0xAA #FFFFFF ???
-0xAB #FFFFFF ???
-0xAC #FFFFFF ???
-0xAD #FFFFFF ???
-0xAE #FFFFFF ???
-0xAF #FFFFFF ???
-0xB0 #FFFFFF ???
-0xB1 #FFFFFF ???
-0xB2 #FFFFFF ???
-0xB3 #FFFFFF ???
-0xB4 #FFFFFF ???
-0xB5 #FFFFFF ???
-0xB6 #FFFFFF ???
-0xB7 #FFFFFF ???
-0xB8 #FFFFFF ???
-0xB9 #FFFFFF ???
-0xBA #FFFFFF ???
-0xBB #FFFFFF ???
-0xBC #FFFFFF ???
-0xBD #FFFFFF ???
-0xBE #FFFFFF ???
-0xBF #FFFFFF ???
-0xC0 #FFFFFF ???
-0xC1 #FFFFFF ???
-0xC2 #FFFFFF ???
-0xC3 #FFFFFF ???
-0xC4 #FFFFFF ???
-0xC5 #FFFFFF ???
-0xC6 #FFFFFF ???
-0xC7 #FFFFFF ???
-0xC8 #FFFFFF ???
-0xC9 #FFFFFF ???
-0xCA #FFFFFF ???
-0xCB #FFFFFF ???
-0xCC #FFFFFF ???
-0xCD #FFFFFF ???
-0xCE #FFFFFF ???
-0xCF #FFFFFF ???
-0xD0 #FFFFFF ???
-0xD1 #FFFFFF ???
-0xD2 #FFFFFF ???
-0xD3 #FFFFFF ???
-0xD4 #FFFFFF ???
-0xD5 #FFFFFF ???
-0xD6 #FFFFFF ???
-0xD7 #FFFFFF ???
-0xD8 #FFFFFF ???
-0xD9 #FFFFFF ???
-0xDA #FFFFFF ???
-0xDB #FFFFFF ???
-0xDC #FFFFFF ???
-0xDD #FFFFFF ???
-0xDE #FFFFFF ???
-0xDF #FFFFFF ???
-0xE0 #FFFFFF ???
-0xE1 #FFFFFF ???
-0xE2 #FFFFFF ???
-0xE3 #FFFFFF ???
-0xE4 #FFFFFF ???
-0xE5 #FFFFFF ???
-0xE6 #FFFFFF ???
-0xE7 #FFFFFF ???
-0xE8 #FFFFFF ???
-0xE9 #FFFFFF ???
-0xEA #FFFFFF ???
-0xEB #FFFFFF ???
-0xEC #FFFFFF ???
-0xED #FFFFFF ???
-0xEE #FFFFFF ???
-0xEF #FFFFFF ???
-0xF0 #FFFFFF ???
-0xF1 #FFFFFF ???
-0xF2 #FFFFFF ???
-0xF3 #FFFFFF ???
-0xF4 #FFFFFF ???
-0xF5 #FFFFFF ???
-0xF6 #FFFFFF ???
-0xF7 #FFFFFF ???
-0xF8 #FFFFFF ???
-0xF9 #FFFFFF ???
-0xFA #FFFFFF ???
-0xFB #FFFFFF ???
-0xFC #FFFFFF ???
-0xFD #FFFFFF ???
-0xFE #FFFFFF ???
-0xFF #FFFFFF ???
-
-0x00 #FFFFFF ???
-0x01 #8A4B08 Jump
-0x02 #FFFFFF ???
-0x03 #FFFFFF ???
-0x04 #FFFFFF ???
-0x05 #FFFFFF ???
-0x06 #FFFFFF ???
-0x07 #FFFFFF ???
-0x08 #FFFFFF ???
-0x09 #FFFFFF ???
-0x0A #FFFFFF ???
-0x0B #FFFFFF ???
-0x0C #FFFFFF ???
-0x0D #FFFFFF ???
-0x0E #FFFFFF ???
-0x0F #FFFFFF ???
-0x10 #FFFFFF ???
-0x11 #FFFFFF ???
-0x12 #FFFFFF ???
-0x13 #FFFFFF ???
-0x14 #FFFFFF ???
-0x15 #FFFFFF ???
-0x16 #0099FF Water
-0x17 #FFFFFF ???
-0x18 #FFFFFF ???
-0x19 #FFFFFF ???
-0x1A #FFFFFF ???
-0x1B #FFFFFF ???
-0x1C #FFFFFF ???
-0x1D #FFFFFF ???
-0x1E #FFFFFF ???
-0x1F #FFFFFF ???
-0x20 #FFFFFF ???
-0x21 #FFFFFF ???
-0x22 #FFFFFF ???
-0x23 #FFFFFF ???
-0x24 #00AF11 TallGrass
-0x25 #FFFFFF ???
-0x26 #FFFFFF ???
-0x27 #FFFFFF ???
-0x28 #FFFFFF ???
-0x29 #FFFFFF ???
-0x2A #FFFFFF ???
-0x2B #FFFFFF ???
-0x2C #FFFFFF ???
-0x2D #FFFFFF ???
-0x2E #FFFFFF ???
-0x2F #FFFFFF ???
-0x30 #FFFFFF ???
-0x31 #FFFFFF ???
-0x32 #FFFFFF ???
-0x33 #FFFFFF ???
-0x34 #FFFFFF ???
-0x35 #FFFFFF ???
-0x36 #FFFFFF ???
-0x37 #FFFFFF ???
-0x38 #FFFFFF ???
-0x39 #FFFFFF ???
-0x3A #FFFFFF ???
-0x3B #FFFFFF ???
-0x3C #FFFFFF ???
-0x3D #FFFFFF ???
-0x3E #FFFFFF ???
-0x3F #FFFFFF ???
-0x40 #FFFFFF ???
-0x41 #FFFFFF ???
-0x42 #FFFFFF ???
-0x43 #FFFFFF ???
-0x44 #FFFFFF ???
-0x45 #FFFFFF ???
-0x46 #FFFFFF ???
-0x47 #FFFFFF ???
-0x48 #FFFFFF ???
-0x49 #FFFFFF ???
-0x4A #FFFFFF ???
-0x4B #FFFFFF ???
-0x4C #FFFFFF ???
-0x4D #FFFFFF ???
-0x4E #FFFFFF ???
-0x4F #FFFFFF ???
-0x50 #FFFFFF ???
-0x51 #FFFFFF ???
-0x52 #FFFFFF ???
-0x53 #FFFFFF ???
-0x54 #FFFFFF ???
-0x55 #FFFFFF ???
-0x56 #FFFFFF ???
-0x57 #FFFFFF ???
-0x58 #FFFFFF ???
-0x59 #FFFFFF ???
-0x5A #FFFFFF ???
-0x5B #FFFFFF ???
-0x5C #FFFFFF ???
-0x5D #FFFFFF ???
-0x5E #FFFFFF ???
-0x5F #FFFFFF ???
-0x60 #FFFFFF ???
-0x61 #FFFFFF ???
-0x62 #FFFFFF ???
-0x63 #FFFFFF ???
-0x64 #FFFFFF ???
-0x65 #FFFFFF ???
-0x66 #FFFFFF ???
-0x67 #FFFFFF ???
-0x68 #FFFFFF ???
-0x69 #FFFFFF ???
-0x6A #FFFFFF ???
-0x6B #FFFFFF ???
-0x6C #FFFFFF ???
-0x6D #FFFFFF ???
-0x6E #FFFFFF ???
-0x6F #FFFFFF ???
-0x70 #FFFFFF ???
-0x71 #FFFFFF ???
-0x72 #FFFFFF ???
-0x73 #FFFFFF ???
-0x74 #FFFFFF ???
-0x75 #FFFFFF ???
-0x76 #FFFFFF ???
-0x77 #FFFFFF ???
-0x78 #FFFFFF ???
-0x79 #FFFFFF ???
-0x7A #FFFFFF ???
-0x7B #FFFFFF ???
-0x7C #FFFFFF ???
-0x7D #FFFFFF ???
-0x7E #FFFFFF ???
-0x7F #FFFFFF ???
-0x80 #FFFFFF NoCollision
-0x81 #FF0000 Collision
-0x82 #FFFFFF ???
-0x83 #EF5F00 WaterBorder
-0x84 #FFFFFF ???
-0x85 #FFFFFF ???
-0x86 #FFFFFF ???
-0x87 #FFFFFF ???
-0x88 #FFFFFF ???
-0x89 #FFFFFF ???
-0x8A #FFFFFF ???
-0x8B #FFFFFF ???
-0x8C #FFFFFF ???
-0x8D #FFFFFF ???
-0x8E #FFFFFF ???
-0x8F #FFFFFF ???
-0x90 #FFFFFF ???
-0x91 #FFFFFF ???
-0x92 #FFFFFF ???
-0x93 #FFFFFF ???
-0x94 #FFFFFF ???
-0x95 #FFFFFF ???
-0x96 #FFFFFF ???
-0x97 #FFFFFF ???
-0x98 #FFFFFF ???
-0x99 #FFFFFF ???
-0x9A #FFFFFF ???
-0x9B #FFFFFF ???
-0x9C #FFFFFF ???
-0x9D #FFFFFF ???
-0x9E #FFFFFF ???
-0x9F #FFFFFF ???
-0xA0 #FFFFFF ???
-0xA1 #FFFFFF ???
-0xA2 #FFFFFF ???
-0xA3 #FFFFFF ???
-0xA4 #FFFFFF ???
-0xA5 #FFFFFF ???
-0xA6 #FFFFFF ???
-0xA7 #FFFFFF ???
-0xA8 #FFFFFF ???
-0xA9 #FFFFFF ???
-0xAA #FFFFFF ???
-0xAB #FFFFFF ???
-0xAC #FFFFFF ???
-0xAD #FFFFFF ???
-0xAE #FFFFFF ???
-0xAF #FFFFFF ???
-0xB0 #FFFFFF ???
-0xB1 #FFFFFF ???
-0xB2 #FFFFFF ???
-0xB3 #FFFFFF ???
-0xB4 #FFFFFF ???
-0xB5 #FFFFFF ???
-0xB6 #FFFFFF ???
-0xB7 #FFFFFF ???
-0xB8 #FFFFFF ???
-0xB9 #FFFFFF ???
-0xBA #FFFFFF ???
-0xBB #FFFFFF ???
-0xBC #FFFFFF ???
-0xBD #FFFFFF ???
-0xBE #FFFFFF ???
-0xBF #FFFFFF ???
-0xC0 #FFFFFF ???
-0xC1 #FFFFFF ???
-0xC2 #FFFFFF ???
-0xC3 #FFFFFF ???
-0xC4 #FFFFFF ???
-0xC5 #FFFFFF ???
-0xC6 #FFFFFF ???
-0xC7 #FFFFFF ???
-0xC8 #FFFFFF ???
-0xC9 #FFFFFF ???
-0xCA #FFFFFF ???
-0xCB #FFFFFF ???
-0xCC #FFFFFF ???
-0xCD #FFFFFF ???
-0xCE #FFFFFF ???
-0xCF #FFFFFF ???
-0xD0 #FFFFFF ???
-0xD1 #FFFFFF ???
-0xD2 #FFFFFF ???
-0xD3 #FFFFFF ???
-0xD4 #FFFFFF ???
-0xD5 #FFFFFF ???
-0xD6 #FFFFFF ???
-0xD7 #FFFFFF ???
-0xD8 #FFFFFF ???
-0xD9 #FFFFFF ???
-0xDA #FFFFFF ???
-0xDB #FFFFFF ???
-0xDC #FFFFFF ???
-0xDD #FFFFFF ???
-0xDE #FFFFFF ???
-0xDF #FFFFFF ???
-0xE0 #FFFFFF ???
-0xE1 #FFFFFF ???
-0xE2 #FFFFFF ???
-0xE3 #FFFFFF ???
-0xE4 #FFFFFF ???
-0xE5 #FFFFFF ???
-0xE6 #FFFFFF ???
-0xE7 #FFFFFF ???
-0xE8 #FFFFFF ???
-0xE9 #FFFFFF ???
-0xEA #FFFFFF ???
-0xEB #FFFFFF ???
-0xEC #FFFFFF ???
-0xED #FFFFFF ???
-0xEE #FFFFFF ???
-0xEF #FFFFFF ???
-0xF0 #FFFFFF ???
-0xF1 #FFFFFF ???
-0xF2 #FFFFFF ???
-0xF3 #FFFFFF ???
-0xF4 #FFFFFF ???
-0xF5 #FFFFFF ???
-0xF6 #FFFFFF ???
-0xF7 #FFFFFF ???
-0xF8 #FFFFFF ???
-0xF9 #FFFFFF ???
-0xFA #FFFFFF ???
-0xFB #FFFFFF ???
-0xFC #FFFFFF ???
-0xFD #FFFFFF ???
-0xFE #FFFFFF ???
-0xFF #FFFFFF ???
-
-0x00 #FFFFFF ???
-0x01 #FFFFFF ???
-0x02 #FFFFFF ???
-0x03 #FFFFFF ???
-0x04 #FFFFFF ???
-0x05 #FFFFFF ???
-0x06 #FFFFFF ???
-0x07 #FFFFFF ???
-0x08 #FFFFFF ???
-0x09 #FFFFFF ???
-0x0A #FFFFFF ???
-0x0B #FFFFFF ???
-0x0C #FFFFFF ???
-0x0D #FFFFFF ???
-0x0E #FFFFFF ???
-0x0F #FFFFFF ???
-0x10 #FFFFFF ???
-0x11 #FFFFFF ???
-0x12 #FFFFFF ???
-0x13 #FFFFFF ???
-0x14 #FFFFFF ???
-0x15 #FFFFFF ???
-0x16 #FFFFFF ???
-0x17 #FFFFFF ???
-0x18 #FFFFFF ???
-0x19 #FFFFFF ???
-0x1A #FFFFFF ???
-0x1B #FFFFFF ???
-0x1C #FFFFFF ???
-0x1D #FFFFFF ???
-0x1E #FFFFFF ???
-0x1F #FFFFFF ???
-0x20 #FFFFFF ???
-0x21 #FFFFFF ???
-0x22 #FFFFFF ???
-0x23 #FFFFFF ???
-0x24 #FFFFFF ???
-0x25 #FFFFFF ???
-0x26 #FFFFFF ???
-0x27 #FFFFFF ???
-0x28 #FFFFFF ???
-0x29 #FFFFFF ???
-0x2A #FFFFFF ???
-0x2B #FFFFFF ???
-0x2C #FFFFFF ???
-0x2D #FFFFFF ???
-0x2E #FFFFFF ???
-0x2F #FFFFFF ???
-0x30 #FFFFFF ???
-0x31 #FFFFFF ???
-0x32 #FFFFFF ???
-0x33 #FFFFFF ???
-0x34 #FFFFFF ???
-0x35 #FFFFFF ???
-0x36 #FFFFFF ???
-0x37 #FFFFFF ???
-0x38 #FFFFFF ???
-0x39 #FFFFFF ???
-0x3A #FFFFFF ???
-0x3B #FFFFFF ???
-0x3C #FFFFFF ???
-0x3D #FFFFFF ???
-0x3E #FFFFFF ???
-0x3F #FFFFFF ???
-0x40 #FFFFFF ???
-0x41 #FFFFFF ???
-0x42 #FFFFFF ???
-0x43 #FFFFFF ???
-0x44 #FFFFFF ???
-0x45 #FFFFFF ???
-0x46 #FFFFFF ???
-0x47 #FFFFFF ???
-0x48 #FFFFFF ???
-0x49 #FFFFFF ???
-0x4A #FFFFFF ???
-0x4B #FFFFFF ???
-0x4C #FFFFFF ???
-0x4D #FFFFFF ???
-0x4E #FFFFFF ???
-0x4F #FFFFFF ???
-0x50 #FFFFFF ???
-0x51 #FFFFFF ???
-0x52 #FFFFFF ???
-0x53 #FFFFFF ???
-0x54 #FFFFFF ???
-0x55 #FFFFFF ???
-0x56 #FFFFFF ???
-0x57 #FFFFFF ???
-0x58 #FFFFFF ???
-0x59 #FFFFFF ???
-0x5A #FFFFFF ???
-0x5B #FFFFFF ???
-0x5C #FFFFFF ???
-0x5D #FFFFFF ???
-0x5E #FFFFFF ???
-0x5F #FFFFFF ???
-0x60 #FFFFFF ???
-0x61 #FFFFFF ???
-0x62 #FFFFFF ???
-0x63 #FFFFFF ???
-0x64 #FFFFFF ???
-0x65 #FFFFFF ???
-0x66 #FFFFFF ???
-0x67 #FFFFFF ???
-0x68 #FFFFFF ???
-0x69 #FFFFFF ???
-0x6A #FFFFFF ???
-0x6B #FFFFFF ???
-0x6C #FFFFFF ???
-0x6D #FFFFFF ???
-0x6E #FFFFFF ???
-0x6F #FFFFFF ???
-0x70 #FFFFFF ???
-0x71 #FFFFFF ???
-0x72 #FFFFFF ???
-0x73 #FFFFFF ???
-0x74 #FFFFFF ???
-0x75 #FFFFFF ???
-0x76 #FFFFFF ???
-0x77 #FFFFFF ???
-0x78 #FFFFFF ???
-0x79 #FFFFFF ???
-0x7A #FFFFFF ???
-0x7B #FFFFFF ???
-0x7C #FFFFFF ???
-0x7D #FFFFFF ???
-0x7E #FFFFFF ???
-0x7F #FFFFFF ???
-0x80 #FFFFFF ???
-0x81 #FFFFFF ???
-0x82 #FFFFFF ???
-0x83 #FFFFFF ???
-0x84 #FFFFFF ???
-0x85 #FFFFFF ???
-0x86 #FFFFFF ???
-0x87 #FFFFFF ???
-0x88 #FFFFFF ???
-0x89 #FFFFFF ???
-0x8A #FFFFFF ???
-0x8B #FFFFFF ???
-0x8C #FFFFFF ???
-0x8D #FFFFFF ???
-0x8E #FFFFFF ???
-0x8F #FFFFFF ???
-0x90 #FFFFFF ???
-0x91 #FFFFFF ???
-0x92 #FFFFFF ???
-0x93 #FFFFFF ???
-0x94 #FFFFFF ???
-0x95 #FFFFFF ???
-0x96 #FFFFFF ???
-0x97 #FFFFFF ???
-0x98 #FFFFFF ???
-0x99 #FFFFFF ???
-0x9A #FFFFFF ???
-0x9B #FFFFFF ???
-0x9C #FFFFFF ???
-0x9D #FFFFFF ???
-0x9E #FFFFFF ???
-0x9F #FFFFFF ???
-0xA0 #FFFFFF ???
-0xA1 #FFFFFF ???
-0xA2 #FFFFFF ???
-0xA3 #FFFFFF ???
-0xA4 #FFFFFF ???
-0xA5 #FFFFFF ???
-0xA6 #FFFFFF ???
-0xA7 #FFFFFF ???
-0xA8 #FFFFFF ???
-0xA9 #FFFFFF ???
-0xAA #FFFFFF ???
-0xAB #FFFFFF ???
-0xAC #FFFFFF ???
-0xAD #FFFFFF ???
-0xAE #FFFFFF ???
-0xAF #FFFFFF ???
-0xB0 #FFFFFF ???
-0xB1 #FFFFFF ???
-0xB2 #FFFFFF ???
-0xB3 #FFFFFF ???
-0xB4 #FFFFFF ???
-0xB5 #FFFFFF ???
-0xB6 #FFFFFF ???
-0xB7 #FFFFFF ???
-0xB8 #FFFFFF ???
-0xB9 #FFFFFF ???
-0xBA #FFFFFF ???
-0xBB #FFFFFF ???
-0xBC #FFFFFF ???
-0xBD #FFFFFF ???
-0xBE #FFFFFF ???
-0xBF #FFFFFF ???
-0xC0 #FFFFFF ???
-0xC1 #FFFFFF ???
-0xC2 #FFFFFF ???
-0xC3 #FFFFFF ???
-0xC4 #FFFFFF ???
-0xC5 #FFFFFF ???
-0xC6 #FFFFFF ???
-0xC7 #FFFFFF ???
-0xC8 #FFFFFF ???
-0xC9 #FFFFFF ???
-0xCA #FFFFFF ???
-0xCB #FFFFFF ???
-0xCC #FFFFFF ???
-0xCD #FFFFFF ???
-0xCE #FFFFFF ???
-0xCF #FFFFFF ???
-0xD0 #FFFFFF ???
-0xD1 #FFFFFF ???
-0xD2 #FFFFFF ???
-0xD3 #FFFFFF ???
-0xD4 #FFFFFF ???
-0xD5 #FFFFFF ???
-0xD6 #FFFFFF ???
-0xD7 #FFFFFF ???
-0xD8 #FFFFFF ???
-0xD9 #FFFFFF ???
-0xDA #FFFFFF ???
-0xDB #FFFFFF ???
-0xDC #FFFFFF ???
-0xDD #FFFFFF ???
-0xDE #FFFFFF ???
-0xDF #FFFFFF ???
-0xE0 #FFFFFF ???
-0xE1 #FFFFFF ???
-0xE2 #FFFFFF ???
-0xE3 #FFFFFF ???
-0xE4 #FFFFFF ???
-0xE5 #FFFFFF ???
-0xE6 #FFFFFF ???
-0xE7 #FFFFFF ???
-0xE8 #FFFFFF ???
-0xE9 #FFFFFF ???
-0xEA #FFFFFF ???
-0xEB #FFFFFF ???
-0xEC #FFFFFF ???
-0xED #FFFFFF ???
-0xEE #FFFFFF ???
-0xEF #FFFFFF ???
-0xF0 #FFFFFF ???
-0xF1 #FFFFFF ???
-0xF2 #FFFFFF ???
-0xF3 #FFFFFF ???
-0xF4 #FFFFFF ???
-0xF5 #FFFFFF ???
-0xF6 #FFFFFF ???
-0xF7 #FFFFFF ???
-0xF8 #FFFFFF ???
-0xF9 #FFFFFF ???
-0xFA #FFFFFF ???
-0xFB #FFFFFF ???
-0xFC #FFFFFF ???
-0xFD #FFFFFF ???
-0xFE #FFFFFF ???
-0xFF #FFFFFF ???
+0x00 #FFFFFF Flat (Normal Idx 0)
+0x01 #808080 Invalid Triangle Flag
+0x02 #8863CC Two Triangle Tile
+0x03 #808080 Invalid Triangle Flag
+0x04 #AC7CFF Slope Normal Idx 1 (Stairs Up East)
+0x05 #808080 Invalid Triangle Flag
+0x06 #8863CC Two Triangle Tile
+0x07 #808080 Invalid Triangle Flag
+0x08 #AC7CFF Slope Normal Idx 2 (Stairs Up North)
+0x09 #808080 Invalid Triangle Flag
+0x0A #8863CC Two Triangle Tile
+0x0B #808080 Invalid Triangle Flag
+0x0C #AC7CFF Slope Normal Idx 3
+0x0D #808080 Invalid Triangle Flag
+0x0E #8863CC Two Triangle Tile
+0x0F #808080 Invalid Triangle Flag
+0x10 #AC7CFF Slope Normal Idx 4 (Stairs Up South)
+0x11 #808080 Invalid Triangle Flag
+0x12 #8863CC Two Triangle Tile
+0x13 #808080 Invalid Triangle Flag
+0x14 #AC7CFF Slope Normal Idx 5
+0x15 #808080 Invalid Triangle Flag
+0x16 #8863CC Two Triangle Tile
+0x17 #808080 Invalid Triangle Flag
+0x18 #AC7CFF Slope Normal Idx 6 (Stairs Up West)
+0x19 #808080 Invalid Triangle Flag
+0x1A #8863CC Two Triangle Tile
+0x1B #808080 Invalid Triangle Flag
+0x1C #AC7CFF Slope Normal Idx 7
+0x1D #808080 Invalid Triangle Flag
+0x1E #8863CC Two Triangle Tile
+0x1F #808080 Invalid Triangle Flag
+0x20 #AC7CFF Slope Normal Idx 8
+0x21 #808080 Invalid Triangle Flag
+0x22 #8863CC Two Triangle Tile
+0x23 #808080 Invalid Triangle Flag
+0x24 #AC7CFF Slope Normal Idx 9
+0x25 #808080 Invalid Triangle Flag
+0x26 #8863CC Two Triangle Tile
+0x27 #808080 Invalid Triangle Flag
+0x28 #AC7CFF Slope Normal Idx 10
+0x29 #808080 Invalid Triangle Flag
+0x2A #8863CC Two Triangle Tile
+0x2B #808080 Invalid Triangle Flag
+0x2C #AC7CFF Slope Normal Idx 11
+0x2D #808080 Invalid Triangle Flag
+0x2E #8863CC Two Triangle Tile
+0x2F #808080 Invalid Triangle Flag
+0x30 #AC7CFF Slope Normal Idx 12
+0x31 #808080 Invalid Triangle Flag
+0x32 #8863CC Two Triangle Tile
+0x33 #808080 Invalid Triangle Flag
+0x34 #AC7CFF Slope Normal Idx 13
+0x35 #808080 Invalid Triangle Flag
+0x36 #8863CC Two Triangle Tile
+0x37 #808080 Invalid Triangle Flag
+0x38 #AC7CFF Slope Normal Idx 14
+0x39 #808080 Invalid Triangle Flag
+0x3A #8863CC Two Triangle Tile
+0x3B #808080 Invalid Triangle Flag
+0x3C #AC7CFF Slope Normal Idx 15
+0x3D #808080 Invalid Triangle Flag
+0x3E #8863CC Two Triangle Tile
+0x3F #808080 Invalid Triangle Flag
+0x40 #AC7CFF Slope Normal Idx 16
+0x41 #808080 Invalid Triangle Flag
+0x42 #8863CC Two Triangle Tile
+0x43 #808080 Invalid Triangle Flag
+0x44 #AC7CFF Slope Normal Idx 17
+0x45 #808080 Invalid Triangle Flag
+0x46 #8863CC Two Triangle Tile
+0x47 #808080 Invalid Triangle Flag
+0x48 #AC7CFF Slope Normal Idx 18
+0x49 #808080 Invalid Triangle Flag
+0x4A #8863CC Two Triangle Tile
+0x4B #808080 Invalid Triangle Flag
+0x4C #AC7CFF Slope Normal Idx 19
+0x4D #808080 Invalid Triangle Flag
+0x4E #8863CC Two Triangle Tile
+0x4F #808080 Invalid Triangle Flag
+0x50 #AC7CFF Slope Normal Idx 20
+0x51 #808080 Invalid Triangle Flag
+0x52 #8863CC Two Triangle Tile
+0x53 #808080 Invalid Triangle Flag
+0x54 #AC7CFF Slope Normal Idx 21
+0x55 #808080 Invalid Triangle Flag
+0x56 #8863CC Two Triangle Tile
+0x57 #808080 Invalid Triangle Flag
+0x58 #AC7CFF Slope Normal Idx 22
+0x59 #808080 Invalid Triangle Flag
+0x5A #8863CC Two Triangle Tile
+0x5B #808080 Invalid Triangle Flag
+0x5C #AC7CFF Slope Normal Idx 23
+0x5D #808080 Invalid Triangle Flag
+0x5E #8863CC Two Triangle Tile
+0x5F #808080 Invalid Triangle Flag
+0x60 #AC7CFF Slope Normal Idx 24
+0x61 #808080 Invalid Triangle Flag
+0x62 #8863CC Two Triangle Tile
+0x63 #808080 Invalid Triangle Flag
+0x64 #AC7CFF Slope Normal Idx 25
+0x65 #808080 Invalid Triangle Flag
+0x66 #8863CC Two Triangle Tile
+0x67 #808080 Invalid Triangle Flag
+0x68 #AC7CFF Slope Normal Idx 26
+0x69 #808080 Invalid Triangle Flag
+0x6A #8863CC Two Triangle Tile
+0x6B #808080 Invalid Triangle Flag
+0x6C #AC7CFF Slope Normal Idx 27
+0x6D #808080 Invalid Triangle Flag
+0x6E #8863CC Two Triangle Tile
+0x6F #808080 Invalid Triangle Flag
+0x70 #AC7CFF Slope Normal Idx 28
+0x71 #808080 Invalid Triangle Flag
+0x72 #8863CC Two Triangle Tile
+0x73 #808080 Invalid Triangle Flag
+0x74 #AC7CFF Slope Normal Idx 29
+0x75 #808080 Invalid Triangle Flag
+0x76 #8863CC Two Triangle Tile
+0x77 #808080 Invalid Triangle Flag
+0x78 #AC7CFF Slope Normal Idx 30
+0x79 #808080 Invalid Triangle Flag
+0x7A #8863CC Two Triangle Tile
+0x7B #808080 Invalid Triangle Flag
+0x7C #AC7CFF Slope Normal Idx 31
+0x7D #808080 Invalid Triangle Flag
+0x7E #8863CC Two Triangle Tile
+0x7F #808080 Invalid Triangle Flag
+0x80 #AC7CFF Slope Normal Idx 32
+0x81 #808080 Invalid Triangle Flag
+0x82 #8863CC Two Triangle Tile
+0x83 #808080 Invalid Triangle Flag
+0x84 #AC7CFF Slope Normal Idx 33
+0x85 #808080 Invalid Triangle Flag
+0x86 #8863CC Two Triangle Tile
+0x87 #808080 Invalid Triangle Flag
+0x88 #AC7CFF Slope Normal Idx 34
+0x89 #808080 Invalid Triangle Flag
+0x8A #8863CC Two Triangle Tile
+0x8B #808080 Invalid Triangle Flag
+0x8C #AC7CFF Slope Normal Idx 35
+0x8D #808080 Invalid Triangle Flag
+0x8E #8863CC Two Triangle Tile
+0x8F #808080 Invalid Triangle Flag
+0x90 #AC7CFF Slope Normal Idx 36
+0x91 #808080 Invalid Triangle Flag
+0x92 #8863CC Two Triangle Tile
+0x93 #808080 Invalid Triangle Flag
+0x94 #AC7CFF Slope Normal Idx 37
+0x95 #808080 Invalid Triangle Flag
+0x96 #8863CC Two Triangle Tile
+0x97 #808080 Invalid Triangle Flag
+0x98 #AC7CFF Slope Normal Idx 38
+0x99 #808080 Invalid Triangle Flag
+0x9A #8863CC Two Triangle Tile
+0x9B #808080 Invalid Triangle Flag
+0x9C #AC7CFF Slope Normal Idx 39
+0x9D #808080 Invalid Triangle Flag
+0x9E #8863CC Two Triangle Tile
+0x9F #808080 Invalid Triangle Flag
+0xA0 #AC7CFF Slope Normal Idx 40
+0xA1 #808080 Invalid Triangle Flag
+0xA2 #8863CC Two Triangle Tile
+0xA3 #808080 Invalid Triangle Flag
+0xA4 #AC7CFF Slope Normal Idx 41
+0xA5 #808080 Invalid Triangle Flag
+0xA6 #8863CC Two Triangle Tile
+0xA7 #808080 Invalid Triangle Flag
+0xA8 #AC7CFF Slope Normal Idx 42
+0xA9 #808080 Invalid Triangle Flag
+0xAA #8863CC Two Triangle Tile
+0xAB #808080 Invalid Triangle Flag
+0xAC #AC7CFF Slope Normal Idx 43
+0xAD #808080 Invalid Triangle Flag
+0xAE #8863CC Two Triangle Tile
+0xAF #808080 Invalid Triangle Flag
+0xB0 #AC7CFF Slope Normal Idx 44
+0xB1 #808080 Invalid Triangle Flag
+0xB2 #8863CC Two Triangle Tile
+0xB3 #808080 Invalid Triangle Flag
+0xB4 #AC7CFF Slope Normal Idx 45
+0xB5 #808080 Invalid Triangle Flag
+0xB6 #8863CC Two Triangle Tile
+0xB7 #808080 Invalid Triangle Flag
+0xB8 #AC7CFF Slope Normal Idx 46
+0xB9 #808080 Invalid Triangle Flag
+0xBA #8863CC Two Triangle Tile
+0xBB #808080 Invalid Triangle Flag
+0xBC #AC7CFF Slope Normal Idx 47
+0xBD #808080 Invalid Triangle Flag
+0xBE #8863CC Two Triangle Tile
+0xBF #808080 Invalid Triangle Flag
+0xC0 #AC7CFF Slope Normal Idx 48
+0xC1 #808080 Invalid Triangle Flag
+0xC2 #8863CC Two Triangle Tile
+0xC3 #808080 Invalid Triangle Flag
+0xC4 #AC7CFF Slope Normal Idx 49
+0xC5 #808080 Invalid Triangle Flag
+0xC6 #8863CC Two Triangle Tile
+0xC7 #808080 Invalid Triangle Flag
+0xC8 #AC7CFF Slope Normal Idx 50
+0xC9 #808080 Invalid Triangle Flag
+0xCA #8863CC Two Triangle Tile
+0xCB #808080 Invalid Triangle Flag
+0xCC #AC7CFF Slope Normal Idx 51
+0xCD #808080 Invalid Triangle Flag
+0xCE #8863CC Two Triangle Tile
+0xCF #808080 Invalid Triangle Flag
+0xD0 #AC7CFF Slope Normal Idx 52
+0xD1 #808080 Invalid Triangle Flag
+0xD2 #8863CC Two Triangle Tile
+0xD3 #808080 Invalid Triangle Flag
+0xD4 #AC7CFF Slope Normal Idx 53
+0xD5 #808080 Invalid Triangle Flag
+0xD6 #8863CC Two Triangle Tile
+0xD7 #808080 Invalid Triangle Flag
+0xD8 #AC7CFF Slope Normal Idx 54
+0xD9 #808080 Invalid Triangle Flag
+0xDA #8863CC Two Triangle Tile
+0xDB #808080 Invalid Triangle Flag
+0xDC #AC7CFF Slope Normal Idx 55
+0xDD #808080 Invalid Triangle Flag
+0xDE #8863CC Two Triangle Tile
+0xDF #808080 Invalid Triangle Flag
+0xE0 #AC7CFF Slope Normal Idx 56
+0xE1 #808080 Invalid Triangle Flag
+0xE2 #8863CC Two Triangle Tile
+0xE3 #808080 Invalid Triangle Flag
+0xE4 #AC7CFF Slope Normal Idx 57
+0xE5 #808080 Invalid Triangle Flag
+0xE6 #8863CC Two Triangle Tile
+0xE7 #808080 Invalid Triangle Flag
+0xE8 #AC7CFF Slope Normal Idx 58
+0xE9 #808080 Invalid Triangle Flag
+0xEA #8863CC Two Triangle Tile
+0xEB #808080 Invalid Triangle Flag
+0xEC #AC7CFF Slope Normal Idx 59
+0xED #808080 Invalid Triangle Flag
+0xEE #8863CC Two Triangle Tile
+0xEF #808080 Invalid Triangle Flag
+0xF0 #AC7CFF Slope Normal Idx 60
+0xF1 #808080 Invalid Triangle Flag
+0xF2 #8863CC Two Triangle Tile
+0xF3 #808080 Invalid Triangle Flag
+0xF4 #AC7CFF Slope Normal Idx 61
+0xF5 #808080 Invalid Triangle Flag
+0xF6 #8863CC Two Triangle Tile
+0xF7 #808080 Invalid Triangle Flag
+0xF8 #AC7CFF Slope Normal Idx 62
+0xF9 #808080 Invalid Triangle Flag
+0xFA #8863CC Two Triangle Tile
+0xFB #808080 Invalid Triangle Flag
+0xFC #AC7CFF Slope Normal Idx 63
+0xFD #808080 Invalid Triangle Flag
+0xFE #8863CC Two Triangle Tile
+0xFF #808080 Invalid Triangle Flag
+0x00 #FFFFFF Normal Idx Hi 0
+0x01 #E0D4F7 Normal Idx Hi 1
+0x02 #E0D4F7 Normal Idx Hi 2
+0x03 #E0D4F7 Normal Idx Hi 3
+0x04 #E0D4F7 Normal Idx Hi 4
+0x05 #E0D4F7 Normal Idx Hi 5
+0x06 #E0D4F7 Normal Idx Hi 6
+0x07 #E0D4F7 Normal Idx Hi 7
+0x08 #E0D4F7 Normal Idx Hi 8
+0x09 #E0D4F7 Normal Idx Hi 9
+0x0A #E0D4F7 Normal Idx Hi 10
+0x0B #E0D4F7 Normal Idx Hi 11
+0x0C #E0D4F7 Normal Idx Hi 12
+0x0D #E0D4F7 Normal Idx Hi 13
+0x0E #E0D4F7 Normal Idx Hi 14
+0x0F #E0D4F7 Normal Idx Hi 15
+0x10 #E0D4F7 Normal Idx Hi 16
+0x11 #E0D4F7 Normal Idx Hi 17
+0x12 #E0D4F7 Normal Idx Hi 18
+0x13 #E0D4F7 Normal Idx Hi 19
+0x14 #E0D4F7 Normal Idx Hi 20
+0x15 #E0D4F7 Normal Idx Hi 21
+0x16 #E0D4F7 Normal Idx Hi 22
+0x17 #E0D4F7 Normal Idx Hi 23
+0x18 #E0D4F7 Normal Idx Hi 24
+0x19 #E0D4F7 Normal Idx Hi 25
+0x1A #E0D4F7 Normal Idx Hi 26
+0x1B #E0D4F7 Normal Idx Hi 27
+0x1C #E0D4F7 Normal Idx Hi 28
+0x1D #E0D4F7 Normal Idx Hi 29
+0x1E #E0D4F7 Normal Idx Hi 30
+0x1F #E0D4F7 Normal Idx Hi 31
+0x20 #E0D4F7 Normal Idx Hi 32
+0x21 #E0D4F7 Normal Idx Hi 33
+0x22 #E0D4F7 Normal Idx Hi 34
+0x23 #E0D4F7 Normal Idx Hi 35
+0x24 #E0D4F7 Normal Idx Hi 36
+0x25 #E0D4F7 Normal Idx Hi 37
+0x26 #E0D4F7 Normal Idx Hi 38
+0x27 #E0D4F7 Normal Idx Hi 39
+0x28 #E0D4F7 Normal Idx Hi 40
+0x29 #E0D4F7 Normal Idx Hi 41
+0x2A #E0D4F7 Normal Idx Hi 42
+0x2B #E0D4F7 Normal Idx Hi 43
+0x2C #E0D4F7 Normal Idx Hi 44
+0x2D #E0D4F7 Normal Idx Hi 45
+0x2E #E0D4F7 Normal Idx Hi 46
+0x2F #E0D4F7 Normal Idx Hi 47
+0x30 #E0D4F7 Normal Idx Hi 48
+0x31 #E0D4F7 Normal Idx Hi 49
+0x32 #E0D4F7 Normal Idx Hi 50
+0x33 #E0D4F7 Normal Idx Hi 51
+0x34 #E0D4F7 Normal Idx Hi 52
+0x35 #E0D4F7 Normal Idx Hi 53
+0x36 #E0D4F7 Normal Idx Hi 54
+0x37 #E0D4F7 Normal Idx Hi 55
+0x38 #E0D4F7 Normal Idx Hi 56
+0x39 #E0D4F7 Normal Idx Hi 57
+0x3A #E0D4F7 Normal Idx Hi 58
+0x3B #E0D4F7 Normal Idx Hi 59
+0x3C #E0D4F7 Normal Idx Hi 60
+0x3D #E0D4F7 Normal Idx Hi 61
+0x3E #E0D4F7 Normal Idx Hi 62
+0x3F #E0D4F7 Normal Idx Hi 63
+0x40 #E0D4F7 Normal Idx Hi 64
+0x41 #E0D4F7 Normal Idx Hi 65
+0x42 #E0D4F7 Normal Idx Hi 66
+0x43 #E0D4F7 Normal Idx Hi 67
+0x44 #E0D4F7 Normal Idx Hi 68
+0x45 #E0D4F7 Normal Idx Hi 69
+0x46 #E0D4F7 Normal Idx Hi 70
+0x47 #E0D4F7 Normal Idx Hi 71
+0x48 #E0D4F7 Normal Idx Hi 72
+0x49 #E0D4F7 Normal Idx Hi 73
+0x4A #E0D4F7 Normal Idx Hi 74
+0x4B #E0D4F7 Normal Idx Hi 75
+0x4C #E0D4F7 Normal Idx Hi 76
+0x4D #E0D4F7 Normal Idx Hi 77
+0x4E #E0D4F7 Normal Idx Hi 78
+0x4F #E0D4F7 Normal Idx Hi 79
+0x50 #E0D4F7 Normal Idx Hi 80
+0x51 #E0D4F7 Normal Idx Hi 81
+0x52 #E0D4F7 Normal Idx Hi 82
+0x53 #E0D4F7 Normal Idx Hi 83
+0x54 #E0D4F7 Normal Idx Hi 84
+0x55 #E0D4F7 Normal Idx Hi 85
+0x56 #E0D4F7 Normal Idx Hi 86
+0x57 #E0D4F7 Normal Idx Hi 87
+0x58 #E0D4F7 Normal Idx Hi 88
+0x59 #E0D4F7 Normal Idx Hi 89
+0x5A #E0D4F7 Normal Idx Hi 90
+0x5B #E0D4F7 Normal Idx Hi 91
+0x5C #E0D4F7 Normal Idx Hi 92
+0x5D #E0D4F7 Normal Idx Hi 93
+0x5E #E0D4F7 Normal Idx Hi 94
+0x5F #E0D4F7 Normal Idx Hi 95
+0x60 #E0D4F7 Normal Idx Hi 96
+0x61 #E0D4F7 Normal Idx Hi 97
+0x62 #E0D4F7 Normal Idx Hi 98
+0x63 #E0D4F7 Normal Idx Hi 99
+0x64 #E0D4F7 Normal Idx Hi 100
+0x65 #E0D4F7 Normal Idx Hi 101
+0x66 #E0D4F7 Normal Idx Hi 102
+0x67 #E0D4F7 Normal Idx Hi 103
+0x68 #E0D4F7 Normal Idx Hi 104
+0x69 #E0D4F7 Normal Idx Hi 105
+0x6A #E0D4F7 Normal Idx Hi 106
+0x6B #E0D4F7 Normal Idx Hi 107
+0x6C #E0D4F7 Normal Idx Hi 108
+0x6D #E0D4F7 Normal Idx Hi 109
+0x6E #E0D4F7 Normal Idx Hi 110
+0x6F #E0D4F7 Normal Idx Hi 111
+0x70 #E0D4F7 Normal Idx Hi 112
+0x71 #E0D4F7 Normal Idx Hi 113
+0x72 #E0D4F7 Normal Idx Hi 114
+0x73 #E0D4F7 Normal Idx Hi 115
+0x74 #E0D4F7 Normal Idx Hi 116
+0x75 #E0D4F7 Normal Idx Hi 117
+0x76 #E0D4F7 Normal Idx Hi 118
+0x77 #E0D4F7 Normal Idx Hi 119
+0x78 #E0D4F7 Normal Idx Hi 120
+0x79 #E0D4F7 Normal Idx Hi 121
+0x7A #E0D4F7 Normal Idx Hi 122
+0x7B #E0D4F7 Normal Idx Hi 123
+0x7C #E0D4F7 Normal Idx Hi 124
+0x7D #E0D4F7 Normal Idx Hi 125
+0x7E #E0D4F7 Normal Idx Hi 126
+0x7F #E0D4F7 Normal Idx Hi 127
+0x80 #E0D4F7 Normal Idx Hi 128
+0x81 #E0D4F7 Normal Idx Hi 129
+0x82 #E0D4F7 Normal Idx Hi 130
+0x83 #E0D4F7 Normal Idx Hi 131
+0x84 #E0D4F7 Normal Idx Hi 132
+0x85 #E0D4F7 Normal Idx Hi 133
+0x86 #E0D4F7 Normal Idx Hi 134
+0x87 #E0D4F7 Normal Idx Hi 135
+0x88 #E0D4F7 Normal Idx Hi 136
+0x89 #E0D4F7 Normal Idx Hi 137
+0x8A #E0D4F7 Normal Idx Hi 138
+0x8B #E0D4F7 Normal Idx Hi 139
+0x8C #E0D4F7 Normal Idx Hi 140
+0x8D #E0D4F7 Normal Idx Hi 141
+0x8E #E0D4F7 Normal Idx Hi 142
+0x8F #E0D4F7 Normal Idx Hi 143
+0x90 #E0D4F7 Normal Idx Hi 144
+0x91 #E0D4F7 Normal Idx Hi 145
+0x92 #E0D4F7 Normal Idx Hi 146
+0x93 #E0D4F7 Normal Idx Hi 147
+0x94 #E0D4F7 Normal Idx Hi 148
+0x95 #E0D4F7 Normal Idx Hi 149
+0x96 #E0D4F7 Normal Idx Hi 150
+0x97 #E0D4F7 Normal Idx Hi 151
+0x98 #E0D4F7 Normal Idx Hi 152
+0x99 #E0D4F7 Normal Idx Hi 153
+0x9A #E0D4F7 Normal Idx Hi 154
+0x9B #E0D4F7 Normal Idx Hi 155
+0x9C #E0D4F7 Normal Idx Hi 156
+0x9D #E0D4F7 Normal Idx Hi 157
+0x9E #E0D4F7 Normal Idx Hi 158
+0x9F #E0D4F7 Normal Idx Hi 159
+0xA0 #E0D4F7 Normal Idx Hi 160
+0xA1 #E0D4F7 Normal Idx Hi 161
+0xA2 #E0D4F7 Normal Idx Hi 162
+0xA3 #E0D4F7 Normal Idx Hi 163
+0xA4 #E0D4F7 Normal Idx Hi 164
+0xA5 #E0D4F7 Normal Idx Hi 165
+0xA6 #E0D4F7 Normal Idx Hi 166
+0xA7 #E0D4F7 Normal Idx Hi 167
+0xA8 #E0D4F7 Normal Idx Hi 168
+0xA9 #E0D4F7 Normal Idx Hi 169
+0xAA #E0D4F7 Normal Idx Hi 170
+0xAB #E0D4F7 Normal Idx Hi 171
+0xAC #E0D4F7 Normal Idx Hi 172
+0xAD #E0D4F7 Normal Idx Hi 173
+0xAE #E0D4F7 Normal Idx Hi 174
+0xAF #E0D4F7 Normal Idx Hi 175
+0xB0 #E0D4F7 Normal Idx Hi 176
+0xB1 #E0D4F7 Normal Idx Hi 177
+0xB2 #E0D4F7 Normal Idx Hi 178
+0xB3 #E0D4F7 Normal Idx Hi 179
+0xB4 #E0D4F7 Normal Idx Hi 180
+0xB5 #E0D4F7 Normal Idx Hi 181
+0xB6 #E0D4F7 Normal Idx Hi 182
+0xB7 #E0D4F7 Normal Idx Hi 183
+0xB8 #E0D4F7 Normal Idx Hi 184
+0xB9 #E0D4F7 Normal Idx Hi 185
+0xBA #E0D4F7 Normal Idx Hi 186
+0xBB #E0D4F7 Normal Idx Hi 187
+0xBC #E0D4F7 Normal Idx Hi 188
+0xBD #E0D4F7 Normal Idx Hi 189
+0xBE #E0D4F7 Normal Idx Hi 190
+0xBF #E0D4F7 Normal Idx Hi 191
+0xC0 #E0D4F7 Normal Idx Hi 192
+0xC1 #E0D4F7 Normal Idx Hi 193
+0xC2 #E0D4F7 Normal Idx Hi 194
+0xC3 #E0D4F7 Normal Idx Hi 195
+0xC4 #E0D4F7 Normal Idx Hi 196
+0xC5 #E0D4F7 Normal Idx Hi 197
+0xC6 #E0D4F7 Normal Idx Hi 198
+0xC7 #E0D4F7 Normal Idx Hi 199
+0xC8 #E0D4F7 Normal Idx Hi 200
+0xC9 #E0D4F7 Normal Idx Hi 201
+0xCA #E0D4F7 Normal Idx Hi 202
+0xCB #E0D4F7 Normal Idx Hi 203
+0xCC #E0D4F7 Normal Idx Hi 204
+0xCD #E0D4F7 Normal Idx Hi 205
+0xCE #E0D4F7 Normal Idx Hi 206
+0xCF #E0D4F7 Normal Idx Hi 207
+0xD0 #E0D4F7 Normal Idx Hi 208
+0xD1 #E0D4F7 Normal Idx Hi 209
+0xD2 #E0D4F7 Normal Idx Hi 210
+0xD3 #E0D4F7 Normal Idx Hi 211
+0xD4 #E0D4F7 Normal Idx Hi 212
+0xD5 #E0D4F7 Normal Idx Hi 213
+0xD6 #E0D4F7 Normal Idx Hi 214
+0xD7 #E0D4F7 Normal Idx Hi 215
+0xD8 #E0D4F7 Normal Idx Hi 216
+0xD9 #E0D4F7 Normal Idx Hi 217
+0xDA #E0D4F7 Normal Idx Hi 218
+0xDB #E0D4F7 Normal Idx Hi 219
+0xDC #E0D4F7 Normal Idx Hi 220
+0xDD #E0D4F7 Normal Idx Hi 221
+0xDE #E0D4F7 Normal Idx Hi 222
+0xDF #E0D4F7 Normal Idx Hi 223
+0xE0 #E0D4F7 Normal Idx Hi 224
+0xE1 #E0D4F7 Normal Idx Hi 225
+0xE2 #E0D4F7 Normal Idx Hi 226
+0xE3 #E0D4F7 Normal Idx Hi 227
+0xE4 #E0D4F7 Normal Idx Hi 228
+0xE5 #E0D4F7 Normal Idx Hi 229
+0xE6 #E0D4F7 Normal Idx Hi 230
+0xE7 #E0D4F7 Normal Idx Hi 231
+0xE8 #E0D4F7 Normal Idx Hi 232
+0xE9 #E0D4F7 Normal Idx Hi 233
+0xEA #E0D4F7 Normal Idx Hi 234
+0xEB #E0D4F7 Normal Idx Hi 235
+0xEC #E0D4F7 Normal Idx Hi 236
+0xED #E0D4F7 Normal Idx Hi 237
+0xEE #E0D4F7 Normal Idx Hi 238
+0xEF #E0D4F7 Normal Idx Hi 239
+0xF0 #E0D4F7 Normal Idx Hi 240
+0xF1 #E0D4F7 Normal Idx Hi 241
+0xF2 #E0D4F7 Normal Idx Hi 242
+0xF3 #E0D4F7 Normal Idx Hi 243
+0xF4 #E0D4F7 Normal Idx Hi 244
+0xF5 #E0D4F7 Normal Idx Hi 245
+0xF6 #E0D4F7 Normal Idx Hi 246
+0xF7 #E0D4F7 Normal Idx Hi 247
+0xF8 #E0D4F7 Normal Idx Hi 248
+0xF9 #E0D4F7 Normal Idx Hi 249
+0xFA #E0D4F7 Normal Idx Hi 250
+0xFB #E0D4F7 Normal Idx Hi 251
+0xFC #E0D4F7 Normal Idx Hi 252
+0xFD #E0D4F7 Normal Idx Hi 253
+0xFE #E0D4F7 Normal Idx Hi 254
+0xFF #E0D4F7 Normal Idx Hi 255
+0x00 #FFFFFF Height Idx Lo 0
+0x01 #D4E8F7 Height Idx Lo 1
+0x02 #D4E8F7 Height Idx Lo 2
+0x03 #D4E8F7 Height Idx Lo 3
+0x04 #D4E8F7 Height Idx Lo 4
+0x05 #D4E8F7 Height Idx Lo 5
+0x06 #D4E8F7 Height Idx Lo 6
+0x07 #D4E8F7 Height Idx Lo 7
+0x08 #D4E8F7 Height Idx Lo 8
+0x09 #D4E8F7 Height Idx Lo 9
+0x0A #D4E8F7 Height Idx Lo 10
+0x0B #D4E8F7 Height Idx Lo 11
+0x0C #D4E8F7 Height Idx Lo 12
+0x0D #D4E8F7 Height Idx Lo 13
+0x0E #D4E8F7 Height Idx Lo 14
+0x0F #D4E8F7 Height Idx Lo 15
+0x10 #D4E8F7 Height Idx Lo 16
+0x11 #D4E8F7 Height Idx Lo 17
+0x12 #D4E8F7 Height Idx Lo 18
+0x13 #D4E8F7 Height Idx Lo 19
+0x14 #D4E8F7 Height Idx Lo 20
+0x15 #D4E8F7 Height Idx Lo 21
+0x16 #D4E8F7 Height Idx Lo 22
+0x17 #D4E8F7 Height Idx Lo 23
+0x18 #D4E8F7 Height Idx Lo 24
+0x19 #D4E8F7 Height Idx Lo 25
+0x1A #D4E8F7 Height Idx Lo 26
+0x1B #D4E8F7 Height Idx Lo 27
+0x1C #D4E8F7 Height Idx Lo 28
+0x1D #D4E8F7 Height Idx Lo 29
+0x1E #D4E8F7 Height Idx Lo 30
+0x1F #D4E8F7 Height Idx Lo 31
+0x20 #D4E8F7 Height Idx Lo 32
+0x21 #D4E8F7 Height Idx Lo 33
+0x22 #D4E8F7 Height Idx Lo 34
+0x23 #D4E8F7 Height Idx Lo 35
+0x24 #D4E8F7 Height Idx Lo 36
+0x25 #D4E8F7 Height Idx Lo 37
+0x26 #D4E8F7 Height Idx Lo 38
+0x27 #D4E8F7 Height Idx Lo 39
+0x28 #D4E8F7 Height Idx Lo 40
+0x29 #D4E8F7 Height Idx Lo 41
+0x2A #D4E8F7 Height Idx Lo 42
+0x2B #D4E8F7 Height Idx Lo 43
+0x2C #D4E8F7 Height Idx Lo 44
+0x2D #D4E8F7 Height Idx Lo 45
+0x2E #D4E8F7 Height Idx Lo 46
+0x2F #D4E8F7 Height Idx Lo 47
+0x30 #D4E8F7 Height Idx Lo 48
+0x31 #D4E8F7 Height Idx Lo 49
+0x32 #D4E8F7 Height Idx Lo 50
+0x33 #D4E8F7 Height Idx Lo 51
+0x34 #D4E8F7 Height Idx Lo 52
+0x35 #D4E8F7 Height Idx Lo 53
+0x36 #D4E8F7 Height Idx Lo 54
+0x37 #D4E8F7 Height Idx Lo 55
+0x38 #D4E8F7 Height Idx Lo 56
+0x39 #D4E8F7 Height Idx Lo 57
+0x3A #D4E8F7 Height Idx Lo 58
+0x3B #D4E8F7 Height Idx Lo 59
+0x3C #D4E8F7 Height Idx Lo 60
+0x3D #D4E8F7 Height Idx Lo 61
+0x3E #D4E8F7 Height Idx Lo 62
+0x3F #D4E8F7 Height Idx Lo 63
+0x40 #D4E8F7 Height Idx Lo 64
+0x41 #D4E8F7 Height Idx Lo 65
+0x42 #D4E8F7 Height Idx Lo 66
+0x43 #D4E8F7 Height Idx Lo 67
+0x44 #D4E8F7 Height Idx Lo 68
+0x45 #D4E8F7 Height Idx Lo 69
+0x46 #D4E8F7 Height Idx Lo 70
+0x47 #D4E8F7 Height Idx Lo 71
+0x48 #D4E8F7 Height Idx Lo 72
+0x49 #D4E8F7 Height Idx Lo 73
+0x4A #D4E8F7 Height Idx Lo 74
+0x4B #D4E8F7 Height Idx Lo 75
+0x4C #D4E8F7 Height Idx Lo 76
+0x4D #D4E8F7 Height Idx Lo 77
+0x4E #D4E8F7 Height Idx Lo 78
+0x4F #D4E8F7 Height Idx Lo 79
+0x50 #D4E8F7 Height Idx Lo 80
+0x51 #D4E8F7 Height Idx Lo 81
+0x52 #D4E8F7 Height Idx Lo 82
+0x53 #D4E8F7 Height Idx Lo 83
+0x54 #D4E8F7 Height Idx Lo 84
+0x55 #D4E8F7 Height Idx Lo 85
+0x56 #D4E8F7 Height Idx Lo 86
+0x57 #D4E8F7 Height Idx Lo 87
+0x58 #D4E8F7 Height Idx Lo 88
+0x59 #D4E8F7 Height Idx Lo 89
+0x5A #D4E8F7 Height Idx Lo 90
+0x5B #D4E8F7 Height Idx Lo 91
+0x5C #D4E8F7 Height Idx Lo 92
+0x5D #D4E8F7 Height Idx Lo 93
+0x5E #D4E8F7 Height Idx Lo 94
+0x5F #D4E8F7 Height Idx Lo 95
+0x60 #D4E8F7 Height Idx Lo 96
+0x61 #D4E8F7 Height Idx Lo 97
+0x62 #D4E8F7 Height Idx Lo 98
+0x63 #D4E8F7 Height Idx Lo 99
+0x64 #D4E8F7 Height Idx Lo 100
+0x65 #D4E8F7 Height Idx Lo 101
+0x66 #D4E8F7 Height Idx Lo 102
+0x67 #D4E8F7 Height Idx Lo 103
+0x68 #D4E8F7 Height Idx Lo 104
+0x69 #D4E8F7 Height Idx Lo 105
+0x6A #D4E8F7 Height Idx Lo 106
+0x6B #D4E8F7 Height Idx Lo 107
+0x6C #D4E8F7 Height Idx Lo 108
+0x6D #D4E8F7 Height Idx Lo 109
+0x6E #D4E8F7 Height Idx Lo 110
+0x6F #D4E8F7 Height Idx Lo 111
+0x70 #D4E8F7 Height Idx Lo 112
+0x71 #D4E8F7 Height Idx Lo 113
+0x72 #D4E8F7 Height Idx Lo 114
+0x73 #D4E8F7 Height Idx Lo 115
+0x74 #D4E8F7 Height Idx Lo 116
+0x75 #D4E8F7 Height Idx Lo 117
+0x76 #D4E8F7 Height Idx Lo 118
+0x77 #D4E8F7 Height Idx Lo 119
+0x78 #D4E8F7 Height Idx Lo 120
+0x79 #D4E8F7 Height Idx Lo 121
+0x7A #D4E8F7 Height Idx Lo 122
+0x7B #D4E8F7 Height Idx Lo 123
+0x7C #D4E8F7 Height Idx Lo 124
+0x7D #D4E8F7 Height Idx Lo 125
+0x7E #D4E8F7 Height Idx Lo 126
+0x7F #D4E8F7 Height Idx Lo 127
+0x80 #D4E8F7 Height Idx Lo 128
+0x81 #D4E8F7 Height Idx Lo 129
+0x82 #D4E8F7 Height Idx Lo 130
+0x83 #D4E8F7 Height Idx Lo 131
+0x84 #D4E8F7 Height Idx Lo 132
+0x85 #D4E8F7 Height Idx Lo 133
+0x86 #D4E8F7 Height Idx Lo 134
+0x87 #D4E8F7 Height Idx Lo 135
+0x88 #D4E8F7 Height Idx Lo 136
+0x89 #D4E8F7 Height Idx Lo 137
+0x8A #D4E8F7 Height Idx Lo 138
+0x8B #D4E8F7 Height Idx Lo 139
+0x8C #D4E8F7 Height Idx Lo 140
+0x8D #D4E8F7 Height Idx Lo 141
+0x8E #D4E8F7 Height Idx Lo 142
+0x8F #D4E8F7 Height Idx Lo 143
+0x90 #D4E8F7 Height Idx Lo 144
+0x91 #D4E8F7 Height Idx Lo 145
+0x92 #D4E8F7 Height Idx Lo 146
+0x93 #D4E8F7 Height Idx Lo 147
+0x94 #D4E8F7 Height Idx Lo 148
+0x95 #D4E8F7 Height Idx Lo 149
+0x96 #D4E8F7 Height Idx Lo 150
+0x97 #D4E8F7 Height Idx Lo 151
+0x98 #D4E8F7 Height Idx Lo 152
+0x99 #D4E8F7 Height Idx Lo 153
+0x9A #D4E8F7 Height Idx Lo 154
+0x9B #D4E8F7 Height Idx Lo 155
+0x9C #D4E8F7 Height Idx Lo 156
+0x9D #D4E8F7 Height Idx Lo 157
+0x9E #D4E8F7 Height Idx Lo 158
+0x9F #D4E8F7 Height Idx Lo 159
+0xA0 #D4E8F7 Height Idx Lo 160
+0xA1 #D4E8F7 Height Idx Lo 161
+0xA2 #D4E8F7 Height Idx Lo 162
+0xA3 #D4E8F7 Height Idx Lo 163
+0xA4 #D4E8F7 Height Idx Lo 164
+0xA5 #D4E8F7 Height Idx Lo 165
+0xA6 #D4E8F7 Height Idx Lo 166
+0xA7 #D4E8F7 Height Idx Lo 167
+0xA8 #D4E8F7 Height Idx Lo 168
+0xA9 #D4E8F7 Height Idx Lo 169
+0xAA #D4E8F7 Height Idx Lo 170
+0xAB #D4E8F7 Height Idx Lo 171
+0xAC #D4E8F7 Height Idx Lo 172
+0xAD #D4E8F7 Height Idx Lo 173
+0xAE #D4E8F7 Height Idx Lo 174
+0xAF #D4E8F7 Height Idx Lo 175
+0xB0 #D4E8F7 Height Idx Lo 176
+0xB1 #D4E8F7 Height Idx Lo 177
+0xB2 #D4E8F7 Height Idx Lo 178
+0xB3 #D4E8F7 Height Idx Lo 179
+0xB4 #D4E8F7 Height Idx Lo 180
+0xB5 #D4E8F7 Height Idx Lo 181
+0xB6 #D4E8F7 Height Idx Lo 182
+0xB7 #D4E8F7 Height Idx Lo 183
+0xB8 #D4E8F7 Height Idx Lo 184
+0xB9 #D4E8F7 Height Idx Lo 185
+0xBA #D4E8F7 Height Idx Lo 186
+0xBB #D4E8F7 Height Idx Lo 187
+0xBC #D4E8F7 Height Idx Lo 188
+0xBD #D4E8F7 Height Idx Lo 189
+0xBE #D4E8F7 Height Idx Lo 190
+0xBF #D4E8F7 Height Idx Lo 191
+0xC0 #D4E8F7 Height Idx Lo 192
+0xC1 #D4E8F7 Height Idx Lo 193
+0xC2 #D4E8F7 Height Idx Lo 194
+0xC3 #D4E8F7 Height Idx Lo 195
+0xC4 #D4E8F7 Height Idx Lo 196
+0xC5 #D4E8F7 Height Idx Lo 197
+0xC6 #D4E8F7 Height Idx Lo 198
+0xC7 #D4E8F7 Height Idx Lo 199
+0xC8 #D4E8F7 Height Idx Lo 200
+0xC9 #D4E8F7 Height Idx Lo 201
+0xCA #D4E8F7 Height Idx Lo 202
+0xCB #D4E8F7 Height Idx Lo 203
+0xCC #D4E8F7 Height Idx Lo 204
+0xCD #D4E8F7 Height Idx Lo 205
+0xCE #D4E8F7 Height Idx Lo 206
+0xCF #D4E8F7 Height Idx Lo 207
+0xD0 #D4E8F7 Height Idx Lo 208
+0xD1 #D4E8F7 Height Idx Lo 209
+0xD2 #D4E8F7 Height Idx Lo 210
+0xD3 #D4E8F7 Height Idx Lo 211
+0xD4 #D4E8F7 Height Idx Lo 212
+0xD5 #D4E8F7 Height Idx Lo 213
+0xD6 #D4E8F7 Height Idx Lo 214
+0xD7 #D4E8F7 Height Idx Lo 215
+0xD8 #D4E8F7 Height Idx Lo 216
+0xD9 #D4E8F7 Height Idx Lo 217
+0xDA #D4E8F7 Height Idx Lo 218
+0xDB #D4E8F7 Height Idx Lo 219
+0xDC #D4E8F7 Height Idx Lo 220
+0xDD #D4E8F7 Height Idx Lo 221
+0xDE #D4E8F7 Height Idx Lo 222
+0xDF #D4E8F7 Height Idx Lo 223
+0xE0 #D4E8F7 Height Idx Lo 224
+0xE1 #D4E8F7 Height Idx Lo 225
+0xE2 #D4E8F7 Height Idx Lo 226
+0xE3 #D4E8F7 Height Idx Lo 227
+0xE4 #D4E8F7 Height Idx Lo 228
+0xE5 #D4E8F7 Height Idx Lo 229
+0xE6 #D4E8F7 Height Idx Lo 230
+0xE7 #D4E8F7 Height Idx Lo 231
+0xE8 #D4E8F7 Height Idx Lo 232
+0xE9 #D4E8F7 Height Idx Lo 233
+0xEA #D4E8F7 Height Idx Lo 234
+0xEB #D4E8F7 Height Idx Lo 235
+0xEC #D4E8F7 Height Idx Lo 236
+0xED #D4E8F7 Height Idx Lo 237
+0xEE #D4E8F7 Height Idx Lo 238
+0xEF #D4E8F7 Height Idx Lo 239
+0xF0 #D4E8F7 Height Idx Lo 240
+0xF1 #D4E8F7 Height Idx Lo 241
+0xF2 #D4E8F7 Height Idx Lo 242
+0xF3 #D4E8F7 Height Idx Lo 243
+0xF4 #D4E8F7 Height Idx Lo 244
+0xF5 #D4E8F7 Height Idx Lo 245
+0xF6 #D4E8F7 Height Idx Lo 246
+0xF7 #D4E8F7 Height Idx Lo 247
+0xF8 #D4E8F7 Height Idx Lo 248
+0xF9 #D4E8F7 Height Idx Lo 249
+0xFA #D4E8F7 Height Idx Lo 250
+0xFB #D4E8F7 Height Idx Lo 251
+0xFC #D4E8F7 Height Idx Lo 252
+0xFD #D4E8F7 Height Idx Lo 253
+0xFE #D4E8F7 Height Idx Lo 254
+0xFF #D4E8F7 Height Idx Lo 255
+0x00 #FFFFFF Height Idx Hi 0
+0x01 #D4E8F7 Height Idx Hi 1
+0x02 #D4E8F7 Height Idx Hi 2
+0x03 #D4E8F7 Height Idx Hi 3
+0x04 #D4E8F7 Height Idx Hi 4
+0x05 #D4E8F7 Height Idx Hi 5
+0x06 #D4E8F7 Height Idx Hi 6
+0x07 #D4E8F7 Height Idx Hi 7
+0x08 #D4E8F7 Height Idx Hi 8
+0x09 #D4E8F7 Height Idx Hi 9
+0x0A #D4E8F7 Height Idx Hi 10
+0x0B #D4E8F7 Height Idx Hi 11
+0x0C #D4E8F7 Height Idx Hi 12
+0x0D #D4E8F7 Height Idx Hi 13
+0x0E #D4E8F7 Height Idx Hi 14
+0x0F #D4E8F7 Height Idx Hi 15
+0x10 #D4E8F7 Height Idx Hi 16
+0x11 #D4E8F7 Height Idx Hi 17
+0x12 #D4E8F7 Height Idx Hi 18
+0x13 #D4E8F7 Height Idx Hi 19
+0x14 #D4E8F7 Height Idx Hi 20
+0x15 #D4E8F7 Height Idx Hi 21
+0x16 #D4E8F7 Height Idx Hi 22
+0x17 #D4E8F7 Height Idx Hi 23
+0x18 #D4E8F7 Height Idx Hi 24
+0x19 #D4E8F7 Height Idx Hi 25
+0x1A #D4E8F7 Height Idx Hi 26
+0x1B #D4E8F7 Height Idx Hi 27
+0x1C #D4E8F7 Height Idx Hi 28
+0x1D #D4E8F7 Height Idx Hi 29
+0x1E #D4E8F7 Height Idx Hi 30
+0x1F #D4E8F7 Height Idx Hi 31
+0x20 #D4E8F7 Height Idx Hi 32
+0x21 #D4E8F7 Height Idx Hi 33
+0x22 #D4E8F7 Height Idx Hi 34
+0x23 #D4E8F7 Height Idx Hi 35
+0x24 #D4E8F7 Height Idx Hi 36
+0x25 #D4E8F7 Height Idx Hi 37
+0x26 #D4E8F7 Height Idx Hi 38
+0x27 #D4E8F7 Height Idx Hi 39
+0x28 #D4E8F7 Height Idx Hi 40
+0x29 #D4E8F7 Height Idx Hi 41
+0x2A #D4E8F7 Height Idx Hi 42
+0x2B #D4E8F7 Height Idx Hi 43
+0x2C #D4E8F7 Height Idx Hi 44
+0x2D #D4E8F7 Height Idx Hi 45
+0x2E #D4E8F7 Height Idx Hi 46
+0x2F #D4E8F7 Height Idx Hi 47
+0x30 #D4E8F7 Height Idx Hi 48
+0x31 #D4E8F7 Height Idx Hi 49
+0x32 #D4E8F7 Height Idx Hi 50
+0x33 #D4E8F7 Height Idx Hi 51
+0x34 #D4E8F7 Height Idx Hi 52
+0x35 #D4E8F7 Height Idx Hi 53
+0x36 #D4E8F7 Height Idx Hi 54
+0x37 #D4E8F7 Height Idx Hi 55
+0x38 #D4E8F7 Height Idx Hi 56
+0x39 #D4E8F7 Height Idx Hi 57
+0x3A #D4E8F7 Height Idx Hi 58
+0x3B #D4E8F7 Height Idx Hi 59
+0x3C #D4E8F7 Height Idx Hi 60
+0x3D #D4E8F7 Height Idx Hi 61
+0x3E #D4E8F7 Height Idx Hi 62
+0x3F #D4E8F7 Height Idx Hi 63
+0x40 #D4E8F7 Height Idx Hi 64
+0x41 #D4E8F7 Height Idx Hi 65
+0x42 #D4E8F7 Height Idx Hi 66
+0x43 #D4E8F7 Height Idx Hi 67
+0x44 #D4E8F7 Height Idx Hi 68
+0x45 #D4E8F7 Height Idx Hi 69
+0x46 #D4E8F7 Height Idx Hi 70
+0x47 #D4E8F7 Height Idx Hi 71
+0x48 #D4E8F7 Height Idx Hi 72
+0x49 #D4E8F7 Height Idx Hi 73
+0x4A #D4E8F7 Height Idx Hi 74
+0x4B #D4E8F7 Height Idx Hi 75
+0x4C #D4E8F7 Height Idx Hi 76
+0x4D #D4E8F7 Height Idx Hi 77
+0x4E #D4E8F7 Height Idx Hi 78
+0x4F #D4E8F7 Height Idx Hi 79
+0x50 #D4E8F7 Height Idx Hi 80
+0x51 #D4E8F7 Height Idx Hi 81
+0x52 #D4E8F7 Height Idx Hi 82
+0x53 #D4E8F7 Height Idx Hi 83
+0x54 #D4E8F7 Height Idx Hi 84
+0x55 #D4E8F7 Height Idx Hi 85
+0x56 #D4E8F7 Height Idx Hi 86
+0x57 #D4E8F7 Height Idx Hi 87
+0x58 #D4E8F7 Height Idx Hi 88
+0x59 #D4E8F7 Height Idx Hi 89
+0x5A #D4E8F7 Height Idx Hi 90
+0x5B #D4E8F7 Height Idx Hi 91
+0x5C #D4E8F7 Height Idx Hi 92
+0x5D #D4E8F7 Height Idx Hi 93
+0x5E #D4E8F7 Height Idx Hi 94
+0x5F #D4E8F7 Height Idx Hi 95
+0x60 #D4E8F7 Height Idx Hi 96
+0x61 #D4E8F7 Height Idx Hi 97
+0x62 #D4E8F7 Height Idx Hi 98
+0x63 #D4E8F7 Height Idx Hi 99
+0x64 #D4E8F7 Height Idx Hi 100
+0x65 #D4E8F7 Height Idx Hi 101
+0x66 #D4E8F7 Height Idx Hi 102
+0x67 #D4E8F7 Height Idx Hi 103
+0x68 #D4E8F7 Height Idx Hi 104
+0x69 #D4E8F7 Height Idx Hi 105
+0x6A #D4E8F7 Height Idx Hi 106
+0x6B #D4E8F7 Height Idx Hi 107
+0x6C #D4E8F7 Height Idx Hi 108
+0x6D #D4E8F7 Height Idx Hi 109
+0x6E #D4E8F7 Height Idx Hi 110
+0x6F #D4E8F7 Height Idx Hi 111
+0x70 #D4E8F7 Height Idx Hi 112
+0x71 #D4E8F7 Height Idx Hi 113
+0x72 #D4E8F7 Height Idx Hi 114
+0x73 #D4E8F7 Height Idx Hi 115
+0x74 #D4E8F7 Height Idx Hi 116
+0x75 #D4E8F7 Height Idx Hi 117
+0x76 #D4E8F7 Height Idx Hi 118
+0x77 #D4E8F7 Height Idx Hi 119
+0x78 #D4E8F7 Height Idx Hi 120
+0x79 #D4E8F7 Height Idx Hi 121
+0x7A #D4E8F7 Height Idx Hi 122
+0x7B #D4E8F7 Height Idx Hi 123
+0x7C #D4E8F7 Height Idx Hi 124
+0x7D #D4E8F7 Height Idx Hi 125
+0x7E #D4E8F7 Height Idx Hi 126
+0x7F #D4E8F7 Height Idx Hi 127
+0x80 #D4E8F7 Height Idx Hi 128
+0x81 #D4E8F7 Height Idx Hi 129
+0x82 #D4E8F7 Height Idx Hi 130
+0x83 #D4E8F7 Height Idx Hi 131
+0x84 #D4E8F7 Height Idx Hi 132
+0x85 #D4E8F7 Height Idx Hi 133
+0x86 #D4E8F7 Height Idx Hi 134
+0x87 #D4E8F7 Height Idx Hi 135
+0x88 #D4E8F7 Height Idx Hi 136
+0x89 #D4E8F7 Height Idx Hi 137
+0x8A #D4E8F7 Height Idx Hi 138
+0x8B #D4E8F7 Height Idx Hi 139
+0x8C #D4E8F7 Height Idx Hi 140
+0x8D #D4E8F7 Height Idx Hi 141
+0x8E #D4E8F7 Height Idx Hi 142
+0x8F #D4E8F7 Height Idx Hi 143
+0x90 #D4E8F7 Height Idx Hi 144
+0x91 #D4E8F7 Height Idx Hi 145
+0x92 #D4E8F7 Height Idx Hi 146
+0x93 #D4E8F7 Height Idx Hi 147
+0x94 #D4E8F7 Height Idx Hi 148
+0x95 #D4E8F7 Height Idx Hi 149
+0x96 #D4E8F7 Height Idx Hi 150
+0x97 #D4E8F7 Height Idx Hi 151
+0x98 #D4E8F7 Height Idx Hi 152
+0x99 #D4E8F7 Height Idx Hi 153
+0x9A #D4E8F7 Height Idx Hi 154
+0x9B #D4E8F7 Height Idx Hi 155
+0x9C #D4E8F7 Height Idx Hi 156
+0x9D #D4E8F7 Height Idx Hi 157
+0x9E #D4E8F7 Height Idx Hi 158
+0x9F #D4E8F7 Height Idx Hi 159
+0xA0 #D4E8F7 Height Idx Hi 160
+0xA1 #D4E8F7 Height Idx Hi 161
+0xA2 #D4E8F7 Height Idx Hi 162
+0xA3 #D4E8F7 Height Idx Hi 163
+0xA4 #D4E8F7 Height Idx Hi 164
+0xA5 #D4E8F7 Height Idx Hi 165
+0xA6 #D4E8F7 Height Idx Hi 166
+0xA7 #D4E8F7 Height Idx Hi 167
+0xA8 #D4E8F7 Height Idx Hi 168
+0xA9 #D4E8F7 Height Idx Hi 169
+0xAA #D4E8F7 Height Idx Hi 170
+0xAB #D4E8F7 Height Idx Hi 171
+0xAC #D4E8F7 Height Idx Hi 172
+0xAD #D4E8F7 Height Idx Hi 173
+0xAE #D4E8F7 Height Idx Hi 174
+0xAF #D4E8F7 Height Idx Hi 175
+0xB0 #D4E8F7 Height Idx Hi 176
+0xB1 #D4E8F7 Height Idx Hi 177
+0xB2 #D4E8F7 Height Idx Hi 178
+0xB3 #D4E8F7 Height Idx Hi 179
+0xB4 #D4E8F7 Height Idx Hi 180
+0xB5 #D4E8F7 Height Idx Hi 181
+0xB6 #D4E8F7 Height Idx Hi 182
+0xB7 #D4E8F7 Height Idx Hi 183
+0xB8 #D4E8F7 Height Idx Hi 184
+0xB9 #D4E8F7 Height Idx Hi 185
+0xBA #D4E8F7 Height Idx Hi 186
+0xBB #D4E8F7 Height Idx Hi 187
+0xBC #D4E8F7 Height Idx Hi 188
+0xBD #D4E8F7 Height Idx Hi 189
+0xBE #D4E8F7 Height Idx Hi 190
+0xBF #D4E8F7 Height Idx Hi 191
+0xC0 #D4E8F7 Height Idx Hi 192
+0xC1 #D4E8F7 Height Idx Hi 193
+0xC2 #D4E8F7 Height Idx Hi 194
+0xC3 #D4E8F7 Height Idx Hi 195
+0xC4 #D4E8F7 Height Idx Hi 196
+0xC5 #D4E8F7 Height Idx Hi 197
+0xC6 #D4E8F7 Height Idx Hi 198
+0xC7 #D4E8F7 Height Idx Hi 199
+0xC8 #D4E8F7 Height Idx Hi 200
+0xC9 #D4E8F7 Height Idx Hi 201
+0xCA #D4E8F7 Height Idx Hi 202
+0xCB #D4E8F7 Height Idx Hi 203
+0xCC #D4E8F7 Height Idx Hi 204
+0xCD #D4E8F7 Height Idx Hi 205
+0xCE #D4E8F7 Height Idx Hi 206
+0xCF #D4E8F7 Height Idx Hi 207
+0xD0 #D4E8F7 Height Idx Hi 208
+0xD1 #D4E8F7 Height Idx Hi 209
+0xD2 #D4E8F7 Height Idx Hi 210
+0xD3 #D4E8F7 Height Idx Hi 211
+0xD4 #D4E8F7 Height Idx Hi 212
+0xD5 #D4E8F7 Height Idx Hi 213
+0xD6 #D4E8F7 Height Idx Hi 214
+0xD7 #D4E8F7 Height Idx Hi 215
+0xD8 #D4E8F7 Height Idx Hi 216
+0xD9 #D4E8F7 Height Idx Hi 217
+0xDA #D4E8F7 Height Idx Hi 218
+0xDB #D4E8F7 Height Idx Hi 219
+0xDC #D4E8F7 Height Idx Hi 220
+0xDD #D4E8F7 Height Idx Hi 221
+0xDE #D4E8F7 Height Idx Hi 222
+0xDF #D4E8F7 Height Idx Hi 223
+0xE0 #D4E8F7 Height Idx Hi 224
+0xE1 #D4E8F7 Height Idx Hi 225
+0xE2 #D4E8F7 Height Idx Hi 226
+0xE3 #D4E8F7 Height Idx Hi 227
+0xE4 #D4E8F7 Height Idx Hi 228
+0xE5 #D4E8F7 Height Idx Hi 229
+0xE6 #D4E8F7 Height Idx Hi 230
+0xE7 #D4E8F7 Height Idx Hi 231
+0xE8 #D4E8F7 Height Idx Hi 232
+0xE9 #D4E8F7 Height Idx Hi 233
+0xEA #D4E8F7 Height Idx Hi 234
+0xEB #D4E8F7 Height Idx Hi 235
+0xEC #D4E8F7 Height Idx Hi 236
+0xED #D4E8F7 Height Idx Hi 237
+0xEE #D4E8F7 Height Idx Hi 238
+0xEF #D4E8F7 Height Idx Hi 239
+0xF0 #D4E8F7 Height Idx Hi 240
+0xF1 #D4E8F7 Height Idx Hi 241
+0xF2 #D4E8F7 Height Idx Hi 242
+0xF3 #D4E8F7 Height Idx Hi 243
+0xF4 #D4E8F7 Height Idx Hi 244
+0xF5 #D4E8F7 Height Idx Hi 245
+0xF6 #D4E8F7 Height Idx Hi 246
+0xF7 #D4E8F7 Height Idx Hi 247
+0xF8 #D4E8F7 Height Idx Hi 248
+0xF9 #D4E8F7 Height Idx Hi 249
+0xFA #D4E8F7 Height Idx Hi 250
+0xFB #D4E8F7 Height Idx Hi 251
+0xFC #D4E8F7 Height Idx Hi 252
+0xFD #D4E8F7 Height Idx Hi 253
+0xFE #D4E8F7 Height Idx Hi 254
+0xFF #D4E8F7 Height Idx Hi 255
+0x00 #FFFFFF Walkable (Normal)
+0x01 #E8E8E8 Unused
+0x02 #E7F0DE Seasonal Ground 1 (Winter Snow)
+0x03 #C49A6C Dirt Ground
+0x04 #009900 Tall Grass
+0x05 #7FB069 Snow Region Grass
+0x06 #006600 Dark Grass (Double Wild)
+0x07 #5C8A5C Snow Region Dark Grass
+0x08 #00B050 Very Tall Grass
+0x09 #008040 Very Tall Grass (Strong)
+0x0A #877454 Cave Floor (Encounter)
+0x0B #FFE599 Desert Sand
+0x0C #E6C97A Deep Sand (Sinking)
+0x0D #E8E8E8 Unused
+0x0E #D8D8D8 Snow
+0x0F #9E9E9E Deep Snow (No Bike)
+0x10 #7FFFD4 Reflective Ice (Slide)
+0x11 #F5F5F5 Walkable 2
+0x12 #E8E8E8 Unused
+0x13 #F5F5F5 Walkable 3
+0x14 #99FFFF Puddle
+0x15 #99E6E6 Puddle No Reflect (B2W2)
+0x16 #F9E0B6 Indoor Floor (Encounter)
+0x17 #A2B8CE Shallow Water
+0x18 #00FFFF Ice (Slide)
+0x19 #FFFF99 Beach Sand
+0x1A #E8E8E8 Unused
+0x1B #59F7BD Mirror Floor
+0x1C #67604A Marsh
+0x1D #6D4C41 Strength Boulder Hole
+0x1E #DCE8D4 Seasonal Ground 2
+0x1F #90EE90 Lawn
+0x20 #FF9900 Bridge (Bird Shadow Encounters)
+0x21 #33AA33 Evergreen Grass
+0x22 #1E7A1E Evergreen Dark Grass
+0x23 #FFD966 Desert 2 (Encounter)
+0x24 #7A9E4E Hidden Grotto Path (B2W2)
+0x25 #C9A96A Fallen Leaves (B2W2)
+0x26 #FFF8DC Walkable Light (B2W2)
+0x27 #E88888 Blocked Light (B2W2)
+0x28 #D1C4E9 Free Move Switch Light (B2W2)
+0x29 #E8E8E8 Unused
+0x2A #E8E8E8 Unused
+0x2B #E8E8E8 Unused
+0x2C #E8E8E8 Unused
+0x2D #E8E8E8 Unused
+0x2E #E8E8E8 Unused
+0x2F #E8E8E8 Unused
+0x30 #FFF176 Electric Floor (Sparks)
+0x31 #E8E8E8 Unused
+0x32 #FFD54F Electric Rock (Pushable)
+0x33 #CE93D8 Bobbing Floor (No Dash)
+0x34 #E8E8E8 Unused
+0x35 #E8E8E8 Unused
+0x36 #E8E8E8 Unused
+0x37 #E8E8E8 Unused
+0x38 #E8E8E8 Unused
+0x39 #E8E8E8 Unused
+0x3A #E8E8E8 Unused
+0x3B #E8E8E8 Unused
+0x3C #E8E8E8 Unused
+0x3D #0099FF Fresh Water (Surf)
+0x3E #4DA6FF Fresh Water (Seasonal)
+0x3F #0066FF Sea (Surf)
+0x40 #8FE1EC Waterfall
+0x41 #C2E0F0 Shore (Surf Start)
+0x42 #4A4535 Deep Marsh
+0x43 #003399 Deep Sea
+0x44 #C2E0F0 Shore 2
+0x45 #E8E8E8 Unused
+0x46 #E8E8E8 Unused
+0x47 #E8E8E8 Unused
+0x48 #E8E8E8 Unused
+0x49 #E8E8E8 Unused
+0x4A #E8E8E8 Unused
+0x4B #E8E8E8 Unused
+0x4C #E8E8E8 Unused
+0x4D #E8E8E8 Unused
+0x4E #E8E8E8 Unused
+0x4F #E8E8E8 Unused
+0x50 #E8E8E8 Unused
+0x51 #FF0000 No Move Right
+0x52 #FF0000 No Move Left
+0x53 #FF0000 No Move Up
+0x54 #FF0000 No Move Down
+0x55 #FF0000 No Move Right+Up
+0x56 #FF0000 No Move Left+Up
+0x57 #FF0000 No Move Right+Down
+0x58 #FF0000 No Move Left+Down
+0x59 #E8E8E8 Unused
+0x5A #E8E8E8 Unused
+0x5B #E8E8E8 Unused
+0x5C #E8E8E8 Unused
+0x5D #E8E8E8 Unused
+0x5E #E8E8E8 Unused
+0x5F #E8E8E8 Unused
+0x60 #E8E8E8 Unused
+0x61 #E8E8E8 Unused
+0x62 #E8E8E8 Unused
+0x63 #E8E8E8 Unused
+0x64 #E8E8E8 Unused
+0x65 #E8E8E8 Unused
+0x66 #E8E8E8 Unused
+0x67 #E8E8E8 Unused
+0x68 #E8E8E8 Unused
+0x69 #E8E8E8 Unused
+0x6A #E8E8E8 Unused
+0x6B #E8E8E8 Unused
+0x6C #E8E8E8 Unused
+0x6D #E8E8E8 Unused
+0x6E #E8E8E8 Unused
+0x6F #E8E8E8 Unused
+0x70 #E8E8E8 Unused
+0x71 #E8E8E8 Unused
+0x72 #8A4B08 Ledge Jump Right
+0x73 #8A4B08 Ledge Jump Left
+0x74 #8A4B08 Ledge Jump Up
+0x75 #8A4B08 Ledge Jump Down
+0x76 #FF00DC Conveyor Right
+0x77 #FF00DC Conveyor Left
+0x78 #FF00DC Conveyor Up
+0x79 #FF00DC Conveyor Down
+0x7A #E8E8E8 Unused
+0x7B #E8E8E8 Unused
+0x7C #D4A017 Quicksand
+0x7D #E8E8E8 Unused
+0x7E #E8E8E8 Unused
+0x7F #E8E8E8 Unused
+0x80 #E8E8E8 Unused
+0x81 #E8E8E8 Unused
+0x82 #E8E8E8 Unused
+0x83 #E8E8E8 Unused
+0x84 #E8E8E8 Unused
+0x85 #E8E8E8 Unused
+0x86 #E8E8E8 Unused
+0x87 #E8E8E8 Unused
+0x88 #E8E8E8 Unused
+0x89 #E8E8E8 Unused
+0x8A #E8E8E8 Unused
+0x8B #E8E8E8 Unused
+0x8C #E8E8E8 Unused
+0x8D #E8E8E8 Unused
+0x8E #E8E8E8 Unused
+0x8F #E8E8E8 Unused
+0x90 #E8E8E8 Unused
+0x91 #E8E8E8 Unused
+0x92 #E8E8E8 Unused
+0x93 #E8E8E8 Unused
+0x94 #4A86E8 Sea Current Right
+0x95 #4A86E8 Sea Current Left
+0x96 #4A86E8 Sea Current Up
+0x97 #4A86E8 Sea Current Down
+0x98 #E8E8E8 Unused
+0x99 #E8E8E8 Unused
+0x9A #E8E8E8 Unused
+0x9B #E8E8E8 Unused
+0x9C #E8E8E8 Unused
+0x9D #E8E8E8 Unused
+0x9E #E8E8E8 Unused
+0x9F #E8E8E8 Unused
+0xA0 #FF77AA Slide Down Slope
+0xA1 #FF77AA Slide Down Slope (Encounter)
+0xA2 #E8E8E8 Unused
+0xA3 #B39DDB Free Move Switch
+0xA4 #81D4FA Ice Slide Spin Right
+0xA5 #81D4FA Ice Slide Spin Left
+0xA6 #4FC3F7 Ice Jump Right
+0xA7 #4FC3F7 Ice Jump Left
+0xA8 #29B6F6 Ice Turn Right
+0xA9 #E8E8E8 Unused
+0xAA #E8E8E8 Unused
+0xAB #E8E8E8 Unused
+0xAC #E8E8E8 Unused
+0xAD #E8E8E8 Unused
+0xAE #E8E8E8 Unused
+0xAF #E8E8E8 Unused
+0xB0 #26C6DA Dive Auto Surface
+0xB1 #E8E8E8 Unused
+0xB2 #E8E8E8 Unused
+0xB3 #E8E8E8 Unused
+0xB4 #E8E8E8 Unused
+0xB5 #E8E8E8 Unused
+0xB6 #E8E8E8 Unused
+0xB7 #E8E8E8 Unused
+0xB8 #E8E8E8 Unused
+0xB9 #E8E8E8 Unused
+0xBA #E8E8E8 Unused
+0xBB #E8E8E8 Unused
+0xBC #E8E8E8 Unused
+0xBD #E8E8E8 Unused
+0xBE #8D6E63 Wetland Moor (Fall Off Edge)
+0xBF #A1887F Wetland Moor Stairs
+0xC0 #E8E8E8 Unused
+0xC1 #E8E8E8 Unused
+0xC2 #E8E8E8 Unused
+0xC3 #E8E8E8 Unused
+0xC4 #E8E8E8 Unused
+0xC5 #E8E8E8 Unused
+0xC6 #E8E8E8 Unused
+0xC7 #E8E8E8 Unused
+0xC8 #E8E8E8 Unused
+0xC9 #E8E8E8 Unused
+0xCA #E8E8E8 Unused
+0xCB #E8E8E8 Unused
+0xCC #E8E8E8 Unused
+0xCD #E8E8E8 Unused
+0xCE #E8E8E8 Unused
+0xCF #E8E8E8 Unused
+0xD0 #E8E8E8 Unused
+0xD1 #E8E8E8 Unused
+0xD2 #E8E8E8 Unused
+0xD3 #E8E8E8 Unused
+0xD4 #CECA5F Counter (Talk Over)
+0xD5 #E8E8E8 Unused
+0xD6 #C0B060 PC
+0xD7 #C0B060 Town Map
+0xD8 #C0B060 TV
+0xD9 #CEA95F Small Bookshelf 1
+0xDA #CEA95F Small Bookshelf 2
+0xDB #CEA95F Big Bookshelf 1
+0xDC #CEA95F Big Bookshelf 2
+0xDD #CEA95F Vase
+0xDE #CEA95F Trash Can
+0xDF #CEA95F Shop Shelf 1
+0xE0 #CEA95F Shop Shelf 2
+0xE1 #CEA95F Shop Shelf 3
+0xE2 #CEA95F Vending Machine
+0xE3 #E8E8E8 Unused
+0xE4 #E8E8E8 Unused
+0xE5 #E8E8E8 Unused
+0xE6 #E8E8E8 Unused
+0xE7 #E8E8E8 Unused
+0xE8 #E8E8E8 Unused
+0xE9 #E8E8E8 Unused
+0xEA #E8E8E8 Unused
+0xEB #E8E8E8 Unused
+0xEC #E8E8E8 Unused
+0xED #E8E8E8 Unused
+0xEE #E8E8E8 Unused
+0xEF #E8E8E8 Unused
+0xF0 #E8E8E8 Unused
+0xF1 #E8E8E8 Unused
+0xF2 #E8E8E8 Unused
+0xF3 #E8E8E8 Unused
+0xF4 #E8E8E8 Unused
+0xF5 #E8E8E8 Unused
+0xF6 #E8E8E8 Unused
+0xF7 #E8E8E8 Unused
+0xF8 #E8E8E8 Unused
+0xF9 #E8E8E8 Unused
+0xFA #E8E8E8 Unused
+0xFB #E8E8E8 Unused
+0xFC #E8E8E8 Unused
+0xFD #E8E8E8 Unused
+0xFE #E8E8E8 Unused
+0xFF #FFFFFF No Attribute
+0x00 #FFFFFF Behavior Hi 0 (Valid)
+0x01 #E8E8E8 Unused
+0x02 #E8E8E8 Unused
+0x03 #E8E8E8 Unused
+0x04 #E8E8E8 Unused
+0x05 #E8E8E8 Unused
+0x06 #E8E8E8 Unused
+0x07 #E8E8E8 Unused
+0x08 #E8E8E8 Unused
+0x09 #E8E8E8 Unused
+0x0A #E8E8E8 Unused
+0x0B #E8E8E8 Unused
+0x0C #E8E8E8 Unused
+0x0D #E8E8E8 Unused
+0x0E #E8E8E8 Unused
+0x0F #E8E8E8 Unused
+0x10 #E8E8E8 Unused
+0x11 #E8E8E8 Unused
+0x12 #E8E8E8 Unused
+0x13 #E8E8E8 Unused
+0x14 #E8E8E8 Unused
+0x15 #E8E8E8 Unused
+0x16 #E8E8E8 Unused
+0x17 #E8E8E8 Unused
+0x18 #E8E8E8 Unused
+0x19 #E8E8E8 Unused
+0x1A #E8E8E8 Unused
+0x1B #E8E8E8 Unused
+0x1C #E8E8E8 Unused
+0x1D #E8E8E8 Unused
+0x1E #E8E8E8 Unused
+0x1F #E8E8E8 Unused
+0x20 #E8E8E8 Unused
+0x21 #E8E8E8 Unused
+0x22 #E8E8E8 Unused
+0x23 #E8E8E8 Unused
+0x24 #E8E8E8 Unused
+0x25 #E8E8E8 Unused
+0x26 #E8E8E8 Unused
+0x27 #E8E8E8 Unused
+0x28 #E8E8E8 Unused
+0x29 #E8E8E8 Unused
+0x2A #E8E8E8 Unused
+0x2B #E8E8E8 Unused
+0x2C #E8E8E8 Unused
+0x2D #E8E8E8 Unused
+0x2E #E8E8E8 Unused
+0x2F #E8E8E8 Unused
+0x30 #E8E8E8 Unused
+0x31 #E8E8E8 Unused
+0x32 #E8E8E8 Unused
+0x33 #E8E8E8 Unused
+0x34 #E8E8E8 Unused
+0x35 #E8E8E8 Unused
+0x36 #E8E8E8 Unused
+0x37 #E8E8E8 Unused
+0x38 #E8E8E8 Unused
+0x39 #E8E8E8 Unused
+0x3A #E8E8E8 Unused
+0x3B #E8E8E8 Unused
+0x3C #E8E8E8 Unused
+0x3D #E8E8E8 Unused
+0x3E #E8E8E8 Unused
+0x3F #E8E8E8 Unused
+0x40 #E8E8E8 Unused
+0x41 #E8E8E8 Unused
+0x42 #E8E8E8 Unused
+0x43 #E8E8E8 Unused
+0x44 #E8E8E8 Unused
+0x45 #E8E8E8 Unused
+0x46 #E8E8E8 Unused
+0x47 #E8E8E8 Unused
+0x48 #E8E8E8 Unused
+0x49 #E8E8E8 Unused
+0x4A #E8E8E8 Unused
+0x4B #E8E8E8 Unused
+0x4C #E8E8E8 Unused
+0x4D #E8E8E8 Unused
+0x4E #E8E8E8 Unused
+0x4F #E8E8E8 Unused
+0x50 #E8E8E8 Unused
+0x51 #E8E8E8 Unused
+0x52 #E8E8E8 Unused
+0x53 #E8E8E8 Unused
+0x54 #E8E8E8 Unused
+0x55 #E8E8E8 Unused
+0x56 #E8E8E8 Unused
+0x57 #E8E8E8 Unused
+0x58 #E8E8E8 Unused
+0x59 #E8E8E8 Unused
+0x5A #E8E8E8 Unused
+0x5B #E8E8E8 Unused
+0x5C #E8E8E8 Unused
+0x5D #E8E8E8 Unused
+0x5E #E8E8E8 Unused
+0x5F #E8E8E8 Unused
+0x60 #E8E8E8 Unused
+0x61 #E8E8E8 Unused
+0x62 #E8E8E8 Unused
+0x63 #E8E8E8 Unused
+0x64 #E8E8E8 Unused
+0x65 #E8E8E8 Unused
+0x66 #E8E8E8 Unused
+0x67 #E8E8E8 Unused
+0x68 #E8E8E8 Unused
+0x69 #E8E8E8 Unused
+0x6A #E8E8E8 Unused
+0x6B #E8E8E8 Unused
+0x6C #E8E8E8 Unused
+0x6D #E8E8E8 Unused
+0x6E #E8E8E8 Unused
+0x6F #E8E8E8 Unused
+0x70 #E8E8E8 Unused
+0x71 #E8E8E8 Unused
+0x72 #E8E8E8 Unused
+0x73 #E8E8E8 Unused
+0x74 #E8E8E8 Unused
+0x75 #E8E8E8 Unused
+0x76 #E8E8E8 Unused
+0x77 #E8E8E8 Unused
+0x78 #E8E8E8 Unused
+0x79 #E8E8E8 Unused
+0x7A #E8E8E8 Unused
+0x7B #E8E8E8 Unused
+0x7C #E8E8E8 Unused
+0x7D #E8E8E8 Unused
+0x7E #E8E8E8 Unused
+0x7F #E8E8E8 Unused
+0x80 #E8E8E8 Unused
+0x81 #E8E8E8 Unused
+0x82 #E8E8E8 Unused
+0x83 #E8E8E8 Unused
+0x84 #E8E8E8 Unused
+0x85 #E8E8E8 Unused
+0x86 #E8E8E8 Unused
+0x87 #E8E8E8 Unused
+0x88 #E8E8E8 Unused
+0x89 #E8E8E8 Unused
+0x8A #E8E8E8 Unused
+0x8B #E8E8E8 Unused
+0x8C #E8E8E8 Unused
+0x8D #E8E8E8 Unused
+0x8E #E8E8E8 Unused
+0x8F #E8E8E8 Unused
+0x90 #E8E8E8 Unused
+0x91 #E8E8E8 Unused
+0x92 #E8E8E8 Unused
+0x93 #E8E8E8 Unused
+0x94 #E8E8E8 Unused
+0x95 #E8E8E8 Unused
+0x96 #E8E8E8 Unused
+0x97 #E8E8E8 Unused
+0x98 #E8E8E8 Unused
+0x99 #E8E8E8 Unused
+0x9A #E8E8E8 Unused
+0x9B #E8E8E8 Unused
+0x9C #E8E8E8 Unused
+0x9D #E8E8E8 Unused
+0x9E #E8E8E8 Unused
+0x9F #E8E8E8 Unused
+0xA0 #E8E8E8 Unused
+0xA1 #E8E8E8 Unused
+0xA2 #E8E8E8 Unused
+0xA3 #E8E8E8 Unused
+0xA4 #E8E8E8 Unused
+0xA5 #E8E8E8 Unused
+0xA6 #E8E8E8 Unused
+0xA7 #E8E8E8 Unused
+0xA8 #E8E8E8 Unused
+0xA9 #E8E8E8 Unused
+0xAA #E8E8E8 Unused
+0xAB #E8E8E8 Unused
+0xAC #E8E8E8 Unused
+0xAD #E8E8E8 Unused
+0xAE #E8E8E8 Unused
+0xAF #E8E8E8 Unused
+0xB0 #E8E8E8 Unused
+0xB1 #E8E8E8 Unused
+0xB2 #E8E8E8 Unused
+0xB3 #E8E8E8 Unused
+0xB4 #E8E8E8 Unused
+0xB5 #E8E8E8 Unused
+0xB6 #E8E8E8 Unused
+0xB7 #E8E8E8 Unused
+0xB8 #E8E8E8 Unused
+0xB9 #E8E8E8 Unused
+0xBA #E8E8E8 Unused
+0xBB #E8E8E8 Unused
+0xBC #E8E8E8 Unused
+0xBD #E8E8E8 Unused
+0xBE #E8E8E8 Unused
+0xBF #E8E8E8 Unused
+0xC0 #E8E8E8 Unused
+0xC1 #E8E8E8 Unused
+0xC2 #E8E8E8 Unused
+0xC3 #E8E8E8 Unused
+0xC4 #E8E8E8 Unused
+0xC5 #E8E8E8 Unused
+0xC6 #E8E8E8 Unused
+0xC7 #E8E8E8 Unused
+0xC8 #E8E8E8 Unused
+0xC9 #E8E8E8 Unused
+0xCA #E8E8E8 Unused
+0xCB #E8E8E8 Unused
+0xCC #E8E8E8 Unused
+0xCD #E8E8E8 Unused
+0xCE #E8E8E8 Unused
+0xCF #E8E8E8 Unused
+0xD0 #E8E8E8 Unused
+0xD1 #E8E8E8 Unused
+0xD2 #E8E8E8 Unused
+0xD3 #E8E8E8 Unused
+0xD4 #E8E8E8 Unused
+0xD5 #E8E8E8 Unused
+0xD6 #E8E8E8 Unused
+0xD7 #E8E8E8 Unused
+0xD8 #E8E8E8 Unused
+0xD9 #E8E8E8 Unused
+0xDA #E8E8E8 Unused
+0xDB #E8E8E8 Unused
+0xDC #E8E8E8 Unused
+0xDD #E8E8E8 Unused
+0xDE #E8E8E8 Unused
+0xDF #E8E8E8 Unused
+0xE0 #E8E8E8 Unused
+0xE1 #E8E8E8 Unused
+0xE2 #E8E8E8 Unused
+0xE3 #E8E8E8 Unused
+0xE4 #E8E8E8 Unused
+0xE5 #E8E8E8 Unused
+0xE6 #E8E8E8 Unused
+0xE7 #E8E8E8 Unused
+0xE8 #E8E8E8 Unused
+0xE9 #E8E8E8 Unused
+0xEA #E8E8E8 Unused
+0xEB #E8E8E8 Unused
+0xEC #E8E8E8 Unused
+0xED #E8E8E8 Unused
+0xEE #E8E8E8 Unused
+0xEF #E8E8E8 Unused
+0xF0 #E8E8E8 Unused
+0xF1 #E8E8E8 Unused
+0xF2 #E8E8E8 Unused
+0xF3 #E8E8E8 Unused
+0xF4 #E8E8E8 Unused
+0xF5 #E8E8E8 Unused
+0xF6 #E8E8E8 Unused
+0xF7 #E8E8E8 Unused
+0xF8 #E8E8E8 Unused
+0xF9 #E8E8E8 Unused
+0xFA #E8E8E8 Unused
+0xFB #E8E8E8 Unused
+0xFC #E8E8E8 Unused
+0xFD #E8E8E8 Unused
+0xFE #E8E8E8 Unused
+0xFF #FF8888 Behavior Hi FF (Invalid)
+0x00 #FFFFFF No Flags
+0x01 #FF0000 Block
+0x02 #0066FF Water
+0x03 #7F337F Block+Water
+0x04 #009900 Encounter
+0x05 #7F4C00 Block+Encounter
+0x06 #007F7F Water+Encounter
+0x07 #555555 Block+Water+Encounter
+0x08 #C49A6C Footprint
+0x09 #E14D36 Block+Footprint
+0x0A #6280B5 Water+Footprint
+0x0B #965579 Block+Water+Footprint
+0x0C #629936 Encounter+Footprint
+0x0D #966624 Block+Encounter+Footprint
+0x0E #418879 Water+Encounter+Footprint
+0x0F #70665A Block+Water+Encounter+Footprint
+0x10 #99FFFF Unknown
+0x11 #CC7F7F Block+Unknown
+0x12 #4CB2FF Water+Unknown
+0x13 #8877AA Block+Water+Unknown
+0x14 #4CCC7F Encounter+Unknown
+0x15 #888855 Block+Encounter+Unknown
+0x16 #33AAAA Water+Encounter+Unknown
+0x17 #667F7F Block+Water+Encounter+Unknown
+0x18 #AECCB5 Footprint+Unknown
+0x19 #C98879 Block+Footprint+Unknown
+0x1A #74AACE Water+Footprint+Unknown
+0x1B #977F9A Block+Water+Footprint+Unknown
+0x1C #74BB79 Encounter+Footprint+Unknown
+0x1D #978C5A Block+Encounter+Footprint+Unknown
+0x1E #57A69A Water+Encounter+Footprint+Unknown
+0x1F #78847B Block+Water+Encounter+Footprint+Unknown
+0x20 #66BB44 Grass
+0x21 #B25D22 Block+Grass
+0x22 #3390A1 Water+Grass
+0x23 #77606B Block+Water+Grass
+0x24 #33AA22 Encounter+Grass
+0x25 #777116 Block+Encounter+Grass
+0x26 #22936B Water+Encounter+Grass
+0x27 #596E50 Block+Water+Encounter+Grass
+0x28 #95AA58 Footprint+Grass
+0x29 #B8713A Block+Footprint+Grass
+0x2A #63938F Water+Footprint+Grass
+0x2B #8A6E6B Block+Water+Footprint+Grass
+0x2C #63A43A Encounter+Footprint+Grass
+0x2D #8A7B2C Block+Encounter+Footprint+Grass
+0x2E #4A956B Water+Encounter+Footprint+Grass
+0x2F #6E7756 Block+Water+Encounter+Footprint+Grass
+0x30 #7FDDA1 Unknown+Grass
+0x31 #AA936B Block+Unknown+Grass
+0x32 #55B5C0 Water+Unknown+Grass
+0x33 #7F8890 Block+Water+Unknown+Grass
+0x34 #55C66B Encounter+Unknown+Grass
+0x35 #7F9450 Block+Encounter+Unknown+Grass
+0x36 #3FAE90 Water+Encounter+Unknown+Grass
+0x37 #668B73 Block+Water+Encounter+Unknown+Grass
+0x38 #96C68F Footprint+Unknown+Grass
+0x39 #B0956B Block+Footprint+Unknown+Grass
+0x3A #70AEAB Water+Footprint+Unknown+Grass
+0x3B #8D8B89 Block+Water+Footprint+Unknown+Grass
+0x3C #70BB6B Encounter+Footprint+Unknown+Grass
+0x3D #8D9556 Block+Encounter+Footprint+Unknown+Grass
+0x3E #5AAA89 Water+Encounter+Footprint+Unknown+Grass
+0x3F #758D72 Block+Water+Encounter+Footprint+Unknown+Grass
+0x40 #59F7BD Reflect
+0x41 #AC7B5E Block+Reflect
+0x42 #2CAEDE Water+Reflect
+0x43 #727494 Block+Water+Reflect
+0x44 #2CC85E Encounter+Reflect
+0x45 #72853F Block+Encounter+Reflect
+0x46 #1DA794 Water+Encounter+Reflect
+0x47 #567D6F Block+Water+Encounter+Reflect
+0x48 #8EC894 Footprint+Reflect
+0x49 #B48563 Block+Footprint+Reflect
+0x4A #5FA7B8 Water+Footprint+Reflect
+0x4B #877D8A Block+Water+Footprint+Reflect
+0x4C #5FB863 Encounter+Footprint+Reflect
+0x4D #878A4A Block+Encounter+Footprint+Reflect
+0x4E #47A48A Water+Encounter+Footprint+Reflect
+0x4F #6C836E Block+Water+Encounter+Footprint+Reflect
+0x50 #79FBDE Unknown+Reflect
+0x51 #A5A794 Block+Unknown+Reflect
+0x52 #50C9E9 Water+Unknown+Reflect
+0x53 #7C97AE Block+Water+Unknown+Reflect
+0x54 #50DA94 Encounter+Unknown+Reflect
+0x55 #7CA36F Block+Encounter+Unknown+Reflect
+0x56 #3CBDAE Water+Encounter+Unknown+Reflect
+0x57 #63978B Block+Water+Encounter+Unknown+Reflect
+0x58 #92DAB8 Footprint+Unknown+Reflect
+0x59 #ADA48A Block+Footprint+Unknown+Reflect
+0x5A #6DBDC9 Water+Footprint+Unknown+Reflect
+0x5B #8A97A1 Block+Water+Footprint+Unknown+Reflect
+0x5C #6DCA8A Encounter+Footprint+Unknown+Reflect
+0x5D #8AA16E Block+Encounter+Footprint+Unknown+Reflect
+0x5E #57B6A1 Water+Encounter+Footprint+Unknown+Reflect
+0x5F #739786 Block+Water+Encounter+Footprint+Unknown+Reflect
+0x60 #5FD980 Grass+Reflect
+0x61 #949055 Block+Grass+Reflect
+0x62 #3FB2AA Water+Grass+Reflect
+0x63 #6F8680 Block+Water+Grass+Reflect
+0x64 #3FC355 Encounter+Grass+Reflect
+0x65 #6F9240 Block+Encounter+Grass+Reflect
+0x66 #2FAC80 Water+Encounter+Grass+Reflect
+0x67 #598966 Block+Water+Encounter+Grass+Reflect
+0x68 #81C479 Footprint+Grass+Reflect
+0x69 #A0935B Block+Footprint+Grass+Reflect
+0x6A #60AC9B Water+Footprint+Grass+Reflect
+0x6B #808A7C Block+Water+Footprint+Grass+Reflect
+0x6C #60B95B Encounter+Footprint+Grass+Reflect
+0x6D #809449 Block+Encounter+Footprint+Grass+Reflect
+0x6E #4DA87C Water+Encounter+Footprint+Grass+Reflect
+0x6F #6B8C67 Block+Water+Encounter+Footprint+Grass+Reflect
+0x70 #72E5AA Unknown+Grass+Reflect
+0x71 #95AC80 Block+Unknown+Grass+Reflect
+0x72 #56C5BF Water+Unknown+Grass+Reflect
+0x73 #779E99 Block+Water+Unknown+Grass+Reflect
+0x74 #56D280 Encounter+Unknown+Grass+Reflect
+0x75 #77A866 Block+Encounter+Unknown+Grass+Reflect
+0x76 #44BC99 Water+Encounter+Unknown+Grass+Reflect
+0x77 #639D7F Block+Water+Encounter+Unknown+Grass+Reflect
+0x78 #87D29B Footprint+Unknown+Grass+Reflect
+0x79 #9FA87C Block+Footprint+Unknown+Grass+Reflect
+0x7A #6CBDAF Water+Footprint+Unknown+Grass+Reflect
+0x7B #849D91 Block+Water+Footprint+Unknown+Grass+Reflect
+0x7C #6CC77C Encounter+Footprint+Unknown+Grass+Reflect
+0x7D #84A667 Block+Encounter+Footprint+Unknown+Grass+Reflect
+0x7E #5AB791 Water+Encounter+Footprint+Unknown+Grass+Reflect
+0x7F #719C7D Block+Water+Encounter+Footprint+Unknown+Grass+Reflect
+0x80 #888888 Shadow
+0x81 #C34444 Block+Shadow
+0x82 #4477C3 Water+Shadow
+0x83 #824F82 Block+Water+Shadow
+0x84 #449044 Encounter+Shadow
+0x85 #82602D Block+Encounter+Shadow
+0x86 #2D8282 Water+Encounter+Shadow
+0x87 #616161 Block+Water+Encounter+Shadow
+0x88 #A6917A Footprint+Shadow
+0x89 #C36051 Block+Footprint+Shadow
+0x8A #6E82A6 Water+Footprint+Shadow
+0x8B #92627C Block+Water+Footprint+Shadow
+0x8C #6E9351 Encounter+Footprint+Shadow
+0x8D #926E3D Block+Encounter+Footprint+Shadow
+0x8E #53887C Water+Encounter+Footprint+Shadow
+0x8F #756D63 Block+Water+Encounter+Footprint+Shadow
+0x90 #90C3C3 Unknown+Shadow
+0x91 #B58282 Block+Unknown+Shadow
+0x92 #60A4D7 Water+Unknown+Shadow
+0x93 #887BA1 Block+Water+Unknown+Shadow
+0x94 #60B582 Encounter+Unknown+Shadow
+0x95 #888861 Block+Encounter+Unknown+Shadow
+0x96 #48A1A1 Water+Encounter+Unknown+Shadow
+0x97 #6C8181 Block+Water+Encounter+Unknown+Shadow
+0x98 #A1B5A6 Footprint+Unknown+Shadow
+0x99 #B9887C Block+Footprint+Unknown+Shadow
+0x9A #79A1BC Water+Footprint+Unknown+Shadow
+0x9B #948196 Block+Water+Footprint+Unknown+Shadow
+0x9C #79AE7C Encounter+Footprint+Unknown+Shadow
+0x9D #948B63 Block+Encounter+Footprint+Unknown+Shadow
+0x9E #61A096 Water+Encounter+Footprint+Unknown+Shadow
+0x9F #7B857D Block+Water+Encounter+Footprint+Unknown+Shadow
+0xA0 #77A166 Grass+Shadow
+0xA1 #A46B44 Block+Grass+Shadow
+0xA2 #4F8D99 Water+Grass+Shadow
+0xA3 #7B6A72 Block+Water+Grass+Shadow
+0xA4 #4F9E44 Encounter+Grass+Shadow
+0xA5 #7B7733 Block+Encounter+Grass+Shadow
+0xA6 #3B9072 Water+Encounter+Grass+Shadow
+0xA7 #62735B Block+Water+Encounter+Grass+Shadow
+0xA8 #909F68 Footprint+Grass+Shadow
+0xA9 #AC774E Block+Footprint+Grass+Shadow
+0xAA #6C908D Water+Footprint+Grass+Shadow
+0xAB #897371 Block+Water+Footprint+Grass+Shadow
+0xAC #6C9D4E Encounter+Footprint+Grass+Shadow
+0xAD #897E3E Block+Encounter+Footprint+Grass+Shadow
+0xAE #569271 Water+Encounter+Footprint+Grass+Shadow
+0xAF #727A5E Block+Water+Encounter+Footprint+Grass+Shadow
+0xB0 #82C099 Unknown+Grass+Shadow
+0xB1 #A19072 Block+Unknown+Grass+Shadow
+0xB2 #61AAB2 Water+Unknown+Grass+Shadow
+0xB3 #81888E Block+Water+Unknown+Grass+Shadow
+0xB4 #61B672 Encounter+Unknown+Grass+Shadow
+0xB5 #81925B Block+Encounter+Unknown+Grass+Shadow
+0xB6 #4EA68E Water+Encounter+Unknown+Grass+Shadow
+0xB7 #6B8A77 Block+Water+Encounter+Unknown+Grass+Shadow
+0xB8 #92B78D Footprint+Unknown+Grass+Shadow
+0xB9 #A89271 Block+Footprint+Unknown+Grass+Shadow
+0xBA #75A6A4 Water+Footprint+Unknown+Grass+Shadow
+0xBB #8C8B89 Block+Water+Footprint+Unknown+Grass+Shadow
+0xBC #75B171 Encounter+Footprint+Unknown+Grass+Shadow
+0xBD #8C935E Block+Encounter+Footprint+Unknown+Grass+Shadow
+0xBE #61A489 Water+Encounter+Footprint+Unknown+Grass+Shadow
+0xBF #788D75 Block+Water+Encounter+Footprint+Unknown+Grass+Shadow
+0xC0 #70BFA2 Reflect+Shadow
+0xC1 #A07F6C Block+Reflect+Shadow
+0xC2 #4BA1C1 Water+Reflect+Shadow
+0xC3 #787991 Block+Water+Reflect+Shadow
+0xC4 #4BB26C Encounter+Reflect+Shadow
+0xC5 #788651 Block+Encounter+Reflect+Shadow
+0xC6 #389F91 Water+Encounter+Reflect+Shadow
+0xC7 #607F74 Block+Water+Encounter+Reflect+Shadow
+0xC8 #8CB390 Footprint+Reflect+Shadow
+0xC9 #A9866C Block+Footprint+Reflect+Shadow
+0xCA #699FAC Water+Footprint+Reflect+Shadow
+0xCB #877F89 Block+Water+Footprint+Reflect+Shadow
+0xCC #69AC6C Encounter+Footprint+Reflect+Shadow
+0xCD #878A56 Block+Encounter+Footprint+Reflect+Shadow
+0xCE #549E89 Water+Encounter+Footprint+Reflect+Shadow
+0xCF #708472 Block+Water+Encounter+Footprint+Reflect+Shadow
+0xD0 #7ED4C1 Unknown+Reflect+Shadow
+0xD1 #9E9F91 Block+Unknown+Reflect+Shadow
+0xD2 #5EB9D0 Water+Unknown+Reflect+Shadow
+0xD3 #7E94A7 Block+Water+Unknown+Reflect+Shadow
+0xD4 #5EC591 Encounter+Unknown+Reflect+Shadow
+0xD5 #7E9E74 Block+Encounter+Unknown+Reflect+Shadow
+0xD6 #4BB2A7 Water+Encounter+Unknown+Reflect+Shadow
+0xD7 #69948B Block+Water+Encounter+Unknown+Reflect+Shadow
+0xD8 #8FC6AC Footprint+Unknown+Reflect+Shadow
+0xD9 #A59E89 Block+Footprint+Unknown+Reflect+Shadow
+0xDA #72B2BC Water+Footprint+Unknown+Reflect+Shadow
+0xDB #8A959D Block+Water+Footprint+Unknown+Reflect+Shadow
+0xDC #72BD89 Encounter+Footprint+Unknown+Reflect+Shadow
+0xDD #8A9D72 Block+Encounter+Footprint+Unknown+Reflect+Shadow
+0xDE #5FAE9D Water+Encounter+Footprint+Unknown+Reflect+Shadow
+0xDF #769586 Block+Water+Encounter+Footprint+Unknown+Reflect+Shadow
+0xE0 #6DBE83 Grass+Reflect+Shadow
+0xE1 #918E62 Block+Grass+Reflect+Shadow
+0xE2 #51A8A2 Water+Grass+Reflect+Shadow
+0xE3 #748681 Block+Water+Grass+Reflect+Shadow
+0xE4 #51B462 Encounter+Grass+Reflect+Shadow
+0xE5 #74904E Block+Encounter+Grass+Reflect+Shadow
+0xE6 #41A581 Water+Encounter+Grass+Reflect+Shadow
+0xE7 #61896C Block+Water+Encounter+Grass+Reflect+Shadow
+0xE8 #82B57D Footprint+Grass+Reflect+Shadow
+0xE9 #9B9064 Block+Footprint+Grass+Reflect+Shadow
+0xEA #68A597 Water+Footprint+Grass+Reflect+Shadow
+0xEB #81897E Block+Water+Footprint+Grass+Reflect+Shadow
+0xEC #68AF64 Encounter+Footprint+Grass+Reflect+Shadow
+0xED #819253 Block+Encounter+Footprint+Grass+Reflect+Shadow
+0xEE #57A37E Water+Encounter+Footprint+Grass+Reflect+Shadow
+0xEF #6F8B6C Block+Water+Encounter+Footprint+Grass+Reflect+Shadow
+0xF0 #78CEA2 Unknown+Grass+Reflect+Shadow
+0xF1 #93A581 Block+Unknown+Grass+Reflect+Shadow
+0xF2 #60B9B4 Water+Unknown+Grass+Reflect+Shadow
+0xF3 #7A9A96 Block+Water+Unknown+Grass+Reflect+Shadow
+0xF4 #60C381 Encounter+Unknown+Grass+Reflect+Shadow
+0xF5 #7AA36C Block+Encounter+Unknown+Grass+Reflect+Shadow
+0xF6 #50B496 Water+Encounter+Unknown+Grass+Reflect+Shadow
+0xF7 #699A81 Block+Water+Encounter+Unknown+Grass+Reflect+Shadow
+0xF8 #87C397 Footprint+Unknown+Grass+Reflect+Shadow
+0xF9 #9BA37E Block+Footprint+Unknown+Grass+Reflect+Shadow
+0xFA #70B4A8 Water+Footprint+Unknown+Grass+Reflect+Shadow
+0xFB #859A90 Block+Water+Footprint+Unknown+Grass+Reflect+Shadow
+0xFC #70BC7E Encounter+Footprint+Unknown+Grass+Reflect+Shadow
+0xFD #85A16C Block+Encounter+Footprint+Unknown+Grass+Reflect+Shadow
+0xFE #60B090 Water+Encounter+Footprint+Unknown+Grass+Reflect+Shadow
+0xFF #749A7E Block+Water+Encounter+Footprint+Unknown+Grass+Reflect+Shadow
+0x00 #FFFFFF Diagonal / (Default)
+0x01 #FFF176 Diagonal / +Light (B2W2)
+0x02 #808080 Diagonal / +Unused Bits
+0x03 #808080 Diagonal / +Light (B2W2) +Unused Bits
+0x04 #808080 Diagonal / +Unused Bits
+0x05 #808080 Diagonal / +Light (B2W2) +Unused Bits
+0x06 #808080 Diagonal / +Unused Bits
+0x07 #808080 Diagonal / +Light (B2W2) +Unused Bits
+0x08 #808080 Diagonal / +Unused Bits
+0x09 #808080 Diagonal / +Light (B2W2) +Unused Bits
+0x0A #808080 Diagonal / +Unused Bits
+0x0B #808080 Diagonal / +Light (B2W2) +Unused Bits
+0x0C #808080 Diagonal / +Unused Bits
+0x0D #808080 Diagonal / +Light (B2W2) +Unused Bits
+0x0E #808080 Diagonal / +Unused Bits
+0x0F #808080 Diagonal / +Light (B2W2) +Unused Bits
+0x10 #808080 Diagonal / +Unused Bits
+0x11 #808080 Diagonal / +Light (B2W2) +Unused Bits
+0x12 #808080 Diagonal / +Unused Bits
+0x13 #808080 Diagonal / +Light (B2W2) +Unused Bits
+0x14 #808080 Diagonal / +Unused Bits
+0x15 #808080 Diagonal / +Light (B2W2) +Unused Bits
+0x16 #808080 Diagonal / +Unused Bits
+0x17 #808080 Diagonal / +Light (B2W2) +Unused Bits
+0x18 #808080 Diagonal / +Unused Bits
+0x19 #808080 Diagonal / +Light (B2W2) +Unused Bits
+0x1A #808080 Diagonal / +Unused Bits
+0x1B #808080 Diagonal / +Light (B2W2) +Unused Bits
+0x1C #808080 Diagonal / +Unused Bits
+0x1D #808080 Diagonal / +Light (B2W2) +Unused Bits
+0x1E #808080 Diagonal / +Unused Bits
+0x1F #808080 Diagonal / +Light (B2W2) +Unused Bits
+0x20 #808080 Diagonal / +Unused Bits
+0x21 #808080 Diagonal / +Light (B2W2) +Unused Bits
+0x22 #808080 Diagonal / +Unused Bits
+0x23 #808080 Diagonal / +Light (B2W2) +Unused Bits
+0x24 #808080 Diagonal / +Unused Bits
+0x25 #808080 Diagonal / +Light (B2W2) +Unused Bits
+0x26 #808080 Diagonal / +Unused Bits
+0x27 #808080 Diagonal / +Light (B2W2) +Unused Bits
+0x28 #808080 Diagonal / +Unused Bits
+0x29 #808080 Diagonal / +Light (B2W2) +Unused Bits
+0x2A #808080 Diagonal / +Unused Bits
+0x2B #808080 Diagonal / +Light (B2W2) +Unused Bits
+0x2C #808080 Diagonal / +Unused Bits
+0x2D #808080 Diagonal / +Light (B2W2) +Unused Bits
+0x2E #808080 Diagonal / +Unused Bits
+0x2F #808080 Diagonal / +Light (B2W2) +Unused Bits
+0x30 #808080 Diagonal / +Unused Bits
+0x31 #808080 Diagonal / +Light (B2W2) +Unused Bits
+0x32 #808080 Diagonal / +Unused Bits
+0x33 #808080 Diagonal / +Light (B2W2) +Unused Bits
+0x34 #808080 Diagonal / +Unused Bits
+0x35 #808080 Diagonal / +Light (B2W2) +Unused Bits
+0x36 #808080 Diagonal / +Unused Bits
+0x37 #808080 Diagonal / +Light (B2W2) +Unused Bits
+0x38 #808080 Diagonal / +Unused Bits
+0x39 #808080 Diagonal / +Light (B2W2) +Unused Bits
+0x3A #808080 Diagonal / +Unused Bits
+0x3B #808080 Diagonal / +Light (B2W2) +Unused Bits
+0x3C #808080 Diagonal / +Unused Bits
+0x3D #808080 Diagonal / +Light (B2W2) +Unused Bits
+0x3E #808080 Diagonal / +Unused Bits
+0x3F #808080 Diagonal / +Light (B2W2) +Unused Bits
+0x40 #808080 Diagonal / +Unused Bits
+0x41 #808080 Diagonal / +Light (B2W2) +Unused Bits
+0x42 #808080 Diagonal / +Unused Bits
+0x43 #808080 Diagonal / +Light (B2W2) +Unused Bits
+0x44 #808080 Diagonal / +Unused Bits
+0x45 #808080 Diagonal / +Light (B2W2) +Unused Bits
+0x46 #808080 Diagonal / +Unused Bits
+0x47 #808080 Diagonal / +Light (B2W2) +Unused Bits
+0x48 #808080 Diagonal / +Unused Bits
+0x49 #808080 Diagonal / +Light (B2W2) +Unused Bits
+0x4A #808080 Diagonal / +Unused Bits
+0x4B #808080 Diagonal / +Light (B2W2) +Unused Bits
+0x4C #808080 Diagonal / +Unused Bits
+0x4D #808080 Diagonal / +Light (B2W2) +Unused Bits
+0x4E #808080 Diagonal / +Unused Bits
+0x4F #808080 Diagonal / +Light (B2W2) +Unused Bits
+0x50 #808080 Diagonal / +Unused Bits
+0x51 #808080 Diagonal / +Light (B2W2) +Unused Bits
+0x52 #808080 Diagonal / +Unused Bits
+0x53 #808080 Diagonal / +Light (B2W2) +Unused Bits
+0x54 #808080 Diagonal / +Unused Bits
+0x55 #808080 Diagonal / +Light (B2W2) +Unused Bits
+0x56 #808080 Diagonal / +Unused Bits
+0x57 #808080 Diagonal / +Light (B2W2) +Unused Bits
+0x58 #808080 Diagonal / +Unused Bits
+0x59 #808080 Diagonal / +Light (B2W2) +Unused Bits
+0x5A #808080 Diagonal / +Unused Bits
+0x5B #808080 Diagonal / +Light (B2W2) +Unused Bits
+0x5C #808080 Diagonal / +Unused Bits
+0x5D #808080 Diagonal / +Light (B2W2) +Unused Bits
+0x5E #808080 Diagonal / +Unused Bits
+0x5F #808080 Diagonal / +Light (B2W2) +Unused Bits
+0x60 #808080 Diagonal / +Unused Bits
+0x61 #808080 Diagonal / +Light (B2W2) +Unused Bits
+0x62 #808080 Diagonal / +Unused Bits
+0x63 #808080 Diagonal / +Light (B2W2) +Unused Bits
+0x64 #808080 Diagonal / +Unused Bits
+0x65 #808080 Diagonal / +Light (B2W2) +Unused Bits
+0x66 #808080 Diagonal / +Unused Bits
+0x67 #808080 Diagonal / +Light (B2W2) +Unused Bits
+0x68 #808080 Diagonal / +Unused Bits
+0x69 #808080 Diagonal / +Light (B2W2) +Unused Bits
+0x6A #808080 Diagonal / +Unused Bits
+0x6B #808080 Diagonal / +Light (B2W2) +Unused Bits
+0x6C #808080 Diagonal / +Unused Bits
+0x6D #808080 Diagonal / +Light (B2W2) +Unused Bits
+0x6E #808080 Diagonal / +Unused Bits
+0x6F #808080 Diagonal / +Light (B2W2) +Unused Bits
+0x70 #808080 Diagonal / +Unused Bits
+0x71 #808080 Diagonal / +Light (B2W2) +Unused Bits
+0x72 #808080 Diagonal / +Unused Bits
+0x73 #808080 Diagonal / +Light (B2W2) +Unused Bits
+0x74 #808080 Diagonal / +Unused Bits
+0x75 #808080 Diagonal / +Light (B2W2) +Unused Bits
+0x76 #808080 Diagonal / +Unused Bits
+0x77 #808080 Diagonal / +Light (B2W2) +Unused Bits
+0x78 #808080 Diagonal / +Unused Bits
+0x79 #808080 Diagonal / +Light (B2W2) +Unused Bits
+0x7A #808080 Diagonal / +Unused Bits
+0x7B #808080 Diagonal / +Light (B2W2) +Unused Bits
+0x7C #808080 Diagonal / +Unused Bits
+0x7D #808080 Diagonal / +Light (B2W2) +Unused Bits
+0x7E #808080 Diagonal / +Unused Bits
+0x7F #808080 Diagonal / +Light (B2W2) +Unused Bits
+0x80 #B0A0D0 Diagonal \
+0x81 #D8C878 Diagonal \ +Light (B2W2)
+0x82 #808080 Diagonal \ +Unused Bits
+0x83 #808080 Diagonal \ +Light (B2W2) +Unused Bits
+0x84 #808080 Diagonal \ +Unused Bits
+0x85 #808080 Diagonal \ +Light (B2W2) +Unused Bits
+0x86 #808080 Diagonal \ +Unused Bits
+0x87 #808080 Diagonal \ +Light (B2W2) +Unused Bits
+0x88 #808080 Diagonal \ +Unused Bits
+0x89 #808080 Diagonal \ +Light (B2W2) +Unused Bits
+0x8A #808080 Diagonal \ +Unused Bits
+0x8B #808080 Diagonal \ +Light (B2W2) +Unused Bits
+0x8C #808080 Diagonal \ +Unused Bits
+0x8D #808080 Diagonal \ +Light (B2W2) +Unused Bits
+0x8E #808080 Diagonal \ +Unused Bits
+0x8F #808080 Diagonal \ +Light (B2W2) +Unused Bits
+0x90 #808080 Diagonal \ +Unused Bits
+0x91 #808080 Diagonal \ +Light (B2W2) +Unused Bits
+0x92 #808080 Diagonal \ +Unused Bits
+0x93 #808080 Diagonal \ +Light (B2W2) +Unused Bits
+0x94 #808080 Diagonal \ +Unused Bits
+0x95 #808080 Diagonal \ +Light (B2W2) +Unused Bits
+0x96 #808080 Diagonal \ +Unused Bits
+0x97 #808080 Diagonal \ +Light (B2W2) +Unused Bits
+0x98 #808080 Diagonal \ +Unused Bits
+0x99 #808080 Diagonal \ +Light (B2W2) +Unused Bits
+0x9A #808080 Diagonal \ +Unused Bits
+0x9B #808080 Diagonal \ +Light (B2W2) +Unused Bits
+0x9C #808080 Diagonal \ +Unused Bits
+0x9D #808080 Diagonal \ +Light (B2W2) +Unused Bits
+0x9E #808080 Diagonal \ +Unused Bits
+0x9F #808080 Diagonal \ +Light (B2W2) +Unused Bits
+0xA0 #808080 Diagonal \ +Unused Bits
+0xA1 #808080 Diagonal \ +Light (B2W2) +Unused Bits
+0xA2 #808080 Diagonal \ +Unused Bits
+0xA3 #808080 Diagonal \ +Light (B2W2) +Unused Bits
+0xA4 #808080 Diagonal \ +Unused Bits
+0xA5 #808080 Diagonal \ +Light (B2W2) +Unused Bits
+0xA6 #808080 Diagonal \ +Unused Bits
+0xA7 #808080 Diagonal \ +Light (B2W2) +Unused Bits
+0xA8 #808080 Diagonal \ +Unused Bits
+0xA9 #808080 Diagonal \ +Light (B2W2) +Unused Bits
+0xAA #808080 Diagonal \ +Unused Bits
+0xAB #808080 Diagonal \ +Light (B2W2) +Unused Bits
+0xAC #808080 Diagonal \ +Unused Bits
+0xAD #808080 Diagonal \ +Light (B2W2) +Unused Bits
+0xAE #808080 Diagonal \ +Unused Bits
+0xAF #808080 Diagonal \ +Light (B2W2) +Unused Bits
+0xB0 #808080 Diagonal \ +Unused Bits
+0xB1 #808080 Diagonal \ +Light (B2W2) +Unused Bits
+0xB2 #808080 Diagonal \ +Unused Bits
+0xB3 #808080 Diagonal \ +Light (B2W2) +Unused Bits
+0xB4 #808080 Diagonal \ +Unused Bits
+0xB5 #808080 Diagonal \ +Light (B2W2) +Unused Bits
+0xB6 #808080 Diagonal \ +Unused Bits
+0xB7 #808080 Diagonal \ +Light (B2W2) +Unused Bits
+0xB8 #808080 Diagonal \ +Unused Bits
+0xB9 #808080 Diagonal \ +Light (B2W2) +Unused Bits
+0xBA #808080 Diagonal \ +Unused Bits
+0xBB #808080 Diagonal \ +Light (B2W2) +Unused Bits
+0xBC #808080 Diagonal \ +Unused Bits
+0xBD #808080 Diagonal \ +Light (B2W2) +Unused Bits
+0xBE #808080 Diagonal \ +Unused Bits
+0xBF #808080 Diagonal \ +Light (B2W2) +Unused Bits
+0xC0 #808080 Diagonal \ +Unused Bits
+0xC1 #808080 Diagonal \ +Light (B2W2) +Unused Bits
+0xC2 #808080 Diagonal \ +Unused Bits
+0xC3 #808080 Diagonal \ +Light (B2W2) +Unused Bits
+0xC4 #808080 Diagonal \ +Unused Bits
+0xC5 #808080 Diagonal \ +Light (B2W2) +Unused Bits
+0xC6 #808080 Diagonal \ +Unused Bits
+0xC7 #808080 Diagonal \ +Light (B2W2) +Unused Bits
+0xC8 #808080 Diagonal \ +Unused Bits
+0xC9 #808080 Diagonal \ +Light (B2W2) +Unused Bits
+0xCA #808080 Diagonal \ +Unused Bits
+0xCB #808080 Diagonal \ +Light (B2W2) +Unused Bits
+0xCC #808080 Diagonal \ +Unused Bits
+0xCD #808080 Diagonal \ +Light (B2W2) +Unused Bits
+0xCE #808080 Diagonal \ +Unused Bits
+0xCF #808080 Diagonal \ +Light (B2W2) +Unused Bits
+0xD0 #808080 Diagonal \ +Unused Bits
+0xD1 #808080 Diagonal \ +Light (B2W2) +Unused Bits
+0xD2 #808080 Diagonal \ +Unused Bits
+0xD3 #808080 Diagonal \ +Light (B2W2) +Unused Bits
+0xD4 #808080 Diagonal \ +Unused Bits
+0xD5 #808080 Diagonal \ +Light (B2W2) +Unused Bits
+0xD6 #808080 Diagonal \ +Unused Bits
+0xD7 #808080 Diagonal \ +Light (B2W2) +Unused Bits
+0xD8 #808080 Diagonal \ +Unused Bits
+0xD9 #808080 Diagonal \ +Light (B2W2) +Unused Bits
+0xDA #808080 Diagonal \ +Unused Bits
+0xDB #808080 Diagonal \ +Light (B2W2) +Unused Bits
+0xDC #808080 Diagonal \ +Unused Bits
+0xDD #808080 Diagonal \ +Light (B2W2) +Unused Bits
+0xDE #808080 Diagonal \ +Unused Bits
+0xDF #808080 Diagonal \ +Light (B2W2) +Unused Bits
+0xE0 #808080 Diagonal \ +Unused Bits
+0xE1 #808080 Diagonal \ +Light (B2W2) +Unused Bits
+0xE2 #808080 Diagonal \ +Unused Bits
+0xE3 #808080 Diagonal \ +Light (B2W2) +Unused Bits
+0xE4 #808080 Diagonal \ +Unused Bits
+0xE5 #808080 Diagonal \ +Light (B2W2) +Unused Bits
+0xE6 #808080 Diagonal \ +Unused Bits
+0xE7 #808080 Diagonal \ +Light (B2W2) +Unused Bits
+0xE8 #808080 Diagonal \ +Unused Bits
+0xE9 #808080 Diagonal \ +Light (B2W2) +Unused Bits
+0xEA #808080 Diagonal \ +Unused Bits
+0xEB #808080 Diagonal \ +Light (B2W2) +Unused Bits
+0xEC #808080 Diagonal \ +Unused Bits
+0xED #808080 Diagonal \ +Light (B2W2) +Unused Bits
+0xEE #808080 Diagonal \ +Unused Bits
+0xEF #808080 Diagonal \ +Light (B2W2) +Unused Bits
+0xF0 #808080 Diagonal \ +Unused Bits
+0xF1 #808080 Diagonal \ +Light (B2W2) +Unused Bits
+0xF2 #808080 Diagonal \ +Unused Bits
+0xF3 #808080 Diagonal \ +Light (B2W2) +Unused Bits
+0xF4 #808080 Diagonal \ +Unused Bits
+0xF5 #808080 Diagonal \ +Light (B2W2) +Unused Bits
+0xF6 #808080 Diagonal \ +Unused Bits
+0xF7 #808080 Diagonal \ +Light (B2W2) +Unused Bits
+0xF8 #808080 Diagonal \ +Unused Bits
+0xF9 #808080 Diagonal \ +Light (B2W2) +Unused Bits
+0xFA #808080 Diagonal \ +Unused Bits
+0xFB #808080 Diagonal \ +Light (B2W2) +Unused Bits
+0xFC #808080 Diagonal \ +Unused Bits
+0xFD #808080 Diagonal \ +Light (B2W2) +Unused Bits
+0xFE #808080 Diagonal \ +Unused Bits
+0xFF #808080 Diagonal \ +Light (B2W2) +Unused Bits

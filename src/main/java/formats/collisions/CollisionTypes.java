@@ -46,10 +46,10 @@ public class CollisionTypes {
             {"Type", "Collision"},
             {"Type", "Collision"},
             {"Type", "Collision"},
-            {"Terrain", "Terrain 2", "Height", "Height 2", "Flags", "Layer 6 (?)", "Collision", "Shadow"},
-            {"Terrain", "Terrain 2", "Height", "Height 2", "Flags", "Layer 6 (?)", "Collision", "Shadow"},
-            {"Terrain", "Terrain 2", "Height", "Height 2", "Flags", "Layer 6 (?)", "Collision", "Shadow"},
-            {"Terrain", "Terrain 2", "Height", "Height 2", "Flags", "Layer 6 (?)", "Collision", "Shadow"}
+            {"Slope Normal", "Slope Normal Hi", "Height Index", "Height Index Hi", "Behavior", "Behavior Hi", "Flags", "Flags Hi/Diag"},
+            {"Slope Normal", "Slope Normal Hi", "Height Index", "Height Index Hi", "Behavior", "Behavior Hi", "Flags", "Flags Hi/Diag"},
+            {"Slope Normal", "Slope Normal Hi", "Height Index", "Height Index Hi", "Behavior", "Behavior Hi", "Flags", "Flags Hi/Diag"},
+            {"Slope Normal", "Slope Normal Hi", "Height Index", "Height Index Hi", "Behavior", "Behavior Hi", "Flags", "Flags Hi/Diag"}
     };
 
     public static String layerName(int gameIndex, int layer) {

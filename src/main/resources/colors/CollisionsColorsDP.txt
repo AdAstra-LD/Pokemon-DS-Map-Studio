@@ -1,512 +1,512 @@
-0x00 #FFFFFF Empty 
-0x01 #FFFFFF ???
-0x02 #009900 TallGrass
-0x03 #006600 LongTallGrass
-0x04 #FFFFFF ???
-0x05 #FFFFFF ???
-0x06 #FFFFFF ???
-0x07 #FFFFFF ???
-0x08 #877454 CaveGround
-0x09 #FFFFFF ???
-0x0A #FFFFFF ???
-0x0B #F9E0B6 HauntedMansionFloor
-0x0C #937667 Ground/Mountain
-0x0D #FFFFFF ???
-0x0E #FFFFFF ???
-0x0F #FFFFFF ???
-0x10 #0099FF RiverWater
-0x11 #FFFFFF ???
-0x12 #FFFFFF ???
+0x00 #FFFFFF Ground
+0x01 #E8E8E8 Unused
+0x02 #009900 Tall Grass
+0x03 #006600 Long Grass (No Bike)
+0x04 #E8E8E8 Unused
+0x05 #D9EAD3 Unused (Wild Encounters)
+0x06 #D9EAD3 Unused (Wild Encounters)
+0x07 #E8E8E8 Unused
+0x08 #877454 Encounter Ground (Cave)
+0x09 #E8E8E8 Unused
+0x0A #E8E8E8 Unused
+0x0B #F9E0B6 Encounter Ground (No Cave BG)
+0x0C #E8E8E8 Unused
+0x0D #E8E8E8 Unused
+0x0E #E8E8E8 Unused
+0x0F #E8E8E8 Unused
+0x10 #0099FF Pond Water
+0x11 #9FC5E8 Unused (Surfable+Wild Encounters)
+0x12 #9FC5E8 Unused (Surfable+Wild Encounters)
 0x13 #8FE1EC Waterfall
-0x14 #FFFFFF ???
-0x15 #0066FF SeaWater
+0x14 #9FC5E8 Unused (Surfable)
+0x15 #0066FF Sea Water
 0x16 #99FFFF Puddle
-0x17 #A2B8CE WalkableWater
-0x18 #FFFFFF ???
-0x19 #FFFFFF ???
-0x1A #FFFFFF ???
-0x1B #FFFFFF ???
-0x1C #FFFFFF ???
-0x1D #FFFFFF ???
-0x1E #FFFFFF ???
-0x1F #FFFFFF ???
+0x17 #A2B8CE Shallow Water
+0x18 #E8E8E8 Unused
+0x19 #9FC5E8 Unused (Surfable)
+0x1A #E8E8E8 Unused
+0x1B #E8E8E8 Unused
+0x1C #E8E8E8 Unused
+0x1D #B5EFEF Still Puddle (Mirror Reflect)
+0x1E #E8E8E8 Unused
+0x1F #E8E8E8 Unused
 0x20 #00FFFF Ice
 0x21 #FFFF99 Sand
-0x22 #FFFFFF ???
-0x23 #FFFFFF ???
-0x24 #FFFFFF ???
-0x25 #FFFFFF ???
-0x26 #FFFFFF ???
-0x27 #FFFFFF ???
-0x28 #FFFFFF ???
-0x29 #FFFFFF ???
-0x2A #FFFFFF ???
-0x2B #FFFFFF ???
-0x2C #59F7BD Reflection
-0x2D #FFFFFF ???
-0x2E #FFFFFF ???
-0x2F #FFFFFF ???
-0x30 #FFFFFF ???
-0x31 #FFFFFF ???
-0x32 #FFFFFF ???
-0x33 #FFFFFF ???
-0x34 #FFFFFF ???
-0x35 #FFFFFF ???
-0x36 #FFFFFF ???
-0x37 #FFFFFF ???
-0x38 #8A4B08 JumpRight
-0x39 #8A4B08 JumpLeft
-0x3A #8A4B08 JumpUp
-0x3B #8A4B08 JumpDown
-0x3C #FFFFFF ???
-0x3D #FFFFFF ???
-0x3E #FFFFFF ???
-0x3F #8A4B08 JumpCornerDownLeft
-0x40 #FF00DC SlideRight
-0x41 #FF00DC SlideLeft
-0x42 #FF00DC SlideUp
-0x43 #FF00DC SlideDown
-0x44 #FFFFFF ???
-0x45 #FFFFFF ???
-0x46 #FFFFFF ???
-0x47 #FFFFFF ???
-0x48 #FFFFFF ???
-0x49 #FFFFFF ???
-0x4A #FFFFFF ???
-0x4B #7D5858 VerticalMountainClimb
-0x4C #7D5858 HorizontalMountainClimb
-0x4D #FFFFFF ???
-0x4E #FFFFFF ???
-0x4F #FFFFFF ???
-0x50 #FFFFFF ???
-0x51 #FFFFFF ???
-0x52 #FFFFFF ???
-0x53 #FFFFFF ???
-0x54 #FFFFFF ???
-0x55 #FFFFFF ???
-0x56 #FFFFFF ???
-0x57 #FFFFFF ???
-0x58 #FFFFFF ???
-0x59 #FFFFFF ???
-0x5A #FFFFFF ???
-0x5B #FFFFFF ???
-0x5C #FFFFFF ???
-0x5D #FFFFFF ???
-0x5E #99008F WarpRightStairs
-0x5F #99008F WarpLeftStairs
-0x60 #FFFFFF ???
-0x61 #FFFFFF ???
-0x62 #510087 WarpEntranceRight
-0x63 #510087 WarpEntranceLeft
-0x64 #510087 WarpEntranceUp
-0x65 #510087 WarpEntranceDown
-0x66 #FFFFFF ???
-0x67 #9900FF Teleport
-0x68 #FFFFFF ???
-0x69 #9900FF WarpDoor
-0x6A #FFFFFF ???
-0x6B #FFFFFF ???
-0x6C #9900FF WarpRight
-0x6D #9900FF WarpLeft
-0x6E #9900FF WarpUp
-0x6F #9900FF WarpDown
-0x70 #FF9900 BridgeStart
-0x71 #FF9900 BridgeMiddle
-0x72 #FF9900 BridgeOverCave
-0x73 #FF9900 BridgeOverWater
-0x74 #FFFFFF ???
-0x75 #FF9900 BridgeOverSnow
-0x76 #FF9900 VerticalBikeBridge
-0x77 #FFFFFF ???
-0x78 #FFFFFF ???
-0x79 #FF9900 VerticalBikeBridgeOverSand
-0x7A #FF9900 HorizontalBikeBridge
-0x7B #FFFFFF ???
-0x7C #FF9900 HorizantalBikeBridgeOverWater
-0x7D #FF9900 HorizantalBikeBridgeOverSand
-0x7E #FFFFFF ???
-0x7F #FFFFFF ???
-0x80 #CECA5F Table
-0x81 #FFFFFF ???
-0x82 #FFFFFF ???
-0x83 #FFFFFF ???
-0x84 #FFFFFF ???
-0x85 #FFFFFF ???
-0x86 #FFFFFF ???
-0x87 #FFFFFF ???
-0x88 #FFFFFF ???
-0x89 #FFFFFF ???
-0x8A #FFFFFF ???
-0x8B #FFFFFF ???
-0x8C #FFFFFF ???
-0x8D #FFFFFF ???
-0x8E #FFFFFF ???
-0x8F #FFFFFF ???
-0x90 #FFFFFF ???
-0x91 #FFFFFF ???
-0x92 #FFFFFF ???
-0x93 #FFFFFF ???
-0x94 #FFFFFF ???
-0x95 #FFFFFF ???
-0x96 #FFFFFF ???
-0x97 #FFFFFF ???
-0x98 #FFFFFF ???
-0x99 #FFFFFF ???
-0x9A #FFFFFF ???
-0x9B #FFFFFF ???
-0x9C #FFFFFF ???
-0x9D #FFFFFF ???
-0x9E #FFFFFF ???
-0x9F #FFFFFF ???
-0xA0 #553800 FarmLand
-0xA1 #9E9E9E DeepSnow
-0xA2 #707070 VeryDeepSnow
-0xA3 #494949 UltraDeepSnow
-0xA4 #67604A Mud
-0xA5 #67604A Mud(???)
-0xA6 #467C00 MudGrass
-0xA7 #467C00 MudGrass(???)
-0xA8 #D8D8D8 Snow
-0xA9 #FFFFFF ???
-0xAA #FFFFFF ???
-0xAB #FFFFFF ???
-0xAC #FFFFFF ???
-0xAD #FFFFFF ???
-0xAE #FFFFFF ???
-0xAF #FFFFFF ???
-0xB0 #FFFFFF ???
-0xB1 #FFFFFF ???
-0xB2 #FFFFFF ???
-0xB3 #FFFFFF ???
-0xB4 #FFFFFF ???
-0xB5 #FFFFFF ???
-0xB6 #FFFFFF ???
-0xB7 #FFFFFF ???
-0xB8 #FFFFFF ???
-0xB9 #FFFFFF ???
-0xBA #FFFFFF ???
-0xBB #FFFFFF ???
-0xBC #FFFFFF ???
-0xBD #FFFFFF ???
-0xBE #FFFFFF ???
-0xBF #FFFFFF ???
-0xC0 #FFFFFF ???
-0xC1 #FFFFFF ???
-0xC2 #FFFFFF ???
-0xC3 #FFFFFF ???
-0xC4 #FFFFFF ???
-0xC5 #FFFFFF ???
-0xC6 #FFFFFF ???
-0xC7 #FFFFFF ???
-0xC8 #FFFFFF ???
-0xC9 #FFFFFF ???
-0xCA #FFFFFF ???
-0xCB #FFFFFF ???
-0xCC #FFFFFF ???
-0xCD #FFFFFF ???
-0xCE #FFFFFF ???
-0xCF #FFFFFF ???
-0xD0 #FFFFFF ???
-0xD1 #FFFFFF ???
-0xD2 #FFFFFF ???
-0xD3 #FFFFFF ???
-0xD4 #FFFFFF ???
-0xD5 #FFFFFF ???
-0xD6 #FFFFFF ???
-0xD7 #FFFFFF ???
-0xD8 #3A4A7C JumpLeftBike
-0xD9 #BCC48B BikeSlopeTop
-0xDA #BCC48B BikeSlopeBottom
-0xDB #1060A8 BikeParking
-0xDC #FFFFFF ???
-0xDD #FFFFFF ???
-0xDE #FFFFFF ???
-0xDF #FFFFFF ???
-0xE0 #FFFFFF ???
-0xE1 #7F0037 HauntedMansionFurniture(???)
-0xE2 #FFFFFF ???
-0xE3 #FFFFFF ???
-0xE4 #7F0037 RelatedWithHauntedMansion(???)
-0xE5 #FFFFFF ???
-0xE6 #FFFFFF ???
-0xE7 #FFFFFF ???
-0xE8 #FFFFFF ???
-0xE9 #FFFFFF ???
-0xEA #FFFFFF ???
-0xEB #FFFFFF ???
-0xEC #FFFFFF ???
-0xED #FFFFFF ???
-0xEE #FFFFFF ???
-0xEF #FFFFFF ???
-0xF0 #FFFFFF ???
-0xF1 #FFFFFF ???
-0xF2 #FFFFFF ???
-0xF3 #FFFFFF ???
-0xF4 #FFFFFF ???
-0xF5 #FFFFFF ???
-0xF6 #FFFFFF ???
-0xF7 #FFFFFF ???
-0xF8 #FFFFFF ???
-0xF9 #FFFFFF ???
-0xFA #FFFFFF ???
-0xFB #FFFFFF ???
-0xFC #FFFFFF ???
-0xFD #FFFFFF ???
-0xFE #FFFFFF ???
-0xFF #FFFFFF ???
-0x00 #FFFFFF NoCollision
-0x01 #FFFFFF ???
-0x02 #FFFFFF ???
-0x03 #FFFFFF ???
-0x04 #FFFFFF ???
-0x05 #FFFFFF ???
-0x06 #FFFFFF ???
-0x07 #FFFFFF ???
-0x08 #FFFFFF ???
-0x09 #FFFFFF ???
-0x0A #FFFFFF ???
-0x0B #FFFFFF ???
-0x0C #FFFFFF ???
-0x0D #FFFFFF ???
-0x0E #FFFFFF ???
-0x0F #FFFFFF ???
-0x10 #FFFFFF ???
-0x11 #FFFFFF ???
-0x12 #FFFFFF ???
-0x13 #FFFFFF ???
-0x14 #FFFFFF ???
-0x15 #FFFFFF ???
-0x16 #FFFFFF ???
-0x17 #FFFFFF ???
-0x18 #FFFFFF ???
-0x19 #FFFFFF ???
-0x1A #FFFFFF ???
-0x1B #FFFFFF ???
-0x1C #FFFFFF ???
-0x1D #FFFFFF ???
-0x1E #FFFFFF ???
-0x1F #FFFFFF ???
-0x20 #FFFFFF ???
-0x21 #FFFFFF ???
-0x22 #FFFFFF ???
-0x23 #FFFFFF ???
-0x24 #FFFFFF ???
-0x25 #FFFFFF ???
-0x26 #FFFFFF ???
-0x27 #FFFFFF ???
-0x28 #FFFFFF ???
-0x29 #FFFFFF ???
-0x2A #FFFFFF ???
-0x2B #FFFFFF ???
-0x2C #FFFFFF ???
-0x2D #FFFFFF ???
-0x2E #FFFFFF ???
-0x2F #FFFFFF ???
-0x30 #FFFFFF ???
-0x31 #FFFFFF ???
-0x32 #FFFFFF ???
-0x33 #FFFFFF ???
-0x34 #FFFFFF ???
-0x35 #FFFFFF ???
-0x36 #FFFFFF ???
-0x37 #FFFFFF ???
-0x38 #FFFFFF ???
-0x39 #FFFFFF ???
-0x3A #FFFFFF ???
-0x3B #FFFFFF ???
-0x3C #FFFFFF ???
-0x3D #FFFFFF ???
-0x3E #FFFFFF ???
-0x3F #FFFFFF ???
-0x40 #FFFFFF ???
-0x41 #FFFFFF ???
-0x42 #FFFFFF ???
-0x43 #FFFFFF ???
-0x44 #FFFFFF ???
-0x45 #FFFFFF ???
-0x46 #FFFFFF ???
-0x47 #FFFFFF ???
-0x48 #FFFFFF ???
-0x49 #FFFFFF ???
-0x4A #FFFFFF ???
-0x4B #FFFFFF ???
-0x4C #FFFFFF ???
-0x4D #FFFFFF ???
-0x4E #FFFFFF ???
-0x4F #FFFFFF ???
-0x50 #FFFFFF ???
-0x51 #FFFFFF ???
-0x52 #FFFFFF ???
-0x53 #FFFFFF ???
-0x54 #FFFFFF ???
-0x55 #FFFFFF ???
-0x56 #FFFFFF ???
-0x57 #FFFFFF ???
-0x58 #FFFFFF ???
-0x59 #FFFFFF ???
-0x5A #FFFFFF ???
-0x5B #FFFFFF ???
-0x5C #FFFFFF ???
-0x5D #FFFFFF ???
-0x5E #FFFFFF ???
-0x5F #FFFFFF ???
-0x60 #FFFFFF ???
-0x61 #FFFFFF ???
-0x62 #FFFFFF ???
-0x63 #FFFFFF ???
-0x64 #FFFFFF ???
-0x65 #FFFFFF ???
-0x66 #FFFFFF ???
-0x67 #FFFFFF ???
-0x68 #FFFFFF ???
-0x69 #FFFFFF ???
-0x6A #FFFFFF ???
-0x6B #FFFFFF ???
-0x6C #FFFFFF ???
-0x6D #FFFFFF ???
-0x6E #FFFFFF ???
-0x6F #FFFFFF ???
-0x70 #FFFFFF ???
-0x71 #FFFFFF ???
-0x72 #FFFFFF ???
-0x73 #FFFFFF ???
-0x74 #FFFFFF ???
-0x75 #FFFFFF ???
-0x76 #FFFFFF ???
-0x77 #FFFFFF ???
-0x78 #FFFFFF ???
-0x79 #FFFFFF ???
-0x7A #FFFFFF ???
-0x7B #FFFFFF ???
-0x7C #FFFFFF ???
-0x7D #FFFFFF ???
-0x7E #FFFFFF ???
-0x7F #FFFFFF ???
-0x80 #FF0000 Collision
-0x81 #FFFFFF ???
-0x82 #FFFFFF ???
-0x83 #FFFFFF ???
-0x84 #FFFFFF ???
-0x85 #FFFFFF ???
-0x86 #FFFFFF ???
-0x87 #FFFFFF ???
-0x88 #FFFFFF ???
-0x89 #FFFFFF ???
-0x8A #FFFFFF ???
-0x8B #FFFFFF ???
-0x8C #FFFFFF ???
-0x8D #FFFFFF ???
-0x8E #FFFFFF ???
-0x8F #FFFFFF ???
-0x90 #FFFFFF ???
-0x91 #FFFFFF ???
-0x92 #FFFFFF ???
-0x93 #FFFFFF ???
-0x94 #FFFFFF ???
-0x95 #FFFFFF ???
-0x96 #FFFFFF ???
-0x97 #FFFFFF ???
-0x98 #FFFFFF ???
-0x99 #FFFFFF ???
-0x9A #FFFFFF ???
-0x9B #FFFFFF ???
-0x9C #FFFFFF ???
-0x9D #FFFFFF ???
-0x9E #FFFFFF ???
-0x9F #FFFFFF ???
-0xA0 #FFFFFF ???
-0xA1 #FFFFFF ???
-0xA2 #FFFFFF ???
-0xA3 #FFFFFF ???
-0xA4 #FFFFFF ???
-0xA5 #FFFFFF ???
-0xA6 #FFFFFF ???
-0xA7 #FFFFFF ???
-0xA8 #FFFFFF ???
-0xA9 #FFFFFF ???
-0xAA #FFFFFF ???
-0xAB #FFFFFF ???
-0xAC #FFFFFF ???
-0xAD #FFFFFF ???
-0xAE #FFFFFF ???
-0xAF #FFFFFF ???
-0xB0 #FFFFFF ???
-0xB1 #FFFFFF ???
-0xB2 #FFFFFF ???
-0xB3 #FFFFFF ???
-0xB4 #FFFFFF ???
-0xB5 #FFFFFF ???
-0xB6 #FFFFFF ???
-0xB7 #FFFFFF ???
-0xB8 #FFFFFF ???
-0xB9 #FFFFFF ???
-0xBA #FFFFFF ???
-0xBB #FFFFFF ???
-0xBC #FFFFFF ???
-0xBD #FFFFFF ???
-0xBE #FFFFFF ???
-0xBF #FFFFFF ???
-0xC0 #FFFFFF ???
-0xC1 #FFFFFF ???
-0xC2 #FFFFFF ???
-0xC3 #FFFFFF ???
-0xC4 #FFFFFF ???
-0xC5 #FFFFFF ???
-0xC6 #FFFFFF ???
-0xC7 #FFFFFF ???
-0xC8 #FFFFFF ???
-0xC9 #FFFFFF ???
-0xCA #FFFFFF ???
-0xCB #FFFFFF ???
-0xCC #FFFFFF ???
-0xCD #FFFFFF ???
-0xCE #FFFFFF ???
-0xCF #FFFFFF ???
-0xD0 #FFFFFF ???
-0xD1 #FFFFFF ???
-0xD2 #FFFFFF ???
-0xD3 #FFFFFF ???
-0xD4 #FFFFFF ???
-0xD5 #FFFFFF ???
-0xD6 #FFFFFF ???
-0xD7 #FFFFFF ???
-0xD8 #FFFFFF ???
-0xD9 #FFFFFF ???
-0xDA #FFFFFF ???
-0xDB #FFFFFF ???
-0xDC #FFFFFF ???
-0xDD #FFFFFF ???
-0xDE #FFFFFF ???
-0xDF #FFFFFF ???
-0xE0 #FFFFFF ???
-0xE1 #FFFFFF ???
-0xE2 #FFFFFF ???
-0xE3 #FFFFFF ???
-0xE4 #FFFFFF ???
-0xE5 #FFFFFF ???
-0xE6 #FFFFFF ???
-0xE7 #FFFFFF ???
-0xE8 #FFFFFF ???
-0xE9 #FFFFFF ???
-0xEA #FFFFFF ???
-0xEB #FFFFFF ???
-0xEC #FFFFFF ???
-0xED #FFFFFF ???
-0xEE #FFFFFF ???
-0xEF #FFFFFF ???
-0xF0 #FFFFFF ???
-0xF1 #FFFFFF ???
-0xF2 #FFFFFF ???
-0xF3 #FFFFFF ???
-0xF4 #FFFFFF ???
-0xF5 #FFFFFF ???
-0xF6 #FFFFFF ???
-0xF7 #FFFFFF ???
-0xF8 #FFFFFF ???
-0xF9 #FFFFFF ???
-0xFA #FFFFFF ???
-0xFB #FFFFFF ???
-0xFC #FFFFFF ???
-0xFD #FFFFFF ???
-0xFE #FFFFFF ???
-0xFF #FFFFFF ???
+0x22 #9FC5E8 Unused (Surfable+Wild Encounters)
+0x23 #E8E8E8 Unused
+0x24 #D9EAD3 Unused (Wild Encounters)
+0x25 #D9EAD3 Unused (Wild Encounters)
+0x26 #E8E8E8 Unused
+0x27 #E8E8E8 Unused
+0x28 #E8E8E8 Unused
+0x29 #E8E8E8 Unused
+0x2A #9FC5E8 Unused (Surfable+Wild Encounters)
+0x2B #E8E8E8 Unused
+0x2C #59F7BD Mirror Floor
+0x2D #C27BA0 No Explorer Kit (Pt)
+0x2E #E8E8E8 Unused
+0x2F #E8E8E8 Unused
+0x30 #FF0000 Block Right
+0x31 #FF0000 Block Left
+0x32 #FF0000 Block Up
+0x33 #FF0000 Block Down
+0x34 #FF0000 Block Right+Up
+0x35 #FF0000 Block Left+Up
+0x36 #FF0000 Block Right+Down
+0x37 #FF0000 Block Left+Down
+0x38 #8A4B08 Jump Right
+0x39 #8A4B08 Jump Left
+0x3A #8A4B08 Jump Up (Unused In Data)
+0x3B #8A4B08 Jump Down
+0x3C #E8E8E8 Unused
+0x3D #E8E8E8 Unused
+0x3E #E8E8E8 Unused
+0x3F #E8E8E8 Unused
+0x40 #FF00DC Force Slide Right
+0x41 #FF00DC Force Slide Left
+0x42 #FF00DC Force Slide Up
+0x43 #FF00DC Force Slide Down
+0x44 #E8E8E8 Unused
+0x45 #E8E8E8 Unused
+0x46 #E8E8E8 Unused
+0x47 #E8E8E8 Unused
+0x48 #E8E8E8 Unused
+0x49 #FF0000 Block Up+Down
+0x4A #FF0000 Block Left+Right
+0x4B #7D5858 Rock Climb Vertical
+0x4C #7D5858 Rock Climb Horizontal
+0x4D #E8E8E8 Unused
+0x4E #E8E8E8 Unused
+0x4F #E8E8E8 Unused
+0x50 #9FC5E8 Unused (Surfable)
+0x51 #9FC5E8 Unused (Surfable)
+0x52 #9FC5E8 Unused (Surfable)
+0x53 #9FC5E8 Unused (Surfable)
+0x54 #E8E8E8 Unused
+0x55 #E8E8E8 Unused
+0x56 #4A86E8 Gym Water Level 0
+0x57 #4A86E8 Gym Water Level 2
+0x58 #4A86E8 Gym Water Level 4
+0x59 #A64D79 Block (Height Dependent)
+0x5A #8A4B08 Two Tile Jump Up
+0x5B #8A4B08 Two Tile Jump Down
+0x5C #8A4B08 Two Tile Jump Left
+0x5D #8A4B08 Two Tile Jump Right
+0x5E #99008F Side Stairs Right
+0x5F #99008F Side Stairs Left
+0x60 #E8E8E8 Unused
+0x61 #E8E8E8 Unused
+0x62 #510087 Warp Entrance Right
+0x63 #510087 Warp Entrance Left
+0x64 #510087 Warp Entrance Up
+0x65 #510087 Warp Entrance Down
+0x66 #E8E8E8 Unused
+0x67 #9900FF Warp Panel
+0x68 #E8E8E8 Unused
+0x69 #9900FF Door Warp
+0x6A #9900FF Escalator Turn
+0x6B #9900FF Escalator Straight
+0x6C #9900FF Warp Right (No Arrow)
+0x6D #9900FF Warp Left (No Arrow)
+0x6E #9900FF Warp Up (No Arrow)
+0x6F #9900FF Warp Down (No Arrow)
+0x70 #FF9900 Bridge Start/End
+0x71 #FF9900 Bridge Over Ground
+0x72 #FF9900 Bridge Over Encounter Ground
+0x73 #FF9900 Bridge Over Sea
+0x74 #FF9900 Bridge Over Sand
+0x75 #FF9900 Bridge Over Snow
+0x76 #FFB84D Bike Bridge V (Ground)
+0x77 #FFB84D Bike Bridge V (Encounter Ground)
+0x78 #FFB84D Bike Bridge V (Sea)
+0x79 #FFB84D Bike Bridge V (Sand)
+0x7A #FFB84D Bike Bridge H (Ground)
+0x7B #FFB84D Bike Bridge H (Encounter Ground)
+0x7C #FFB84D Bike Bridge H (Sea)
+0x7D #FFB84D Bike Bridge H (Sand)
+0x7E #E8E8E8 Unused
+0x7F #E8E8E8 Unused
+0x80 #CECA5F Counter
+0x81 #E8E8E8 Unused
+0x82 #E8E8E8 Unused
+0x83 #C0B060 PC
+0x84 #E8E8E8 Unused
+0x85 #C0B060 Town Map Poster
+0x86 #C0B060 TV
+0x87 #E8E8E8 Unused
+0x88 #E8E8E8 Unused
+0x89 #E8E8E8 Unused
+0x8A #E8E8E8 Unused
+0x8B #E8E8E8 Unused
+0x8C #E8E8E8 Unused
+0x8D #E8E8E8 Unused
+0x8E #E8E8E8 Unused
+0x8F #E8E8E8 Unused
+0x90 #E8E8E8 Unused
+0x91 #E8E8E8 Unused
+0x92 #E8E8E8 Unused
+0x93 #E8E8E8 Unused
+0x94 #E8E8E8 Unused
+0x95 #E8E8E8 Unused
+0x96 #E8E8E8 Unused
+0x97 #E8E8E8 Unused
+0x98 #E8E8E8 Unused
+0x99 #E8E8E8 Unused
+0x9A #E8E8E8 Unused
+0x9B #E8E8E8 Unused
+0x9C #E8E8E8 Unused
+0x9D #E8E8E8 Unused
+0x9E #E8E8E8 Unused
+0x9F #E8E8E8 Unused
+0xA0 #E8E8E8 Unused
+0xA1 #D8D8D8 Shallow Snow
+0xA2 #9E9E9E Deep Snow
+0xA3 #707070 Very Deep Snow
+0xA4 #67604A Marsh
+0xA5 #4A4535 Deep Marsh (Trap)
+0xA6 #467C00 Marsh Grass
+0xA7 #2F5300 Deep Marsh Grass
+0xA8 #EFEFEF Very Shallow Snow
+0xA9 #BFBFBF Shadowed Snow
+0xAA #E8E8E8 Unused
+0xAB #E8E8E8 Unused
+0xAC #E8E8E8 Unused
+0xAD #E8E8E8 Unused
+0xAE #E8E8E8 Unused
+0xAF #E8E8E8 Unused
+0xB0 #E8E8E8 Unused
+0xB1 #E8E8E8 Unused
+0xB2 #E8E8E8 Unused
+0xB3 #E8E8E8 Unused
+0xB4 #E8E8E8 Unused
+0xB5 #E8E8E8 Unused
+0xB6 #E8E8E8 Unused
+0xB7 #E8E8E8 Unused
+0xB8 #E8E8E8 Unused
+0xB9 #E8E8E8 Unused
+0xBA #E8E8E8 Unused
+0xBB #E8E8E8 Unused
+0xBC #E8E8E8 Unused
+0xBD #E8E8E8 Unused
+0xBE #E8E8E8 Unused
+0xBF #E8E8E8 Unused
+0xC0 #E8E8E8 Unused
+0xC1 #E8E8E8 Unused
+0xC2 #E8E8E8 Unused
+0xC3 #E8E8E8 Unused
+0xC4 #E8E8E8 Unused
+0xC5 #E8E8E8 Unused
+0xC6 #E8E8E8 Unused
+0xC7 #E8E8E8 Unused
+0xC8 #E8E8E8 Unused
+0xC9 #E8E8E8 Unused
+0xCA #E8E8E8 Unused
+0xCB #E8E8E8 Unused
+0xCC #E8E8E8 Unused
+0xCD #E8E8E8 Unused
+0xCE #E8E8E8 Unused
+0xCF #E8E8E8 Unused
+0xD0 #E8E8E8 Unused
+0xD1 #E8E8E8 Unused
+0xD2 #E8E8E8 Unused
+0xD3 #E8E8E8 Unused
+0xD4 #E8E8E8 Unused
+0xD5 #E8E8E8 Unused
+0xD6 #E8E8E8 Unused
+0xD7 #3A4A7C Bike Ramp From Left
+0xD8 #3A4A7C Bike Ramp From Right
+0xD9 #BCC48B Bike Slope Upper (Gear 4)
+0xDA #BCC48B Bike Slope Lower (Gear 4)
+0xDB #1060A8 Bike Bump Post
+0xDC #E8E8E8 Unused
+0xDD #E8E8E8 Unused
+0xDE #E8E8E8 Unused
+0xDF #E8E8E8 Unused
+0xE0 #CEA95F Small Bookshelf 1
+0xE1 #CEA95F Big Bookshelf 1
+0xE2 #CEA95F Big Bookshelf 2
+0xE3 #E8E8E8 Unused
+0xE4 #CEA95F Trash Can
+0xE5 #CEA95F Shop Shelf 1
+0xE6 #E8E8E8 Unused
+0xE7 #E8E8E8 Unused
+0xE8 #E8E8E8 Unused
+0xE9 #E8E8E8 Unused
+0xEA #CEA95F Small Bookshelf 2
+0xEB #CEA95F Shop Shelf 2
+0xEC #CEA95F Shop Shelf 3
+0xED #E8E8E8 Unused
+0xEE #E8E8E8 Unused
+0xEF #E8E8E8 Unused
+0xF0 #E8E8E8 Unused
+0xF1 #E8E8E8 Unused
+0xF2 #E8E8E8 Unused
+0xF3 #E8E8E8 Unused
+0xF4 #E8E8E8 Unused
+0xF5 #E8E8E8 Unused
+0xF6 #E8E8E8 Unused
+0xF7 #E8E8E8 Unused
+0xF8 #E8E8E8 Unused
+0xF9 #E8E8E8 Unused
+0xFA #E8E8E8 Unused
+0xFB #E8E8E8 Unused
+0xFC #E8E8E8 Unused
+0xFD #E8E8E8 Unused
+0xFE #E8E8E8 Unused
+0xFF #FFFFFF No Attribute
+0x00 #FFFFFF Walkable
+0x01 #F2F2F2 Walkable (No Effect)
+0x02 #F2F2F2 Walkable (No Effect)
+0x03 #F2F2F2 Walkable (No Effect)
+0x04 #F2F2F2 Walkable (No Effect)
+0x05 #F2F2F2 Walkable (No Effect)
+0x06 #F2F2F2 Walkable (No Effect)
+0x07 #F2F2F2 Walkable (No Effect)
+0x08 #F2F2F2 Walkable (No Effect)
+0x09 #F2F2F2 Walkable (No Effect)
+0x0A #F2F2F2 Walkable (No Effect)
+0x0B #F2F2F2 Walkable (No Effect)
+0x0C #F2F2F2 Walkable (No Effect)
+0x0D #F2F2F2 Walkable (No Effect)
+0x0E #F2F2F2 Walkable (No Effect)
+0x0F #F2F2F2 Walkable (No Effect)
+0x10 #F2F2F2 Walkable (No Effect)
+0x11 #F2F2F2 Walkable (No Effect)
+0x12 #F2F2F2 Walkable (No Effect)
+0x13 #F2F2F2 Walkable (No Effect)
+0x14 #F2F2F2 Walkable (No Effect)
+0x15 #F2F2F2 Walkable (No Effect)
+0x16 #F2F2F2 Walkable (No Effect)
+0x17 #F2F2F2 Walkable (No Effect)
+0x18 #F2F2F2 Walkable (No Effect)
+0x19 #F2F2F2 Walkable (No Effect)
+0x1A #F2F2F2 Walkable (No Effect)
+0x1B #F2F2F2 Walkable (No Effect)
+0x1C #F2F2F2 Walkable (No Effect)
+0x1D #F2F2F2 Walkable (No Effect)
+0x1E #F2F2F2 Walkable (No Effect)
+0x1F #F2F2F2 Walkable (No Effect)
+0x20 #F2F2F2 Walkable (No Effect)
+0x21 #F2F2F2 Walkable (No Effect)
+0x22 #F2F2F2 Walkable (No Effect)
+0x23 #F2F2F2 Walkable (No Effect)
+0x24 #F2F2F2 Walkable (No Effect)
+0x25 #F2F2F2 Walkable (No Effect)
+0x26 #F2F2F2 Walkable (No Effect)
+0x27 #F2F2F2 Walkable (No Effect)
+0x28 #F2F2F2 Walkable (No Effect)
+0x29 #F2F2F2 Walkable (No Effect)
+0x2A #F2F2F2 Walkable (No Effect)
+0x2B #F2F2F2 Walkable (No Effect)
+0x2C #F2F2F2 Walkable (No Effect)
+0x2D #F2F2F2 Walkable (No Effect)
+0x2E #F2F2F2 Walkable (No Effect)
+0x2F #F2F2F2 Walkable (No Effect)
+0x30 #F2F2F2 Walkable (No Effect)
+0x31 #F2F2F2 Walkable (No Effect)
+0x32 #F2F2F2 Walkable (No Effect)
+0x33 #F2F2F2 Walkable (No Effect)
+0x34 #F2F2F2 Walkable (No Effect)
+0x35 #F2F2F2 Walkable (No Effect)
+0x36 #F2F2F2 Walkable (No Effect)
+0x37 #F2F2F2 Walkable (No Effect)
+0x38 #F2F2F2 Walkable (No Effect)
+0x39 #F2F2F2 Walkable (No Effect)
+0x3A #F2F2F2 Walkable (No Effect)
+0x3B #F2F2F2 Walkable (No Effect)
+0x3C #F2F2F2 Walkable (No Effect)
+0x3D #F2F2F2 Walkable (No Effect)
+0x3E #F2F2F2 Walkable (No Effect)
+0x3F #F2F2F2 Walkable (No Effect)
+0x40 #F2F2F2 Walkable (No Effect)
+0x41 #F2F2F2 Walkable (No Effect)
+0x42 #F2F2F2 Walkable (No Effect)
+0x43 #F2F2F2 Walkable (No Effect)
+0x44 #F2F2F2 Walkable (No Effect)
+0x45 #F2F2F2 Walkable (No Effect)
+0x46 #F2F2F2 Walkable (No Effect)
+0x47 #F2F2F2 Walkable (No Effect)
+0x48 #F2F2F2 Walkable (No Effect)
+0x49 #F2F2F2 Walkable (No Effect)
+0x4A #F2F2F2 Walkable (No Effect)
+0x4B #F2F2F2 Walkable (No Effect)
+0x4C #F2F2F2 Walkable (No Effect)
+0x4D #F2F2F2 Walkable (No Effect)
+0x4E #F2F2F2 Walkable (No Effect)
+0x4F #F2F2F2 Walkable (No Effect)
+0x50 #F2F2F2 Walkable (No Effect)
+0x51 #F2F2F2 Walkable (No Effect)
+0x52 #F2F2F2 Walkable (No Effect)
+0x53 #F2F2F2 Walkable (No Effect)
+0x54 #F2F2F2 Walkable (No Effect)
+0x55 #F2F2F2 Walkable (No Effect)
+0x56 #F2F2F2 Walkable (No Effect)
+0x57 #F2F2F2 Walkable (No Effect)
+0x58 #F2F2F2 Walkable (No Effect)
+0x59 #F2F2F2 Walkable (No Effect)
+0x5A #F2F2F2 Walkable (No Effect)
+0x5B #F2F2F2 Walkable (No Effect)
+0x5C #F2F2F2 Walkable (No Effect)
+0x5D #F2F2F2 Walkable (No Effect)
+0x5E #F2F2F2 Walkable (No Effect)
+0x5F #F2F2F2 Walkable (No Effect)
+0x60 #F2F2F2 Walkable (No Effect)
+0x61 #F2F2F2 Walkable (No Effect)
+0x62 #F2F2F2 Walkable (No Effect)
+0x63 #F2F2F2 Walkable (No Effect)
+0x64 #F2F2F2 Walkable (No Effect)
+0x65 #F2F2F2 Walkable (No Effect)
+0x66 #F2F2F2 Walkable (No Effect)
+0x67 #F2F2F2 Walkable (No Effect)
+0x68 #F2F2F2 Walkable (No Effect)
+0x69 #F2F2F2 Walkable (No Effect)
+0x6A #F2F2F2 Walkable (No Effect)
+0x6B #F2F2F2 Walkable (No Effect)
+0x6C #F2F2F2 Walkable (No Effect)
+0x6D #F2F2F2 Walkable (No Effect)
+0x6E #F2F2F2 Walkable (No Effect)
+0x6F #F2F2F2 Walkable (No Effect)
+0x70 #F2F2F2 Walkable (No Effect)
+0x71 #F2F2F2 Walkable (No Effect)
+0x72 #F2F2F2 Walkable (No Effect)
+0x73 #F2F2F2 Walkable (No Effect)
+0x74 #F2F2F2 Walkable (No Effect)
+0x75 #F2F2F2 Walkable (No Effect)
+0x76 #F2F2F2 Walkable (No Effect)
+0x77 #F2F2F2 Walkable (No Effect)
+0x78 #F2F2F2 Walkable (No Effect)
+0x79 #F2F2F2 Walkable (No Effect)
+0x7A #F2F2F2 Walkable (No Effect)
+0x7B #F2F2F2 Walkable (No Effect)
+0x7C #F2F2F2 Walkable (No Effect)
+0x7D #F2F2F2 Walkable (No Effect)
+0x7E #F2F2F2 Walkable (No Effect)
+0x7F #F2F2F2 Walkable (No Effect)
+0x80 #FF0000 Blocked
+0x81 #FF8888 Blocked (No Effect)
+0x82 #FF8888 Blocked (No Effect)
+0x83 #FF8888 Blocked (No Effect)
+0x84 #FF8888 Blocked (No Effect)
+0x85 #FF8888 Blocked (No Effect)
+0x86 #FF8888 Blocked (No Effect)
+0x87 #FF8888 Blocked (No Effect)
+0x88 #FF8888 Blocked (No Effect)
+0x89 #FF8888 Blocked (No Effect)
+0x8A #FF8888 Blocked (No Effect)
+0x8B #FF8888 Blocked (No Effect)
+0x8C #FF8888 Blocked (No Effect)
+0x8D #FF8888 Blocked (No Effect)
+0x8E #FF8888 Blocked (No Effect)
+0x8F #FF8888 Blocked (No Effect)
+0x90 #FF8888 Blocked (No Effect)
+0x91 #FF8888 Blocked (No Effect)
+0x92 #FF8888 Blocked (No Effect)
+0x93 #FF8888 Blocked (No Effect)
+0x94 #FF8888 Blocked (No Effect)
+0x95 #FF8888 Blocked (No Effect)
+0x96 #FF8888 Blocked (No Effect)
+0x97 #FF8888 Blocked (No Effect)
+0x98 #FF8888 Blocked (No Effect)
+0x99 #FF8888 Blocked (No Effect)
+0x9A #FF8888 Blocked (No Effect)
+0x9B #FF8888 Blocked (No Effect)
+0x9C #FF8888 Blocked (No Effect)
+0x9D #FF8888 Blocked (No Effect)
+0x9E #FF8888 Blocked (No Effect)
+0x9F #FF8888 Blocked (No Effect)
+0xA0 #FF8888 Blocked (No Effect)
+0xA1 #FF8888 Blocked (No Effect)
+0xA2 #FF8888 Blocked (No Effect)
+0xA3 #FF8888 Blocked (No Effect)
+0xA4 #FF8888 Blocked (No Effect)
+0xA5 #FF8888 Blocked (No Effect)
+0xA6 #FF8888 Blocked (No Effect)
+0xA7 #FF8888 Blocked (No Effect)
+0xA8 #FF8888 Blocked (No Effect)
+0xA9 #FF8888 Blocked (No Effect)
+0xAA #FF8888 Blocked (No Effect)
+0xAB #FF8888 Blocked (No Effect)
+0xAC #FF8888 Blocked (No Effect)
+0xAD #FF8888 Blocked (No Effect)
+0xAE #FF8888 Blocked (No Effect)
+0xAF #FF8888 Blocked (No Effect)
+0xB0 #FF8888 Blocked (No Effect)
+0xB1 #FF8888 Blocked (No Effect)
+0xB2 #FF8888 Blocked (No Effect)
+0xB3 #FF8888 Blocked (No Effect)
+0xB4 #FF8888 Blocked (No Effect)
+0xB5 #FF8888 Blocked (No Effect)
+0xB6 #FF8888 Blocked (No Effect)
+0xB7 #FF8888 Blocked (No Effect)
+0xB8 #FF8888 Blocked (No Effect)
+0xB9 #FF8888 Blocked (No Effect)
+0xBA #FF8888 Blocked (No Effect)
+0xBB #FF8888 Blocked (No Effect)
+0xBC #FF8888 Blocked (No Effect)
+0xBD #FF8888 Blocked (No Effect)
+0xBE #FF8888 Blocked (No Effect)
+0xBF #FF8888 Blocked (No Effect)
+0xC0 #FF8888 Blocked (No Effect)
+0xC1 #FF8888 Blocked (No Effect)
+0xC2 #FF8888 Blocked (No Effect)
+0xC3 #FF8888 Blocked (No Effect)
+0xC4 #FF8888 Blocked (No Effect)
+0xC5 #FF8888 Blocked (No Effect)
+0xC6 #FF8888 Blocked (No Effect)
+0xC7 #FF8888 Blocked (No Effect)
+0xC8 #FF8888 Blocked (No Effect)
+0xC9 #FF8888 Blocked (No Effect)
+0xCA #FF8888 Blocked (No Effect)
+0xCB #FF8888 Blocked (No Effect)
+0xCC #FF8888 Blocked (No Effect)
+0xCD #FF8888 Blocked (No Effect)
+0xCE #FF8888 Blocked (No Effect)
+0xCF #FF8888 Blocked (No Effect)
+0xD0 #FF8888 Blocked (No Effect)
+0xD1 #FF8888 Blocked (No Effect)
+0xD2 #FF8888 Blocked (No Effect)
+0xD3 #FF8888 Blocked (No Effect)
+0xD4 #FF8888 Blocked (No Effect)
+0xD5 #FF8888 Blocked (No Effect)
+0xD6 #FF8888 Blocked (No Effect)
+0xD7 #FF8888 Blocked (No Effect)
+0xD8 #FF8888 Blocked (No Effect)
+0xD9 #FF8888 Blocked (No Effect)
+0xDA #FF8888 Blocked (No Effect)
+0xDB #FF8888 Blocked (No Effect)
+0xDC #FF8888 Blocked (No Effect)
+0xDD #FF8888 Blocked (No Effect)
+0xDE #FF8888 Blocked (No Effect)
+0xDF #FF8888 Blocked (No Effect)
+0xE0 #FF8888 Blocked (No Effect)
+0xE1 #FF8888 Blocked (No Effect)
+0xE2 #FF8888 Blocked (No Effect)
+0xE3 #FF8888 Blocked (No Effect)
+0xE4 #FF8888 Blocked (No Effect)
+0xE5 #FF8888 Blocked (No Effect)
+0xE6 #FF8888 Blocked (No Effect)
+0xE7 #FF8888 Blocked (No Effect)
+0xE8 #FF8888 Blocked (No Effect)
+0xE9 #FF8888 Blocked (No Effect)
+0xEA #FF8888 Blocked (No Effect)
+0xEB #FF8888 Blocked (No Effect)
+0xEC #FF8888 Blocked (No Effect)
+0xED #FF8888 Blocked (No Effect)
+0xEE #FF8888 Blocked (No Effect)
+0xEF #FF8888 Blocked (No Effect)
+0xF0 #FF8888 Blocked (No Effect)
+0xF1 #FF8888 Blocked (No Effect)
+0xF2 #FF8888 Blocked (No Effect)
+0xF3 #FF8888 Blocked (No Effect)
+0xF4 #FF8888 Blocked (No Effect)
+0xF5 #FF8888 Blocked (No Effect)
+0xF6 #FF8888 Blocked (No Effect)
+0xF7 #FF8888 Blocked (No Effect)
+0xF8 #FF8888 Blocked (No Effect)
+0xF9 #FF8888 Blocked (No Effect)
+0xFA #FF8888 Blocked (No Effect)
+0xFB #FF8888 Blocked (No Effect)
+0xFC #FF8888 Blocked (No Effect)
+0xFD #FF8888 Blocked (No Effect)
+0xFE #FF8888 Blocked (No Effect)
+0xFF #FF8888 Blocked (No Effect)
