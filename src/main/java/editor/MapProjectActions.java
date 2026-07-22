@@ -6,6 +6,7 @@ import editor.handler.MapData;
 import editor.handler.MapEditorHandler;
 import editor.mapdisplay.MapDisplay;
 import editor.mapgroups.SavePDSMAPAreasDialog;
+import editor.mapgroups.SavePDSMAPAreasProgressDialog;
 import editor.mapmatrix.MapMatrix;
 import editor.mapmatrix.MapMatrixDisplay;
 import editor.mapmatrix.MapMatrixImportDialog;
@@ -210,18 +211,18 @@ final class MapProjectActions {
             if (returnVal == JOptionPane.OK_OPTION) {
                 String areaFolderPath = configDialog.getAreaFolderPath();
                 List<Integer> selectedAreaIndices = configDialog.getSelectedAreaIndices();
-                MainFrameBusyRunner.BusyTask progressTask =
-                        busyRunner.startProgress("Saving areas", selectedAreaIndices.size());
+
+                final SavePDSMAPAreasProgressDialog progressDialog =
+                        new SavePDSMAPAreasProgressDialog(frame, true);
+                progressDialog.init(selectedAreaIndices);
+                progressDialog.setLocationRelativeTo(frame);
 
                 handler.setLastMapDirectoryUsed(areaFolderPath);
                 Thread thread = new Thread(() -> {
-                    try {
-                        busyRunner.setGUIBlock(true);
-
-                        HashMap<Point, MapData> allAreasMap = handler.getMapMatrix().getMatrix();
-                        for (int area : selectedAreaIndices) {
-                            progressTask.setMessage("Saving area " + area);
-
+                    HashMap<Point, MapData> allAreasMap = handler.getMapMatrix().getMatrix();
+                    for (int area : selectedAreaIndices) {
+                        progressDialog.areaStarted(area);
+                        try {
                             HashMap<Point, MapData> singleAreaMap = new HashMap<>();
 
                             Point origin = new Point(0, 0);
@@ -248,20 +249,18 @@ final class MapProjectActions {
 
                             recentMapsMenu.addAndPersist(
                                     Utils.addExtensionToPath(areaFolderPath, MapMatrix.fileExtension));
-                            progressTask.increment();
+                            progressDialog.areaSaved(area);
+                        } catch (ParserConfigurationException | TransformerException | IOException ex) {
+                            progressDialog.areaFailed(area,
+                                    "There was a problem saving the map files of Area " + area + ":\n"
+                                            + ex.getMessage());
                         }
-                    } catch (ParserConfigurationException | TransformerException | IOException ex) {
-                        JOptionPane.showMessageDialog(frame, "There was a problem saving all the map files",
-                                "Error saving map files", JOptionPane.ERROR_MESSAGE);
-                    } finally {
-                        progressTask.finish();
-                        busyRunner.setGUIBlock(false);
-                        JOptionPane.showMessageDialog(frame, "Your maps have been split and saved.",
-                                "Success", JOptionPane.INFORMATION_MESSAGE);
                     }
+                    progressDialog.allFinished();
                 });
                 thread.setDaemon(false);
                 thread.start();
+                progressDialog.setVisible(true);
             }
         }
     }
