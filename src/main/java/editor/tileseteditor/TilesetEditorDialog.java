@@ -678,6 +678,7 @@ public class TilesetEditorDialog extends JDialog {
                 int alpha = (Integer) jSpinner2.getValue();
                 if (alpha >= 0 && alpha < 32) {
                     tileHandler.getMaterialSelected().setAlpha(alpha);
+                    tileDisplay.repaint();
                 }
             }
         }

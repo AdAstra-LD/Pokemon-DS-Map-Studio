@@ -90,6 +90,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import javax.swing.SwingUtilities;
 
+import tileset.MaterialAlphaGL;
 import tileset.Tile;
 import tileset.Tileset;
 import utils.GlUtils;
@@ -414,7 +415,26 @@ public class TileDisplay extends GLJPanel implements GLEventListener, MouseListe
         gl.glEnd();
     }
 
+    private enum MaterialPass {
+        ALL, OPAQUE, TRANSLUCENT;
+
+        boolean includes(float alpha) {
+            switch (this) {
+                case OPAQUE:
+                    return MaterialAlphaGL.isOpaque(alpha);
+                case TRANSLUCENT:
+                    return MaterialAlphaGL.isTranslucent(alpha);
+                default:
+                    return true;
+            }
+        }
+    }
+
     public void drawTile(boolean useWireframe) {
+        drawTile(useWireframe, MaterialPass.ALL);
+    }
+
+    private void drawTile(boolean useWireframe, MaterialPass pass) {
         GL2 gl = (GL2) GLContext.getCurrentGL();
 
         gl.glLoadIdentity();
@@ -434,17 +454,26 @@ public class TileDisplay extends GLJPanel implements GLEventListener, MouseListe
 
         Tile tile = handler.getTileset().get(handler.getTileIndexSelected());
 
-        drawQuads(gl, tile, useWireframe);
-        drawTris(gl, tile, useWireframe);
+        drawQuads(gl, tile, useWireframe, pass);
+        drawTris(gl, tile, useWireframe, pass);
 
     }
 
-    private void drawQuads(GL2 gl, Tile tile, boolean useWireframe) {
+    private void drawQuads(GL2 gl, Tile tile, boolean useWireframe, MaterialPass pass) {
         if (!(tile.getVCoordsQuad().length > 0 && tile.getTCoordsQuad().length > 0 && tile.getColorsQuad().length > 0)) {
             return;
         }
 
         for (int k = 0; k < tile.getTextureIDs().size(); k++) {
+            float alpha = MaterialAlphaGL.getAlpha(handler.getTileset(), tile.getTextureIDs().get(k));
+            if (!pass.includes(alpha)) {
+                continue;
+            }
+            boolean translucent = !useWireframe && MaterialAlphaGL.isTranslucent(alpha);
+            if (translucent) {
+                MaterialAlphaGL.begin(gl, alpha);
+            }
+
             // activate texture unit #0 and bind it to the brick texture object
             //gl.glActiveTexture(GL_TEXTURE0);
             if (texturesEnabled && !useWireframe) {
@@ -491,15 +520,28 @@ public class TileDisplay extends GLJPanel implements GLEventListener, MouseListe
                 }
                 gl.glEnd();
             }
+
+            if (translucent) {
+                MaterialAlphaGL.end(gl);
+            }
         }
     }
 
-    private void drawTris(GL2 gl, Tile tile, boolean useWireframe) {
+    private void drawTris(GL2 gl, Tile tile, boolean useWireframe, MaterialPass pass) {
         if (!(tile.getVCoordsTri().length > 0 && tile.getTCoordsTri().length > 0 && tile.getColorsTri().length > 0)) {
             return;
         }
 
         for (int k = 0; k < tile.getTextureIDs().size(); k++) {
+            float alpha = MaterialAlphaGL.getAlpha(handler.getTileset(), tile.getTextureIDs().get(k));
+            if (!pass.includes(alpha)) {
+                continue;
+            }
+            boolean translucent = !useWireframe && MaterialAlphaGL.isTranslucent(alpha);
+            if (translucent) {
+                MaterialAlphaGL.begin(gl, alpha);
+            }
+
             // activate texture unit #0 and bind it to the brick texture object
             //gl.glActiveTexture(GL_TEXTURE0);
             if (texturesEnabled && !useWireframe) {
@@ -548,6 +590,9 @@ public class TileDisplay extends GLJPanel implements GLEventListener, MouseListe
                 gl.glEnd();
             }
 
+            if (translucent) {
+                MaterialAlphaGL.end(gl);
+            }
         }
 
     }
@@ -571,7 +616,7 @@ public class TileDisplay extends GLJPanel implements GLEventListener, MouseListe
             gl.glEnable(GL_CULL_FACE);
         }
 
-        drawTile(false);
+        drawTile(false, MaterialPass.OPAQUE);
 
         if (backfaceCullingEnabled) {
             gl.glDisable(GL_CULL_FACE);
@@ -598,7 +643,12 @@ public class TileDisplay extends GLJPanel implements GLEventListener, MouseListe
             gl.glEnable(GL_CULL_FACE);
         }
 
-        drawTile(false);
+        drawTile(false, MaterialPass.OPAQUE);
+
+        //Don't write depth so overlapping translucent surfaces don't hide each other
+        gl.glDepthMask(false);
+        drawTile(false, MaterialPass.TRANSLUCENT);
+        gl.glDepthMask(true);
 
         if (backfaceCullingEnabled) {
             gl.glDisable(GL_CULL_FACE);

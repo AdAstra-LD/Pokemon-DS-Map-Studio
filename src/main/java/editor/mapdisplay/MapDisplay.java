@@ -56,6 +56,8 @@ import editor.smartdrawing.SmartGrid;
 import editor.state.MapLayerState;
 import formats.collisions.CollisionDefaultsApplier;
 import geometry.Generator;
+import tileset.MaterialAlphaGL;
+import tileset.Tileset;
 import graphicslib3D.Matrix3D;
 import graphicslib3D.Vector3D;
 
@@ -873,7 +875,9 @@ public class MapDisplay extends GLJPanel implements GLEventListener, MouseListen
 
         //long before = System.nanoTime();
         drawAllMaps(gl, maps, (gl2, geometryGL, textures) -> {
-            drawGeometryGL(gl2, geometryGL, textures);
+            if (MaterialAlphaGL.isOpaque(getMaterialAlpha(geometryGL))) {
+                drawGeometryGL(gl2, geometryGL, textures);
+            }
         });
         //System.out.println("Elapsed: " + (System.nanoTime() - before));
     }
@@ -891,8 +895,48 @@ public class MapDisplay extends GLJPanel implements GLEventListener, MouseListen
         gl.glAlphaFunc(GL_NOTEQUAL, 0.0f);
 
         drawAllMaps(gl, maps, (gl2, geometryGL, textures) -> {
-            drawGeometryGL(gl2, geometryGL, textures);
+            if (MaterialAlphaGL.isOpaque(getMaterialAlpha(geometryGL))) {
+                drawGeometryGL(gl2, geometryGL, textures);
+            }
         });
+
+        if (hasTranslucentMaterials()) {
+            drawTranslucentMaterialMaps(gl, maps);
+        }
+    }
+
+    protected void drawTranslucentMaterialMaps(GL2 gl, HashMap<Point, MapData> maps) {
+        //Don't write depth so overlapping translucent surfaces don't hide each other
+        gl.glDepthMask(false);
+
+        drawAllMaps(gl, maps, (gl2, geometryGL, textures) -> {
+            float alpha = getMaterialAlpha(geometryGL);
+            if (MaterialAlphaGL.isTranslucent(alpha)) {
+                //The color is scaled by the blend color because this pass blends with GL_ONE instead of GL_SRC_ALPHA
+                gl2.glBlendColor(0.0f, 0.0f, 0.0f, alpha);
+                gl2.glBlendFunc(GL2.GL_CONSTANT_ALPHA, GL2.GL_ONE_MINUS_SRC_ALPHA);
+                MaterialAlphaGL.begin(gl2, alpha);
+                drawGeometryGL(gl2, geometryGL, textures);
+            }
+        });
+
+        MaterialAlphaGL.end(gl);
+        gl.glBlendFunc(GL2.GL_ONE, GL2.GL_ONE_MINUS_SRC_ALPHA);
+        gl.glDepthMask(true);
+    }
+
+    protected float getMaterialAlpha(GeometryGL geometryGL) {
+        return MaterialAlphaGL.getAlpha(handler.getTileset(), geometryGL.textureID);
+    }
+
+    protected boolean hasTranslucentMaterials() {
+        Tileset tileset = handler.getTileset();
+        for (int i = 0; i < tileset.getMaterials().size(); i++) {
+            if (MaterialAlphaGL.isTranslucent(MaterialAlphaGL.getAlpha(tileset, i))) {
+                return true;
+            }
+        }
+        return false;
     }
 
     protected void drawWireframeMaps(GL2 gl, HashMap<Point, MapData> maps) {
