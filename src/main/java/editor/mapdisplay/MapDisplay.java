@@ -2279,9 +2279,23 @@ public class MapDisplay extends GLJPanel implements GLEventListener, MouseListen
         refreshMapLayer(handler.getMapSelected());
     }
 
-    protected void pickTile(MouseEvent e) {
-        setMapSelected(e);
+    /**
+     * Takes the tile under the cursor as the selected tile. Where no map
+     * exists there is nothing to take, and selecting there would create a map,
+     * so it does nothing and returns false.
+     */
+    protected boolean pickTileIndex(MouseEvent e) {
+        if (!selectExistingMap(e)) {
+            return false;
+        }
         setTileIndexFromGrid(e);
+        return true;
+    }
+
+    protected void pickTile(MouseEvent e) {
+        if (!pickTileIndex(e)) {
+            return;
+        }
         handler.getMainFrame().updateTileSelectedID();
         handler.getMainFrame().repaintTileSelector();
         handler.getMainFrame().updateTileSelectorScrollBar();

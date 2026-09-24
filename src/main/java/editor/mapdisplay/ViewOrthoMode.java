@@ -78,11 +78,14 @@ public class ViewOrthoMode extends ViewMode {
             switch (d.editMode) {
                 case MODE_EDIT:
                     if (d.handler.getTileset().size() > 0) {
-                        d.setMapSelected(e);
                         d.handler.setLayerChanged(false);
                         boolean left = SwingUtilities.isLeftMouseButton(e);
                         boolean invertedSmart = SwingUtilities.isRightMouseButton(e)
                                 && d.canStartSmartStroke();
+                        //Only drawing selects (and so creates) a map; the right-click picker does not
+                        if (left || invertedSmart || SwingUtilities.isMiddleMouseButton(e)) {
+                            d.setMapSelected(e);
+                        }
                         if (left || invertedSmart) {
                             d.dragStart = d.getCoordsInSelectedMap(e);
                             boolean smartStroke = d.canStartSmartStroke();
@@ -100,8 +103,7 @@ public class ViewOrthoMode extends ViewMode {
                             d.floodFillTileInGrid(e);
                             d.updateActiveMapLayerGL();
                             d.repaint();
-                        } else if (SwingUtilities.isRightMouseButton(e)) {
-                            d.setTileIndexFromGrid(e);
+                        } else if (SwingUtilities.isRightMouseButton(e) && d.pickTileIndex(e)) {
                             d.repaint();
                             d.handler.getMainFrame().updateTileSelectedID();
                             d.handler.getMainFrame().repaintTileSelector();
@@ -113,8 +115,11 @@ public class ViewOrthoMode extends ViewMode {
 
                 case MODE_CLEAR:
                     if (d.handler.getTileset().size() > 0) {
-                        d.setMapSelected(e);
                         d.handler.setLayerChanged(false);
+                        //Right clicks clear nothing, so they must not select (and create) a map
+                        if (SwingUtilities.isLeftMouseButton(e) || SwingUtilities.isMiddleMouseButton(e)) {
+                            d.setMapSelected(e);
+                        }
                         if (SwingUtilities.isLeftMouseButton(e)) {
                             d.handler.addMapState(new MapLayerState("Clear Tile", d.handler));
                             d.clearTileInGrid(e);
@@ -413,8 +418,8 @@ public class ViewOrthoMode extends ViewMode {
 
                 case MODE_CLEAR:
                     if (d.handler.getTileset().size() > 0) {
-                        d.setMapSelected(e);
                         if (SwingUtilities.isLeftMouseButton(e)) {
+                            d.setMapSelected(e);
                             //d.updateLastMapState();
                             d.editedMapCoords.add(d.getMapCoords(e));
                             d.clearTileInGrid(e);
