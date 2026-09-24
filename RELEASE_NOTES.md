@@ -1,115 +1,67 @@
-# Pokemon DS Map Studio 2.3.1 - Enhanced Tools Release
+If this fork helped you with your project, please remember to credit Trifindo and myself.
+This release integrates and builds upon [Trinsic64's fork](https://github.com/Trinsic64/Pokemon-DS-Map-Studio), huge thanks to them.
 
-## Download and Packaging Improvements
+## Important thing to remember
+Maps resaved with this fork will be _**incompatible**_ with vanilla PDSMS and older PDSMS versions. This is still due to the additional 3D layer and Export Group metadata. Tile folder organization is saved in a separate `.meta` sidecar file next to your tileset.
 
-- Added a ready-to-run Windows package with its own Java runtime and `.exe` launcher.
-- Added a portable ZIP with Windows and Linux/macOS launch scripts.
-- Included the expected root-level `converter` folder, supporting DLL, and setup instructions.
-- Included README and release notes inside each distribution.
-- Added automated tagged releases and SHA-256 checksum generation.
-- `g3dcvtr.exe` remains user-supplied and is not redistributed.
-
-This release expands Pokemon DS Map Studio with new map-selection tools, Smart Drawing workflows, tile organization, portable metadata, and collision-default editing.
-
-## New Map Selection Tools
-
-- Rectangle selection
-- Lasso selection
-- Wand selection
-- Move selected tiles
-- Copy, cut, paste, duplicate, and delete selections
-- Rotate and flip selections
-- Fill a selection with the currently selected tile
-- Selection operations across map boundaries
-- Undo support for selection edits
-
-### Selection Shortcuts
+### Selection tools (merged from Trinsic64's fork, refined)
+- Rectangle, Lasso and Magic Wand selection, plus a Move Selection tool for dragging selected tiles to a new place.
+- Cut, Copy, Paste and Delete for selected regions, with full undo support and selections that work across map boundaries. The clipboard survives opening another map, so tiles can be copied between maps.
+- Flip, Rotate and Fill inside selections; Line, Rectangle and Ellipse drawing tools — all with optional Smart Drawing via the "Smart Tools" toggle. Right mouse button draws the inverted form of a Smart shape.
+- Shift+drag starts a rectangle selection from any tool: the tile preview disappears and the cursor switches, so you always know you are selecting instead of drawing. Shift+click with the Wand selects all matching tiles in the map; Ctrl+click adds to / removes from the selection.
+- Camera controls moved to Ctrl: Ctrl+drag pans, Ctrl+mouse wheel zooms.
+- Middle click flood fill now only fills inside the current selection; clicking an unselected tile does nothing.
+- Animated selection outline (marching ants); the selection fill turns more transparent while moving tiles.
+- Opening or creating a map releases every selection.
 
 | Action | Shortcut |
 | --- | --- |
 | Select all | `Ctrl+A` |
-| Copy | `Ctrl+C` |
-| Cut | `Ctrl+X` |
-| Paste | `Ctrl+V` |
+| Copy / Cut / Paste | `Ctrl+C` / `Ctrl+X` / `Ctrl+V` |
 | Fill selection | `Ctrl+F` |
 | Deselect | `Ctrl+D` |
 | Delete selection | `Delete` |
+| Rectangle selection (any tool) | `Shift`+drag |
+| Pan / zoom camera | `Ctrl`+drag / `Ctrl`+wheel |
+| Flood fill inside selection | Middle click |
 
-Choose a selection tool from the main toolbar, select the required tiles, and then use the toolbar actions, keyboard shortcuts, or selection context menu.
+### Tile organization (merged from Trinsic64's fork, refined)
+- Tile folders for the tile list, including nested subfolders, custom grid layouts with empty slots, folder pinning, resizing and reordering. Folders never change the game-facing tile order.
+- Folder tiles can have independent display sizes without changing their real game dimensions.
+- Portable folder bundles: export a folder and import it into another compatible tileset, preserving hierarchy, layout slots, tile names, display sizes, collision defaults and Smart Drawing organization — the bundle can even carry tiles not present in the destination tileset.
+- Ctrl+click multi-selection, Shift+click range selection and Shift+drag band selection in the tile list. Dragging any selected tile moves the whole group, preserving tileset order.
+- Create Smart Drawings from tiles selected in a folder; new Smart Drawing folder system with expandable groups.
+- New right-click menus for folder management (create, import, export, rename, display size).
 
-## Smart Tools
+### Collision defaults (merged from Trinsic64's fork, refined)
+- Per-tile collision defaults with proper "Type" and "Collision" layer names, editable in the Tileset Editor's new Collision Defaults tab.
+- Collision footprints can be larger than the tile's game dimensions, with a configurable anchor.
+- Paint or clear cells one at a time, fill or clear a whole layer, right-click to sample a cell's value, and copy/paste a single layer or the complete defaults between tiles.
+- "Auto Coll." toggle applies these defaults automatically while mapping.
+- Overhauled move permission labels for all supported games: corrected DP/Pt and HGSS terrain types, labeled HGSS footstep sounds, and renamed the BW/B2W2 collision layers to match the actual data layout.
 
-- Smart freehand drawing with automatic edges and corners
-- Smart line drawing
-- Smart rectangle drawing
-- Smart circle drawing
-- Smart wand selection
-- Smart rotation and flipping
-- Inverted Smart Drawing shapes using the right mouse button
-- Smart Drawing templates generated from arranged folder tiles
+### Replace & Remap
+- New safe Replace/Remap workflow: validation and a full plan preview before anything is written to your maps.
 
-Select a Smart Drawing reference, enable **Smart Tools**, and use the normal drawing or shape tools on the map. Draw with the left mouse button for the standard form or the right mouse button for its inverted form.
+### Export improvements
+- Visual area picker for NSBTX export and PDSMAP splitting: the map matrix is rendered with area color overlays; Ctrl+wheel zooms at the cursor, middle-drag pans, clicking toggles areas.
+- Progress dialog for the PDSMAP area split, with per-area status, counts and error details.
+- Reworked and unified export dialogs (NSBMD, NSBTX, IMD, split areas).
+- `g3dcvtr.exe` is now located automatically (working folder, app folder, or any parent folder), so exporting works no matter where you launch from. As always, `g3dcvtr.exe` is user-supplied and never redistributed.
 
-## Tile Folders
+### UI and platform
+- Native OS file dialogs everywhere (thanks to AsteroidPizza39), including fixes for many save dialogs that previously opened as "Open" dialogs.
+- Updated JOGL to 2.5.0 — the app now runs on Apple Silicon Macs (thanks to rene589).
+- Corrected the backsound names (thanks to Pixelstyx).
+- Fixed a crash when importing OBJ tiles exported from Blockbench (thanks to PoeticRainbow).
+- Fixed the Linux install script (thanks to LowriJenkins).
+- Compact toolbar layout: two-column tool groups, View group grid with separators, layer up/down buttons under the layer selector, Deselect next to the selection tools.
+- The Keyboard Shortcuts window lists all the new bindings.
 
-- Create folders and nested subfolders
-- Arrange tiles in custom grid layouts
-- Keep empty layout spaces without creating placeholder tile IDs
-- Drag and drop tiles between folders
-- Move or remove tiles using the tile context menu
-- Pin folders for access while browsing long tilesets
-- Expand, collapse, resize, reorder, and scroll folders
-- Give folder tiles independent display sizes without changing game tile dimensions
-- Duplicate tile groups while preserving their folder arrangement
-- Organize Smart Drawing templates into expandable groups
-- Keep folder order independent from the game-facing **All Tiles** order
+### Before you use
+- Compatible with maps made using PDSMS v2.2.2. **Backup your maps** before opening them in this version.
+- Do not import someone else's tileset metadata (`.meta`) over your own maps — it rewrites your tile organization. Build your own folder structure, or start from Trinsic64's starter tileset + metadata for blank maps and testing.
 
-Right-click a folder or tile in the Tile List to access its organization, layout, display-size, movement, import, and export commands. Folder layouts are available in both the main window and the Tileset Editor.
+REQUIREMENTS: Java 11 or newer
 
-## Portable Tile Metadata
-
-- Export individual folders as portable bundles
-- Import folders without replacing existing folder structures
-- Import bundles containing tiles that are not already in the destination tileset
-- Preserve folder hierarchy and layout slots
-- Preserve tile names and folder display sizes
-- Preserve collision defaults
-- Preserve Smart Drawing organization
-
-Use the folder context menu to export a folder bundle. Import the bundle into another compatible tileset to add its folder structure and included metadata.
-
-## Collision Defaults
-
-- Define collision defaults for both collision layers
-- Create collision footprints larger than a tile's game dimensions
-- Use folder display size as the collision-footprint reference
-- Paint or clear collision values one cell at a time
-- Fill or clear an entire collision layer
-- Copy and paste one collision layer
-- Copy and paste complete collision defaults
-- Edit collision defaults from tile context menus
-- Dedicated Collision Defaults workspace in the Tileset Editor
-- Automatically apply defaults while drawing with **Auto Coll.**
-
-Open the **Collision Defaults** tab in the Tileset Editor and select a tile from the Tile Selector. Choose a collision value, then left-click or drag to paint cells. Right-click a footprint cell to sample its collision value. Use **Copy Layer**, **Paste Layer**, **Copy All**, and **Paste All** to reuse settings efficiently.
-
-Enable **Auto Coll.** in the main map tools when collision defaults should be applied automatically as tiles are painted.
-
-## Tileset Editor Enhancements
-
-- Multi-tile selection follows the visible folder layout order
-- Move and organize folder tiles without changing **All Tiles** ordering
-- Duplicate selected tile arrangements into new layout space
-- Create Smart Drawing templates from selected folder layouts
-- Assign and remove multiple selected tiles from folders
-- Edit collision defaults while browsing the tileset
-
-Use the Tile Selector to choose one or more tiles. Folder-based selection and movement operate on the folder arrangement, while **All Tiles** continues to represent the tileset's game-data order.
-
-## Credits
-
-- **Pokemon DS Map Studio:** [AdAstra-LD](https://github.com/AdAstra-LD/Pokemon-DS-Map-Studio) and the original PDSMS contributors
-- **Enhanced tools and feature design:** [Trinsic64](https://github.com/Trinsic64)
-- **Development assistance:** Claude Code and OpenAI Codex
-
-Pokemon is a trademark of Nintendo, Creatures Inc., and GAME FREAK inc. This is an unofficial community project and is not affiliated with or endorsed by those companies.
+*Pokemon is a trademark of Nintendo, Creatures Inc., and GAME FREAK inc. This is an unofficial community project, not affiliated with or endorsed by those companies.*
