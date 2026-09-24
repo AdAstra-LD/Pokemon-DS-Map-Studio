@@ -86,6 +86,7 @@ final class MapEditActions {
             if (state.shouldPruneUnusedMaps()) {
                 handler.getMapMatrix().removeUnusedMaps();
             }
+            mapDisplay.updateSelectionActions();
             if (!handler.mapSelectedExists()) {
                 handler.setDefaultMapSelected();
 
@@ -120,6 +121,7 @@ final class MapEditActions {
             if (state.shouldPruneUnusedMaps()) {
                 handler.getMapMatrix().removeUnusedMaps();
             }
+            mapDisplay.updateSelectionActions();
 
             mapDisplay.repaint();
             viewUpdater.updateMapMatrixDisplay();

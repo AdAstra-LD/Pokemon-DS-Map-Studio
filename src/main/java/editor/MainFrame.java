@@ -566,17 +566,23 @@ public class MainFrame extends JFrame {
      * clipboard. Outside the ortho view all of them stay disabled.
      */
     public void updateSelectionActionButtons() {
-        if (jbCopySelection == null || handler == null) {
+        if (jbCopySelection == null || jmiCopySelection == null || handler == null) {
             return;
         }
         boolean ortho = mapDisplay.isOrthoView();
         boolean hasSelection = ortho && mapDisplay.hasSelection();
+        //Where no map exists yet only filling applies (it creates the map)
+        boolean onExistingMap = ortho && mapDisplay.hasSelectionOnExistingMap();
         boolean hasClipboard = ortho && handler.hasRegionClipboard();
-        jbCopySelection.setEnabled(hasSelection);
-        jbCutSelection.setEnabled(hasSelection);
-        jbDeleteSelection.setEnabled(hasSelection);
+        jbCopySelection.setEnabled(onExistingMap);
+        jbCutSelection.setEnabled(onExistingMap);
+        jbDeleteSelection.setEnabled(onExistingMap);
         jbDeselect.setEnabled(hasSelection);
         jbPasteSelection.setEnabled(hasClipboard);
+        jmiCopySelection.setEnabled(onExistingMap);
+        jmiCutSelection.setEnabled(onExistingMap);
+        jmiDeleteSelection.setEnabled(onExistingMap);
+        jmiFillSelection.setEnabled(hasSelection);
     }
 
     private JToggleButton createToolToggle(ImageIcon icon, String toolTip,

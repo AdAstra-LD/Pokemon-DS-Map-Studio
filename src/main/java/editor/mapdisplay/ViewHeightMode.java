@@ -72,6 +72,12 @@ public class ViewHeightMode extends ViewMode {
         switch (d.editMode) {
             case MODE_CLEAR:
                 d.handler.getMapMatrix().removeUnusedMaps();
+                d.updateSelectionActions();
+                //Reading the selected map would create it again
+                if (!d.handler.mapSelectedExists()) {
+                    d.handler.setDefaultMapSelected();
+                    d.handler.getMainFrame().getThumbnailLayerSelector().drawAllLayerThumbnails();
+                }
                 break;
         }
         d.handler.updateLayerThumbnail(d.handler.getActiveLayerIndex());

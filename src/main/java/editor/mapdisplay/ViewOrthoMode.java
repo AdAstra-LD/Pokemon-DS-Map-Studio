@@ -30,6 +30,7 @@ public class ViewOrthoMode extends ViewMode {
 
     @Override
     public void mousePressed(MapDisplay d, MouseEvent e) {
+        d.shiftSelectGesture = false;
         if (d.SHIFT_PRESSED) {
             //Shift + Click with the magic wand selects all matching tiles in the map
             if (SwingUtilities.isLeftMouseButton(e)
@@ -40,11 +41,17 @@ public class ViewOrthoMode extends ViewMode {
             }
             //Shift + drag starts a rectangle selection from any tool,
             //adding to the current selection like the rectangle select tool does
-            else if (SwingUtilities.isLeftMouseButton(e) && !d.isPasting()
-                    && !d.isFloatingMove()) {
-                d.setMapSelected(e);
-                d.startSelection(e, true);
-                d.repaint();
+            else if (SwingUtilities.isLeftMouseButton(e)) {
+                //The whole drag belongs to the selection gesture: it must
+                //never fall through to the tool and draw
+                d.shiftSelectGesture = true;
+                if (!d.isPasting() && !d.isFloatingMove()) {
+                    //Selecting where no map exists is allowed; only filling
+                    //the selection creates the map
+                    d.selectExistingMap(e);
+                    d.startSelection(e, true);
+                    d.repaint();
+                }
             }
         } else if (d.CTRL_PRESSED && !isSelectionMode(d.editMode)) {
             //Ctrl + drag moves the camera (selection tools keep Ctrl for
@@ -159,7 +166,9 @@ public class ViewOrthoMode extends ViewMode {
                         if (d.isPasting()) {
                             d.commitPaste(e);
                         } else {
-                            d.setMapSelected(e);
+                            //Selecting where no map exists is allowed; only
+                            //filling the selection creates the map
+                            d.selectExistingMap(e);
                             d.startSelection(e, false);
                             d.repaint();
                         }
@@ -175,7 +184,9 @@ public class ViewOrthoMode extends ViewMode {
 
                 case MODE_SELECT_LASSO:
                     if (SwingUtilities.isLeftMouseButton(e)) {
-                        d.setMapSelected(e);
+                        //Selecting where no map exists is allowed; only
+                        //filling the selection creates the map
+                        d.selectExistingMap(e);
                         d.startLasso(e);
                         d.repaint();
                     } else if (SwingUtilities.isRightMouseButton(e) && d.hasSelection()) {
@@ -259,6 +270,15 @@ public class ViewOrthoMode extends ViewMode {
 
     @Override
     public void mouseReleased(MapDisplay d, MouseEvent e) {
+        //Finish a Shift selection gesture: whatever the tool, it edited nothing
+        if (d.shiftSelectGesture && SwingUtilities.isLeftMouseButton(e)) {
+            d.shiftSelectGesture = false;
+            if (d.selDragActive) {
+                d.endSelectionDrag();
+                d.repaint();
+            }
+            return;
+        }
         //Finish a Shift-started rectangle selection made outside the select tool
         if (d.selDragActive && d.editMode != MapDisplay.EditMode.MODE_SELECT
                 && SwingUtilities.isLeftMouseButton(e)) {
@@ -340,6 +360,9 @@ public class ViewOrthoMode extends ViewMode {
         d.handler.getMainFrame().updateMapMatrixDisplay();
 
         d.handler.getMainFrame().updateViewGeometryCount();
+
+        //The gesture may have created or removed the selection's map
+        d.updateSelectionActions();
     }
 
     @Override
@@ -352,6 +375,9 @@ public class ViewOrthoMode extends ViewMode {
                 d.updateSelection(e);
                 d.repaint();
             }
+        } else if (d.shiftSelectGesture && !d.selDragActive) {
+            //A Shift press that started no selection (e.g. while pasting): the
+            //drag does nothing, and above all does not fall through to the tool
         } else if (d.CTRL_PRESSED && !isSelectionMode(d.editMode) && !d.selDragActive) {
             if (SwingUtilities.isLeftMouseButton(e) || SwingUtilities.isMiddleMouseButton(e)) {
                 d.moveCamera(e);

@@ -245,6 +245,9 @@ public class MapDisplay extends GLJPanel implements GLEventListener, MouseListen
     protected Point selDragStart = null;
     protected boolean selDragMoved = false;
     protected boolean selDragActive = false;
+    //A left press made with Shift belongs to the Shift selection gesture until
+    //released, even when it started no selection (e.g. while pasting)
+    protected boolean shiftSelectGesture = false;
     protected boolean selAdditive = false;
     protected boolean selStartedAdditive = false;
     protected boolean[][] selAddBase = null;
@@ -1382,6 +1385,21 @@ public class MapDisplay extends GLJPanel implements GLEventListener, MouseListen
         }
     }
 
+    /**
+     * Selects the map under the cursor when one exists and says whether it
+     * does. Selecting a map where none exists would create it.
+     */
+    protected boolean selectExistingMap(MouseEvent e) {
+        Point map = getMapCoords(e);
+        if (!handler.mapExists(map)) {
+            return false;
+        }
+        if (!map.equals(handler.getMapSelected())) {
+            handler.setMapSelected(map);
+        }
+        return true;
+    }
+
     public void setMapSelectedIfExists(MouseEvent e) {
         Point selectedMap = getMapCoords(e);
         if (!selectedMap.equals(handler.getMapSelected()) && handler.mapExists(selectedMap)) {
@@ -1520,8 +1538,27 @@ public class MapDisplay extends GLJPanel implements GLEventListener, MouseListen
         }
     }
 
+    /** Whether there is a selection, on an existing map or where no map exists yet. */
     public boolean hasSelection() {
         return selection != null && !selection.isEmpty();
+    }
+
+    /**
+     * Whether the selection lies on an existing map. Only filling applies
+     * where no map exists (and creates it): moving, transforming, cutting,
+     * copying and deleting would act on nothing, or create an empty map.
+     */
+    public boolean hasSelectionOnExistingMap() {
+        return hasSelection() && handler.mapExists(selection.getMapCoords());
+    }
+
+    /**
+     * Refreshes the selection actions after maps were created or removed
+     * outside a selection change (clearing, undo), since what applies to the
+     * selection depends on whether its map exists.
+     */
+    public void updateSelectionActions() {
+        notifySelectionChanged();
     }
 
     public boolean isPasting() {
@@ -1809,11 +1846,12 @@ public class MapDisplay extends GLJPanel implements GLEventListener, MouseListen
     /* -------------------- Copy / cut / delete / fill -------------------- */
 
     public boolean copySelection() {
-        if (!hasSelection()) {
+        if (!hasSelectionOnExistingMap()) {
             return false;
         }
         Rectangle r = getSelectionBounds();
-        MapGrid grid = handler.getMapMatrix().getMapAndCreate(selection.getMapCoords()).getGrid();
+        //Copying only reads, so it never creates the map
+        MapGrid grid = handler.getMapMatrix().getMap(selection.getMapCoords()).getGrid();
         int layer = handler.getActiveLayerIndex();
         int[][] tiles = new int[r.width][r.height];
         int[][] heights = new int[r.width][r.height];
@@ -1842,7 +1880,7 @@ public class MapDisplay extends GLJPanel implements GLEventListener, MouseListen
     }
 
     private void deleteSelection(String stateName) {
-        if (!hasSelection()) {
+        if (!hasSelectionOnExistingMap()) {
             return;
         }
         handler.addMapState(new MapLayerState(stateName, handler));
@@ -1868,9 +1906,12 @@ public class MapDisplay extends GLJPanel implements GLEventListener, MouseListen
         if (!hasSelection() || handler.getTileset().size() == 0) {
             return;
         }
+        Point map = selection.getMapCoords();
+        boolean createsMap = !handler.mapExists(map);
+        //State first: undoing it then removes a map the fill created
         handler.addMapState(new MapLayerState("Fill Selection", handler));
         Rectangle r = getSelectionBounds();
-        MapGrid grid = handler.getMapMatrix().getMapAndCreate(selection.getMapCoords()).getGrid();
+        MapGrid grid = handler.getMapMatrix().getMapAndCreate(map).getGrid();
         int layer = handler.getActiveLayerIndex();
         boolean[][] selMask = selection.getMask();
         Tile tile = handler.getTileSelected();
@@ -1884,8 +1925,14 @@ public class MapDisplay extends GLJPanel implements GLEventListener, MouseListen
                 }
             }
         }
-        applyAutoCollision(selection.getMapCoords());
-        refreshMapLayer(selection.getMapCoords());
+        applyAutoCollision(map);
+        refreshMapLayer(map);
+        if (createsMap) {
+            //The new map is selected like a drawn one
+            handler.setMapSelected(map);
+            handler.getMainFrame().updateMapMatrixDisplay();
+            notifySelectionChanged();
+        }
     }
 
     /* -------------------- Paste (stamp) -------------------- */
@@ -1931,7 +1978,7 @@ public class MapDisplay extends GLJPanel implements GLEventListener, MouseListen
     /* -------------------- Move selection (floating region) -------------------- */
 
     protected boolean canBeginMoveSelection(MouseEvent e) {
-        return isCursorInsideSelection(e);
+        return hasSelectionOnExistingMap() && isCursorInsideSelection(e);
     }
 
     /** True when the mouse event lies on a selected cell. */
@@ -2037,7 +2084,7 @@ public class MapDisplay extends GLJPanel implements GLEventListener, MouseListen
      * placement.
      */
     private void transformSelection(int op) {
-        if (!hasSelection() || floatingMove) {
+        if (!hasSelectionOnExistingMap() || floatingMove) {
             return;
         }
         Rectangle r = getSelectionBounds();
@@ -2770,7 +2817,7 @@ public class MapDisplay extends GLJPanel implements GLEventListener, MouseListen
             selectionPopupMenu = new javax.swing.JPopupMenu();
 
             javax.swing.JMenuItem miMove = new javax.swing.JMenuItem("Move Selection");
-            miMove.setName("selectionItem");
+            miMove.setName("existingMapItem");
             miMove.addActionListener(evt -> {
                 setEditMode(EditMode.MODE_MOVE_SELECT);
                 handler.getMainFrame().getJtbModeMoveSelect().setSelected(true);
@@ -2779,28 +2826,28 @@ public class MapDisplay extends GLJPanel implements GLEventListener, MouseListen
             selectionPopupMenu.addSeparator();
 
             javax.swing.JMenuItem miRotate = new javax.swing.JMenuItem("Rotate 90\u00b0 Clockwise");
-            miRotate.setName("selectionItem");
+            miRotate.setName("existingMapItem");
             miRotate.addActionListener(evt -> rotateSelection90());
             selectionPopupMenu.add(miRotate);
 
             javax.swing.JMenuItem miFlipH = new javax.swing.JMenuItem("Flip Horizontal");
-            miFlipH.setName("selectionItem");
+            miFlipH.setName("existingMapItem");
             miFlipH.addActionListener(evt -> flipSelectionHorizontal());
             selectionPopupMenu.add(miFlipH);
 
             javax.swing.JMenuItem miFlipV = new javax.swing.JMenuItem("Flip Vertical");
-            miFlipV.setName("selectionItem");
+            miFlipV.setName("existingMapItem");
             miFlipV.addActionListener(evt -> flipSelectionVertical());
             selectionPopupMenu.add(miFlipV);
             selectionPopupMenu.addSeparator();
 
             javax.swing.JMenuItem miCut = new javax.swing.JMenuItem("Cut");
-            miCut.setName("selectionItem");
+            miCut.setName("existingMapItem");
             miCut.addActionListener(evt -> cutSelection());
             selectionPopupMenu.add(miCut);
 
             javax.swing.JMenuItem miCopy = new javax.swing.JMenuItem("Copy");
-            miCopy.setName("selectionItem");
+            miCopy.setName("existingMapItem");
             miCopy.addActionListener(evt -> copySelection());
             selectionPopupMenu.add(miCopy);
 
@@ -2810,7 +2857,7 @@ public class MapDisplay extends GLJPanel implements GLEventListener, MouseListen
             selectionPopupMenu.add(miPaste);
 
             javax.swing.JMenuItem miDelete = new javax.swing.JMenuItem("Delete");
-            miDelete.setName("selectionItem");
+            miDelete.setName("existingMapItem");
             miDelete.addActionListener(evt -> deleteSelection());
             selectionPopupMenu.add(miDelete);
 
@@ -2837,6 +2884,9 @@ public class MapDisplay extends GLJPanel implements GLEventListener, MouseListen
                 item.setEnabled(handler.hasRegionClipboard());
             } else if ("selectionItem".equals(item.getName())) {
                 item.setEnabled(selectionActions);
+            } else if ("existingMapItem".equals(item.getName())) {
+                //Only filling applies where no map exists yet
+                item.setEnabled(selectionActions && hasSelectionOnExistingMap());
             }
         }
         selectionPopupMenu.show(this, e.getX(), e.getY());
