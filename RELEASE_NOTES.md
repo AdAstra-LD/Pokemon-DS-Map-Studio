@@ -46,6 +46,7 @@ Maps resaved with this fork will be _**incompatible**_ with vanilla PDSMS and ol
 ### Export improvements
 - Visual area picker for NSBTX export and PDSMAP splitting: the map matrix is rendered with area color overlays; Ctrl+wheel zooms at the cursor, middle-drag pans, clicking toggles areas.
 - Progress dialog for the PDSMAP area split, with per-area status, counts and error details.
+- Fixed the PDSMAP area split: it no longer redirects the open project's saves into the last area folder, each area opens on its own with its collision/BDHC/building files (no extra map at 0,0 anymore), the area thumbnails and "Open Recent" entries are correct, and an unexpected error can no longer lock the progress dialog.
 - Reworked and unified export dialogs (NSBMD, NSBTX, IMD, split areas).
 - `g3dcvtr.exe` is now located automatically (working folder, app folder, or any parent folder), so exporting works no matter where you launch from. As always, `g3dcvtr.exe` is user-supplied and never redistributed.
 

@@ -5,6 +5,7 @@ import editor.gameselector.GameTsetSelectorDialog2;
 import editor.handler.MapData;
 import editor.handler.MapEditorHandler;
 import editor.mapdisplay.MapDisplay;
+import editor.mapgroups.MapGroup;
 import editor.mapgroups.SavePDSMAPAreasDialog;
 import editor.mapgroups.SavePDSMAPAreasProgressDialog;
 import editor.mapmatrix.MapMatrix;
@@ -23,10 +24,12 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.TreeMap;
 import javax.imageio.ImageIO;
 import javax.swing.JButton;
 import javax.swing.AbstractButton;
 import javax.swing.JOptionPane;
+import javax.swing.SwingUtilities;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.TransformerException;
 import tileset.TextureNotFoundException;
@@ -197,7 +200,7 @@ final class MapProjectActions {
         }
     }
 
-    void splitPDSMAPintoAreas(boolean includeMapAtOrigin) {
+    void splitPDSMAPintoAreas() {
         final SavePDSMAPAreasDialog configDialog = new SavePDSMAPAreasDialog(frame, false);
         configDialog.init(handler);
         configDialog.setLocationRelativeTo(frame);
@@ -219,44 +222,36 @@ final class MapProjectActions {
 
                 handler.setLastMapDirectoryUsed(areaFolderPath);
                 Thread thread = new Thread(() -> {
-                    HashMap<Point, MapData> allAreasMap = handler.getMapMatrix().getMatrix();
-                    for (int area : selectedAreaIndices) {
-                        progressDialog.areaStarted(area);
-                        try {
-                            HashMap<Point, MapData> singleAreaMap = new HashMap<>();
+                    try {
+                        MapMatrix mapMatrix = handler.getMapMatrix();
+                        HashMap<Point, MapData> allAreasMap = mapMatrix.getMatrix();
+                        TreeMap<Integer, MapGroup> areas = mapMatrix.getAreas();
+                        for (int area : selectedAreaIndices) {
+                            progressDialog.areaStarted(area);
+                            try {
+                                HashMap<Point, MapData> singleAreaMap = new HashMap<>();
+                                for (Point point : areas.get(area).getCoordList()) {
+                                    singleAreaMap.put(point, allAreasMap.get(point));
+                                }
 
-                            Point origin = new Point(0, 0);
-                            MapData originMap = allAreasMap.get(origin);
-                            if (includeMapAtOrigin && originMap != null) {
-                                singleAreaMap.put(origin, originMap);
+                                String areaFilePath = mapMatrix.saveAreaToFile(areaFolderPath, singleAreaMap, area);
+                                writeTileset(areaFilePath);
+                                ImageIO.write(MapMatrix.createMapsThumbnail(singleAreaMap), "png",
+                                        new File(new File(areaFilePath).getParent(), "MapThumbnail.png"));
+
+                                SwingUtilities.invokeLater(() -> recentMapsMenu.addAndPersist(areaFilePath));
+                                progressDialog.areaSaved(area);
+                            } catch (Exception ex) {
+                                ex.printStackTrace();
+                                progressDialog.areaFailed(area,
+                                        "There was a problem saving the map files of Area " + area + ":\n"
+                                                + ex);
                             }
-
-                            for (Point point : handler.getMapMatrix().getAreas().get(area).getCoordList()) {
-                                singleAreaMap.put(point, allAreasMap.get(point));
-                            }
-                            Set<HashMap.Entry<Point, MapData>> areaEntrySet = singleAreaMap.entrySet();
-
-                            handler.getMapMatrix().saveAreaToFile(areaFolderPath, areaEntrySet, area);
-                            writeTileset();
-
-                            handler.getMapMatrix().saveCollisions(areaEntrySet);
-                            handler.getMapMatrix().saveBacksounds(areaEntrySet);
-                            handler.getMapMatrix().saveBDHCs(areaEntrySet);
-                            handler.getMapMatrix().saveBdhcams(areaEntrySet);
-                            handler.getMapMatrix().saveBuildings(areaEntrySet);
-
-                            saveMapThumbnail();
-
-                            recentMapsMenu.addAndPersist(
-                                    Utils.addExtensionToPath(areaFolderPath, MapMatrix.fileExtension));
-                            progressDialog.areaSaved(area);
-                        } catch (ParserConfigurationException | TransformerException | IOException ex) {
-                            progressDialog.areaFailed(area,
-                                    "There was a problem saving the map files of Area " + area + ":\n"
-                                            + ex.getMessage());
                         }
+                    } finally {
+                        //Always release the progress dialog, it can't be closed until then
+                        progressDialog.allFinished();
                     }
-                    progressDialog.allFinished();
                 });
                 thread.setDaemon(false);
                 thread.start();
@@ -563,7 +558,12 @@ final class MapProjectActions {
     }
 
     void writeTileset() throws FileNotFoundException, ParserConfigurationException, TransformerException, IOException {
-        File file = new File(handler.getMapMatrix().filePath);
+        writeTileset(handler.getMapMatrix().filePath);
+    }
+
+    /** Writes the tileset next to the PDSMAP file at mapFilePath, named after it. */
+    void writeTileset(String mapFilePath) throws FileNotFoundException, ParserConfigurationException, TransformerException, IOException {
+        File file = new File(mapFilePath);
         String path = file.getParent();
 
         String filename = Utils.removeExtensionFromPath(file.getName()) + "." + Tileset.fileExtension;

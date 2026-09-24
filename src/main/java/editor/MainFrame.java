@@ -1056,7 +1056,7 @@ public class MainFrame extends JFrame {
     }
 
     private void jbSplitPDSMAPbyAreaActionPerformed(ActionEvent e) {
-        splitPDSMAPintoAreas(true);
+        splitPDSMAPintoAreas();
     }
 
     private void jbExportAndConvertAllActionPerformed(ActionEvent e) {
@@ -1123,7 +1123,7 @@ public class MainFrame extends JFrame {
     }
 
     private void jmiSplitPDSMAPbyAreaActionPerformed(ActionEvent e) {
-        splitPDSMAPintoAreas(true);
+        splitPDSMAPintoAreas();
     }
 
 
@@ -1416,8 +1416,8 @@ public class MainFrame extends JFrame {
         toolDialogLauncher.openAnimationEditor();
     }
 
-    private void splitPDSMAPintoAreas(boolean includeMapAtOrigin) {
-        mapProjectActions.splitPDSMAPintoAreas(includeMapAtOrigin);
+    private void splitPDSMAPintoAreas() {
+        mapProjectActions.splitPDSMAPintoAreas();
     }
 
     public void openKeyboardInfoDialog() {

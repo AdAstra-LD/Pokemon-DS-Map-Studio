@@ -119,6 +119,15 @@ public class MapMatrix {
         removeUnusedMaps();
         removeAllUnusedMapFiles();
 
+        writeGridsToFile(path, entrySet, getMinCoords());
+    }
+
+    /**
+     * Writes the PDSMAP file itself. Map positions are stored relative to
+     * minCoords, which must be the min coords of the maps that will be loaded
+     * back from this file, so that their per-map files keep matching names.
+     */
+    private void writeGridsToFile(String path, Set<Map.Entry<Point, MapData>> entrySet, Point minCoords) throws FileNotFoundException {
         PrintWriter out = new PrintWriter(path);
 
         out.println(gameIndexTag);
@@ -128,7 +137,6 @@ public class MapMatrix {
         String filename = Utils.removeExtensionFromPath(new File(path).getName());
         out.println(filename + "." + Tileset.fileExtension);
 
-        Point minCoords = getMinCoords();
         for (HashMap.Entry<Point, MapData> map : entrySet) {
             Point coords = map.getKey();
             MapData md = map.getValue();
@@ -302,55 +310,34 @@ public class MapMatrix {
         return matrix;
     }
 
-    public void saveAreaToFile(String path, Set<HashMap.Entry<Point, MapData>> areaEntrySet, int areaToSave) throws FileNotFoundException {
-        String dirPath = path + File.separator + "AD" + areaToSave;
+    /**
+     * Saves the given maps of one area as a standalone PDSMAP project in
+     * "folderPath/ADn/ADn.pdsmap", together with their per-map files. Map
+     * positions and per-map file names are made relative to the area itself,
+     * so the saved project opens on its own. The opened project (its file path
+     * and its maps) is left untouched.
+     *
+     * @return the path of the saved PDSMAP file
+     */
+    public String saveAreaToFile(String folderPath, HashMap<Point, MapData> areaMaps, int areaToSave) throws IOException {
+        String dirPath = folderPath + File.separator + "AD" + areaToSave;
         File dir = new File(dirPath);
-        dir.mkdir();
-
-        this.filePath = dirPath + File.separator + "AD" + areaToSave + "." + fileExtension;
-        PrintWriter out = new PrintWriter(filePath);
-
-        removeUnusedMaps();
-        removeAllUnusedMapFiles();
-        for (HashMap.Entry<Point, MapData> entry : areaEntrySet) {
-            Point p = entry.getKey();
-            MapData md = entry.getValue();
-
-            if (p != null && md != null) {
-                out.println(gameIndexTag);
-                out.println(handler.getGameIndex());
-
-                out.println(tilesetTag);
-                String filename = Utils.removeExtensionFromPath(new File(filePath).getName());
-                out.println(filename + "." + Tileset.fileExtension);
-
-                Point minCoords = getMinCoords();
-                out.println(mapstartTag);
-                out.println((p.x - minCoords.x) + " " + (p.y - minCoords.y));
-
-                out.println(areaIndexTag);
-                out.println(md.getAreaIndex());
-
-                out.println(exportgroupTag);
-                out.println(md.getExportGroupIndex());
-
-                if (md.getExportGroupIndex() > 0 && md.isExportGroupCenter()) {
-                    out.println(exportgroupCenterTag);
-                }
-
-                for (int[][] tLayer : md.getGrid().tileLayers) {
-                    out.println(tileGridTag);
-                    MapGrid.printMatrixInFile(out, tLayer); //Todo change this
-                }
-
-                for (int[][] hLayer : md.getGrid().heightLayers) {
-                    out.println(heightGridTag);
-                    MapGrid.printMatrixInFile(out, hLayer); //Todo change this
-                }
-                out.println(mapEndTag);
-            }
+        if (!dir.isDirectory() && !dir.mkdirs()) {
+            throw new IOException("Can't create the folder " + dirPath);
         }
-        out.close();
+        String areaFilePath = dirPath + File.separator + "AD" + areaToSave + "." + fileExtension;
+
+        removeAllUnusedMapFiles(dirPath, areaMaps);
+        writeGridsToFile(areaFilePath, areaMaps.entrySet(), getMinCoords(areaMaps));
+
+        Set<Map.Entry<Point, MapData>> areaEntrySet = areaMaps.entrySet();
+        saveCollisions(areaFilePath, areaMaps, areaEntrySet);
+        saveBacksounds(areaFilePath, areaMaps, areaEntrySet);
+        saveBDHCs(areaFilePath, areaMaps, areaEntrySet);
+        saveBdhcams(areaFilePath, areaMaps, areaEntrySet);
+        saveBuildings(areaFilePath, areaMaps, areaEntrySet);
+
+        return areaFilePath;
     }
 
     public void addMapsFromFile(HashMap<Point, MapData> newMaps, Point offset, String folderPath, String fileName) throws IOException, NullPointerException, TextureNotFoundException {
@@ -480,10 +467,15 @@ public class MapMatrix {
     }
 
     public void saveBDHCs(Set<Map.Entry<Point, MapData>> entrySet) throws IOException {
+        saveBDHCs(filePath, matrix, entrySet);
+    }
+
+    private void saveBDHCs(String mapFilePath, HashMap<Point, MapData> layout,
+                    Set<Map.Entry<Point, MapData>> entrySet) throws IOException {
         int game = handler.getGameIndex();
         for (HashMap.Entry<Point, MapData> mapEntry : entrySet) {
-            String path = getFilePathWithCoords(matrix, new File(filePath).getParent(),
-                    new File(filePath).getName(), mapEntry.getKey(), Bdhc.fileExtension);
+            String path = getFilePathWithCoords(layout, new File(mapFilePath).getParent(),
+                    new File(mapFilePath).getName(), mapEntry.getKey(), Bdhc.fileExtension);
             if (game == Game.DIAMOND || game == Game.PEARL) {
                 BdhcWriterDP.writeBdhc(mapEntry.getValue().getBdhc(), path);
             } else {
@@ -493,21 +485,31 @@ public class MapMatrix {
     }
 
     public void saveBacksounds(Set<Map.Entry<Point, MapData>> entrySet) throws IOException {
+        saveBacksounds(filePath, matrix, entrySet);
+    }
+
+    private void saveBacksounds(String mapFilePath, HashMap<Point, MapData> layout,
+                    Set<Map.Entry<Point, MapData>> entrySet) throws IOException {
         int game = handler.getGameIndex();
         for (HashMap.Entry<Point, MapData> mapEntry : entrySet) {
-            String path = getFilePathWithCoords(matrix, new File(filePath).getParent(),
-                    new File(filePath).getName(), mapEntry.getKey(), Backsound.fileExtension);
+            String path = getFilePathWithCoords(layout, new File(mapFilePath).getParent(),
+                    new File(mapFilePath).getName(), mapEntry.getKey(), Backsound.fileExtension);
             if (game == Game.HEART_GOLD || game == Game.SOUL_SILVER) {
                 mapEntry.getValue().getBacksound().writeToFile(path);
             }
         }
     }
 
-    public void saveBdhcams(Set<Map.Entry<Point, MapData>> entrySet) throws IOException{
+    public void saveBdhcams(Set<Map.Entry<Point, MapData>> entrySet) throws IOException {
+        saveBdhcams(filePath, matrix, entrySet);
+    }
+
+    private void saveBdhcams(String mapFilePath, HashMap<Point, MapData> layout,
+                    Set<Map.Entry<Point, MapData>> entrySet) throws IOException {
         int game = handler.getGameIndex();
         for (HashMap.Entry<Point, MapData> mapEntry : entrySet) {
-            String path = getFilePathWithCoords(matrix, new File(filePath).getParent(),
-                    new File(filePath).getName(), mapEntry.getKey(), Bdhcam.fileExtension);
+            String path = getFilePathWithCoords(layout, new File(mapFilePath).getParent(),
+                    new File(mapFilePath).getName(), mapEntry.getKey(), Bdhcam.fileExtension);
             if (game == Game.PLATINUM || game == Game.HEART_GOLD || game == Game.SOUL_SILVER) {
                 BdhcamWriter.writeBdhcamToFile(path, mapEntry.getValue().getBdhcam(), mapEntry.getValue().getBdhc(), game);
             }
@@ -515,15 +517,20 @@ public class MapMatrix {
     }
 
     public void saveCollisions(Set<Map.Entry<Point, MapData>> entrySet) throws IOException {
+        saveCollisions(filePath, matrix, entrySet);
+    }
+
+    private void saveCollisions(String mapFilePath, HashMap<Point, MapData> layout,
+                    Set<Map.Entry<Point, MapData>> entrySet) throws IOException {
         for (HashMap.Entry<Point, MapData> mapEntry : entrySet) {
-            String path = getFilePathWithCoords(matrix, new File(filePath).getParent(),
-                    new File(filePath).getName(), mapEntry.getKey(), Collisions.fileExtension);
+            String path = getFilePathWithCoords(layout, new File(mapFilePath).getParent(),
+                    new File(mapFilePath).getName(), mapEntry.getKey(), Collisions.fileExtension);
             mapEntry.getValue().getCollisions().saveToFile(path);
 
             if (Game.isGenV(handler.getGameIndex())) {
                 if (mapEntry.getValue().getCollisions2() != null) {
-                    String path2 = getFilePathWithCoords(matrix, new File(filePath).getParent(),
-                            new File(filePath).getName(), "2", mapEntry.getKey(), Collisions.fileExtension);
+                    String path2 = getFilePathWithCoords(layout, new File(mapFilePath).getParent(),
+                            new File(mapFilePath).getName(), "2", mapEntry.getKey(), Collisions.fileExtension);
                     mapEntry.getValue().getCollisions2().saveToFile(path2);
                 }
             }
@@ -531,9 +538,14 @@ public class MapMatrix {
     }
 
     public void saveBuildings(Set<Map.Entry<Point, MapData>> entrySet) throws IOException {
+        saveBuildings(filePath, matrix, entrySet);
+    }
+
+    private void saveBuildings(String mapFilePath, HashMap<Point, MapData> layout,
+                    Set<Map.Entry<Point, MapData>> entrySet) throws IOException {
         for (HashMap.Entry<Point, MapData> mapEntry : entrySet) {
-            String path = getFilePathWithCoords(matrix, new File(filePath).getParent(),
-                    new File(filePath).getName(), mapEntry.getKey(), BuildFile.fileExtension);
+            String path = getFilePathWithCoords(layout, new File(mapFilePath).getParent(),
+                    new File(mapFilePath).getName(), mapEntry.getKey(), BuildFile.fileExtension);
             mapEntry.getValue().getBuildings().saveToFile(path);
         }
     }
@@ -876,6 +888,28 @@ public class MapMatrix {
         }
     }
 
+    /**
+     * Lays out the thumbnails of the given maps as they appear in the map
+     * matrix. Unlike a screenshot of the map display, it doesn't need OpenGL.
+     */
+    public static BufferedImage createMapsThumbnail(HashMap<Point, MapData> maps) {
+        Point min = getMinCoords(maps);
+        Point max = getMaxCoords(maps);
+        int size = MapData.mapThumbnailSize;
+        BufferedImage img = new BufferedImage((max.x - min.x + 1) * size, (max.y - min.y + 1) * size,
+                BufferedImage.TYPE_INT_ARGB);
+        Graphics g = img.getGraphics();
+        for (Map.Entry<Point, MapData> entry : maps.entrySet()) {
+            BufferedImage mapThumbnail = entry.getValue().getMapThumbnail();
+            if (mapThumbnail != null) {
+                Point p = entry.getKey();
+                g.drawImage(mapThumbnail, (p.x - min.x) * size, (p.y - min.y) * size, size, size, null);
+            }
+        }
+        g.dispose();
+        return img;
+    }
+
     public Point getMaxCoords() {
         return getMaxCoords(matrix);
     }
@@ -920,33 +954,42 @@ public class MapMatrix {
     }
 
     public void removeAllUnusedMapFiles() {
-        try {
-            String folderPath = new File(filePath).getParent();
+        removeAllUnusedMapFiles(new File(filePath).getParent(), matrix);
+    }
 
-            removeUnusedMapFiles(folderPath, "obj");
-            removeUnusedMapFiles(folderPath, "mtl");
-            removeUnusedMapFiles(folderPath, "imd");
-            removeUnusedMapFiles(folderPath, "nsbmd");
-            removeUnusedMapFiles(folderPath, Bdhc.fileExtension);
-            removeUnusedMapFiles(folderPath, Collisions.fileExtension);
-            removeUnusedMapFiles(folderPath, BuildFile.fileExtension);
-            removeUnusedMapFiles(folderPath, Backsound.fileExtension);
+    /**
+     * Deletes the per-map files in folderPath whose coords don't belong to any
+     * map of layout (coords in the file names are relative to its min coords).
+     */
+    private void removeAllUnusedMapFiles(String folderPath, HashMap<Point, MapData> layout) {
+        try {
+            removeUnusedMapFiles(folderPath, layout, "obj");
+            removeUnusedMapFiles(folderPath, layout, "mtl");
+            removeUnusedMapFiles(folderPath, layout, "imd");
+            removeUnusedMapFiles(folderPath, layout, "nsbmd");
+            removeUnusedMapFiles(folderPath, layout, Bdhc.fileExtension);
+            removeUnusedMapFiles(folderPath, layout, Collisions.fileExtension);
+            removeUnusedMapFiles(folderPath, layout, BuildFile.fileExtension);
+            removeUnusedMapFiles(folderPath, layout, Backsound.fileExtension);
         } catch (Exception ex) {
             ex.printStackTrace();
         }
     }
 
-    private void removeUnusedMapFiles(String folderPath, String fileExtension) {
-        Point minCoords = getMinCoords();
+    private void removeUnusedMapFiles(String folderPath, HashMap<Point, MapData> layout, String fileExtension) {
+        Point minCoords = getMinCoords(layout);
 
         if (folderPath != null) {
             File folder = new File(folderPath);
             File[] filesToRemove = folder.listFiles(new FilenameFilter() {
                 @Override
                 public boolean accept(File dir, String name) {
-                    return canRemoveMapFile(name, fileExtension, minCoords);
+                    return canRemoveMapFile(name, fileExtension, layout, minCoords);
                 }
             });
+            if (filesToRemove == null) {
+                return;
+            }
 
             for (File file : filesToRemove) {
                 try {
@@ -1173,25 +1216,26 @@ public class MapMatrix {
         return allContourPoints;
     }
 
-    private boolean canRemoveMapFile(String fileName, String fileExtension, Point minCoords) {
+    private boolean canRemoveMapFile(String fileName, String fileExtension,
+                                     HashMap<Point, MapData> layout, Point minCoords) {
         try {
             //System.out.println("MAP FILE: " + fileName);
             return fileName.endsWith("." + fileExtension)
                     && nameHasMapCoords(fileName)
-                    && !isMapFileUsed(fileName, minCoords);
+                    && !isMapFileUsed(fileName, layout, minCoords);
         } catch (Exception ex) {
             return false;
         }
     }
 
-    private boolean isMapFileUsed(String fileName, Point minCoords) {
+    private boolean isMapFileUsed(String fileName, HashMap<Point, MapData> layout, Point minCoords) {
         Point mapCoords = geMapCoordsFromName(fileName);
 
         mapCoords.x += minCoords.x;
         mapCoords.y += minCoords.y;
 
         //System.out.println(mapCoords.x + " " + mapCoords.y + " " + fileName + " USED: " + matrix.keySet().contains(mapCoords));
-        return matrix.keySet().contains(mapCoords);
+        return layout.containsKey(mapCoords);
     }
 
     private Point geMapCoordsFromName(String fileName) {
