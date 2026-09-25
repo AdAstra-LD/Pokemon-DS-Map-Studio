@@ -10,6 +10,7 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableRowSorter;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.WindowAdapter;
@@ -72,6 +73,13 @@ public class ExportMapBinInfoDialog extends JDialog {
         jTable1.getColumnModel().getColumn(1).setPreferredWidth(350);
 
         jTable1.getColumnModel().getColumn(1).setCellRenderer(new StatusColumnCellRenderer());
+
+        TableRowSorter<DefaultTableModel> sorter =
+                new TableRowSorter<>((DefaultTableModel) jTable1.getModel());
+        sorter.setComparator(0, String.CASE_INSENSITIVE_ORDER);
+        sorter.setSortKeys(Collections.singletonList(
+                new RowSorter.SortKey(0, SortOrder.ASCENDING)));
+        jTable1.setRowSorter(sorter);
 
         jTable1.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
             @Override
@@ -333,10 +341,15 @@ public class ExportMapBinInfoDialog extends JDialog {
     public void saveAllBins() {
         DefaultTableModel tableModel = (DefaultTableModel) jTable1.getModel();
 
+        java.util.List<Point> sortedCoords = new ArrayList<>(mapCoords);
+        sortedCoords.sort(Comparator
+                .comparingInt((Point p) -> p.x)
+                .thenComparingInt(p -> p.y));
+
         int nFilesProcessed = 0;
         int nFilesConverted = 0;
         int nFilesNotConverted = 0;
-        for (Point p : mapCoords) {
+        for (Point p : sortedCoords) {
 
             String mapName = handler.getMapMatrix().getMapName(p);
             ExportStatus exportStatus = ExportStatus.UNKNOWN_ERROR_STATUS;
