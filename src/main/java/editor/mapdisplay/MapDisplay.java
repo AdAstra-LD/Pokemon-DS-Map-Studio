@@ -3188,8 +3188,9 @@ public class MapDisplay extends GLJPanel implements GLEventListener, MouseListen
 
     protected void drawScreenshot(GL2 gl) {
 
-        float xScale = (float) getWidth() / width;
-        float yScale = (float) getHeight() / height;
+        //Use the surface size: with HiDPI scaling (e.g. macOS Retina) it is larger than getWidth()/getHeight()
+        float xScale = (float) getSurfaceWidth() / width;
+        float yScale = (float) getSurfaceHeight() / height;
         final int mapWidth = (int) (cols * tileSize * xScale);
         final int mapHeight = (int) (rows * tileSize * yScale);
         BufferedImage upscaledImage = new BufferedImage(mapWidth, mapHeight, BufferedImage.TYPE_INT_RGB);
